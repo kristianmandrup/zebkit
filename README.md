@@ -1,1 +1,3 @@
-http://repo.zebkit.org/zebkit.logo.png
+
+![ScreenShot](http://repo.zebkit.org/zebkit.logo.png)
+
