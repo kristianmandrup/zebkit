@@ -1,0 +1,31 @@
+{
+    "name"       : "zebkit",
+    "version"    : "2.0.0",
+    "description": "zebkit",
+    "author"  : "Andrei Vishneuski",
+    "scripts" : {},
+    "main": "zebkit.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/barmalei/zebkit.git"
+    },
+    "author": "",
+    "license": "Apache",
+    "bugs": {
+        "url": "https://github.com/barmalei/zebkit/issues"
+    },
+    "homepage": "https://github.com/barmalei/zebkit",
+    "devDependencies"   : {
+        "jshint"        : "latest",
+        "gulp"          : "latest",
+        "gulp-rename"   : "latest",
+        "gulp-uglify"   : "latest",
+        "gulp-concat"   : "latest",
+        "gulp-wrap"     : "latest",
+        "gulp-webserver": "latest",
+        "gulp-zip"      : "latest",
+        "gulp-jshint"   : "latest",
+        "gulp-rm"       : "latest",
+        "gulp-expect-file"   : "latest"
+    }
+}
