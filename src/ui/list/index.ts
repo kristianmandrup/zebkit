@@ -1,5 +1,3 @@
-zebkit.package("ui", function(pkg, Class) {
-
 /**
  * @module ui
 */
