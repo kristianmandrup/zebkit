@@ -22,7 +22,9 @@
  * @constructor
  * @extends {zebkit.layout.Layout}
  */
-class ListLayout extends Layout {
+import Layout from './Layout';
+
+export default class ListLayout implements Layout {
     constructor(ax, gap) {
         /**
          * Horizontal list items alignment

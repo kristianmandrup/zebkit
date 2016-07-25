@@ -1,4 +1,3 @@
-import Layout from '.';
 /**
  * Rester layout manager can be used to use absolute position of
  * layoutable components. That means all components will be laid
@@ -12,7 +11,9 @@ import Layout from '.';
  * @constructor
  * @extends {zebkit.layout.Layout}
  */
-class RasterLayout extends Layout {
+import Layout from './Layout';
+
+export default class RasterLayout implements Layout {
     constructor(ups = false) {
         this.usePsSize = ups;
     }

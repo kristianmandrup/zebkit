@@ -1,5 +1,3 @@
-import Layout from '.';
-
 /**
  *  Layout manager implementation that logically splits component area into five areas: top, bottom, left, right and center.
  *  Top and bottom components are stretched to fill all available space horizontally and are sized to have preferred height horizontally.
@@ -21,7 +19,9 @@ import Layout from '.';
  * @class zebkit.layout.BorderLayout
  * @extends {zebkit.layout.Layout}
  */
-class BorderLayout extends Layout {
+import Layout from './Layout';
+
+export default class BorderLayout implements Layout {
 
     /**
      * Horizontal gap (space between components)
@@ -38,7 +38,10 @@ class BorderLayout extends Layout {
      * @readOnly
      * @type {Integer}
      */
-    constructor(hgap = 0,vgap = 0) {      
+    hgap: number;
+    vgap: number;
+
+    constructor(hgap: number = 0,vgap: number = 0) {      
         this.hgap = hgap;
         this.vgap = vgap;
     }

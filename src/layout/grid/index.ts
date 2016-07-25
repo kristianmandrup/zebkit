@@ -1,4 +1,4 @@
-import Layout from '..';
+import Layout from '../Layout';
 import Constraints from './Constraints';
 
 /**
@@ -38,8 +38,8 @@ import Constraints from './Constraints';
  * @class  zebkit.layout.GridLayout
  * @extends {zebkit.layout.Layout}
  */
-class GridLayout extends Layout {
-    constructor(r, c, stretchRows, stretchCols) {
+export default class GridLayout implements Layout {
+    constructor(r, c, stretchRows, stretchCols) {        
         this.stretchCols = this.stretchRows = false;
         /**
          * Number of virtual rows to place children components

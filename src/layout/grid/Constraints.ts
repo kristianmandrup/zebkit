@@ -8,7 +8,7 @@
  * @constructor
  * @class zebkit.layout.Constraints
  */
-class Constraints {
+export default class Constraints {
     constructor(ax, ay, p) {
         /**
          * Top cell padding

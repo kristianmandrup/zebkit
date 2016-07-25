@@ -24,26 +24,14 @@
  * @event pressed
  * @param {zebkit.ui.Panel} src a toolbar element that has been pressed
  */
-pkg.Toolbar = Class(pkg.Panel, [
-    function $clazz() {
-        this.ToolPan = Class(pkg.EvStatePan, [
-            function(c) {
-                this.$super(new zebkit.layout.BorderLayout());
-                this.add("center", c);
-            },
 
-            function getContentComponent() {
-                return this.kids[0];
-            },
 
-            function stateUpdated(o, n) {
-                this.$super(o, n);
-                if (o === PRESSED_OVER && n === OVER) {
-                    this.parent._.fired(this);
-                }
-            }
-        ]);
+import ToolPan from './toolbar/ToolPan';
+import Panel from './core/Panel';
 
+export default class Toolbar extends Panel {
+    $clazz() {
+        this.ToolPan  = ToolPan; 
         this.ImagePan = Class(pkg.ImagePan, []);
         this.Line     = Class(pkg.Line, []);
         this.Checkbox = Class(pkg.Checkbox, []);

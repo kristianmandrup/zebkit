@@ -1,4 +1,3 @@
-import Layout from '.';
 /**
  * Flow layout manager group and places components aligned with
  * different vertical and horizontal alignments
@@ -37,8 +36,11 @@ import Layout from '.';
  * @constructor
  * @extends {zebkit.layout.Layout}
  */
-class FlowLayout extends Layout {
+import Layout from './Layout';
+
+export default class FlowLayout implements Layout {
     constructor(ax, ay, dir, g) {
+        super();
         /**
          * Gap between laid out components
          * @attribute gap

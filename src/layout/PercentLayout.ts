@@ -21,7 +21,9 @@
  * @constructor
  * @extends {zebkit.layout.Layout}
  */
-class PercentLayout extends Layout {
+import Layout from './Layout';
+
+export default class PercentLayout implements Layout {
     constructor(dir, gap, stretch) {
          /**
           * Direction the components have to be placed (vertically or horizontally)

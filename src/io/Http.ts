@@ -1,8 +1,8 @@
-pkg.getRequest = function() {
+export const getRequest = function() {
     if (typeof XMLHttpRequest !== "undefined") {
         var r = new XMLHttpRequest();
 
-        if (zebkit.isFF) {
+        if (web.isFF) {
             r.__send = r.send;
             r.send = function(data) {
                 // !!! FF can throw NS_ERROR_FAILURE exception instead of
@@ -58,9 +58,9 @@ pkg.getRequest = function() {
  * @api  zebkit.io.GET()
  * @method GET
  */
-pkg.GET = function(url) {
-    if (zebkit.isString(url)) {
-        var http = new pkg.HTTP(url);
+export const GET = function(url) {
+    if (utils.isString(url)) {
+        var http = new HTTP(url);
         return http.GET.apply(http, Array.prototype.slice.call(arguments, 1));
     }
     else {
@@ -124,8 +124,8 @@ pkg.GET = function(url) {
  * @method  POST
  * @api  zebkit.io.POST()
  */
-pkg.POST = function(url) {
-    var http = new pkg.HTTP(url);
+export const POST = function(url) {
+    var http = new HTTP(url);
     return http.POST.apply(http, Array.prototype.slice.call(arguments, 1));
 };
 
@@ -137,11 +137,14 @@ pkg.POST = function(url) {
  * @constructor
  * @param {String} url an URL to a HTTP resource
  */
-pkg.HTTP = Class([
-    function(url) {
+export class HTTP {
+    url: string;
+    header: {};
+
+    constructor(url: string) {
         this.url = url;
         this.header = {};
-    },
+    }
 
     /**
      * Perform HTTP GET request synchronously or asynchronously with the given
@@ -175,13 +178,13 @@ pkg.HTTP = Class([
 
      * @method GET
      */
-    function GET(q, f) {
+    GET(q, f) {
         if (typeof q == 'function') {
             f = q;
             q = null;
         }
         return this.SEND("GET", pkg.QS.append(this.url, q), null, f);
-    },
+    }
 
     /**
      * Perform HTTP POST request synchronously or asynchronously with the given
@@ -217,7 +220,7 @@ pkg.HTTP = Class([
 
      * @method POST
      */
-    function POST(d, f) {
+    POST(d, f) {
         if (typeof d == 'function') {
             f = d;
             d = null;
@@ -246,10 +249,10 @@ pkg.HTTP = Class([
      * if the HTTP request has to be sent asynchronously.
      * @method SEND
      */
-    function SEND(method, url, data, callback) {
+    SEND(method, url, data, callback) {
         //!!! IE9 returns 404 if XDomainRequest is used for the same domain but for different paths.
         //!!! Using standard XMLHttpRequest has to be forced in this case
-        var r = pkg.getRequest(), $this = this;
+        var r = getRequest(), $this = this;
 
         if (callback != null) {
             r.onreadystatechange = function() {
@@ -295,4 +298,4 @@ pkg.HTTP = Class([
             return r.responseText;
         }
     }
-]);
+}

@@ -7,8 +7,9 @@ import TextModel from './TextModel';
  * @class zebkit.data.SingleLineTxt
  * @extends zebkit.data.TextModel
  */
-class SingleLineTxt extends TextModel {
+export default class SingleLineTxt extends TextModel {
     constructor() {
+        super();
         this.maxLen = max == null ? -1 : max;
         this.buf = "";
         this.extra = 0;

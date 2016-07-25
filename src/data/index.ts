@@ -1,30 +1,17 @@
 export default class Data {
-    descent(a : null | string | number, b : null | string | number) {
+    descent(a : any, b : any) {
         if (a == null) return 1;
         return (typeof(a) === 'string') ? a.localeCompare(b) : a - b;
     }
 
-    ascent(a : null | string | number, b : null | string | number) {
+    ascent(a : any, b : any) {
         if (b == null) return 1;
         return (typeof(b) === 'string') ? b.localeCompare(a) : b - a;
     };
 }
 
-import Text from './Text';
-import TextModel from './TextModel';
-import SingleLineText from './SingleLineText';
-import Item from './Item';
-import TreeModel from './TreeModel';
-
-
-export {
-  TextModel: TextModel,
-  ListModel: ListModel,
-  TreeModel: TreeModel,
-
-  Text: Text,
-  SingleLineText: SingleLineText,
-  
-  Item: Item,
-  ListItem: ListItem 
-}
+export { default as Text } from './Text';
+export { default as TextModel } from './TextModel';
+export { default as SingleLineText } from './SingleLineText';
+export { default as Item } from './Item';
+export { default as TreeModel } from './TreeModel';

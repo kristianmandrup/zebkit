@@ -40,8 +40,8 @@
  * @param {String} url an URL of remote service
  * @param {Array} methods a list of methods names the remote service provides
  */
-pkg.Service = Class([
-    function(url, methods) {
+export default class Service {
+    constructor(url, methods) {
         var $this = this;
         /**
          * Remote service url
@@ -86,7 +86,7 @@ pkg.Service = Class([
                 };
             })();
         }
-    },
+    }
 
     /**
      * Transforms the given remote method execution with the specified parameters
@@ -118,16 +118,17 @@ pkg.Service = Class([
       * @return {String}  a result
       * @method  send
       */
-    function send(url, data, callback) {
+    send(url, data, callback) {
         var http = new pkg.HTTP(url);
         if (this.contentType != null) {
             http.header['Content-Type'] = this.contentType;
         }
         return http.POST(data, callback);
     }
-]);
 
-pkg.Service.invoke = function(clazz, url, method) {
-    var rpc = new clazz(url, method);
-    return function() { return rpc[method].apply(rpc, arguments); };
-};
+    invoke = (clazz, url, method) => {
+        var rpc = new clazz(url, method);
+        return function() { return rpc[method].apply(rpc, arguments); };
+    };    
+}
+

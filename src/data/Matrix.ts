@@ -54,8 +54,8 @@
     *
 */
 
-class Matrix {
-    $clazz = () {
+export default class Matrix {
+    $clazz = () => {
         this.Listeners = zebkit.util.ListenersClass("matrixResized", "cellModified",
                                                    "matrixSorted", "matrixRowInserted",
                                                    "matrixColInserted");

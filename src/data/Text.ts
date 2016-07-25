@@ -13,7 +13,7 @@ Text.Line.prototype.toString = function() {
  * @constructor
  * @extends zebkit.data.TextModel
  */
-class Text extends TextModel {
+export default class Text extends TextModel {
     static Line = function(s) {
         this.s = s;
     };

@@ -1,5 +1,3 @@
-import Layout from '.';
-
 /**
  * Layoutable class defines rectangular component that
  * has elementary metrical properties like width, height
@@ -12,7 +10,9 @@ import Layout from '.';
  * @constructor
  * @extends {zebkit.layout.Layout}
  */
-class Layoutable extends Layout {
+import Layout from './Layout';
+
+export default class Layoutable implements Layout {
       /**
        * x coordinate
        * @attribute x
@@ -175,7 +175,7 @@ class Layoutable extends Layout {
             };
         }
 
-        zebkit.util.findInTree(this, $normPath(path),
+        util.findInTree(this, $normPath(path),
             function(node, name) {
                 return node.clazz != null && zebkit.instanceOf(node, zebkit.Class.forName(name));
             }, callback);

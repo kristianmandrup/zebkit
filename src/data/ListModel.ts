@@ -50,8 +50,8 @@
   * @param {Integer} i an index at that the element has been re-set
   */
 
-class ListModel {
-    $clazz  = () {
+export default class ListModel {
+    $clazz  = () => {
         this.Listeners = zebkit.util.ListenersClass("elementInserted", "elementRemoved", "elementSet");
     }
 

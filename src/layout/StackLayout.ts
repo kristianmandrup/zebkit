@@ -1,5 +1,3 @@
-import Layout from '.';
-
 /**
  *  Layout manager implementation that places layoutbale components
  *  on top of each other stretching its to fill all available parent
@@ -7,9 +5,10 @@ import Layout from '.';
  *  @class zebkit.layout.StackLayout
  *  @constructor
  */
-class StackLayout extends Layout {
+import Layout from './Layout';
+
+export default class StackLayout implements Layout {
     constructor() {
-      super();
     }
 
     calcPreferredSize(target){

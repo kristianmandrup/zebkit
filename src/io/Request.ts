@@ -1,4 +1,4 @@
-var $Request = pkg.$Request = function() {
+export default function $Request() {
     this.responseText = this.statusText = "";
     this.onreadystatechange = this.responseXml = null;
     this.readyState = this.status = 0;

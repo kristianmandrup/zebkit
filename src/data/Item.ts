@@ -5,7 +5,7 @@
  * @param  {Object} [v] the item value
  * @constructor
  */
-class Item {
+export default class Item {
     constructor() {
         /**
          * Array of children items of the item element
@@ -33,4 +33,4 @@ class Item {
          * @readOnly
          */
     }
-)
+}

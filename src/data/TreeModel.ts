@@ -54,8 +54,8 @@ import data from '.';
  * @param {zebkit.data.Item}  item an item that has been inserted into the tree model
  */
 
-class TreeModel {
-    $clazz = () {
+export default class TreeModel {
+    $clazz = () => {
         this.Listeners = zebkit.util.ListenersClass("itemModified", "itemRemoved", "itemInserted");
 
         this.create = function(r, p) {
