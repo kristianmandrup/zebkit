@@ -8,6 +8,7 @@
 import { FOCUS_EVENT } from './events';
 import Manager from './Manager';
 import * as layout from '../../layout';
+import KeyEvent from '../web/keys/KeyEvent';
 
 export default class FocusManager extends Manager {
     focusOwner: any;
@@ -85,7 +86,7 @@ export default class FocusManager extends Manager {
      * @method keyPressed
      */
     keyPressed(e){
-        if (pkg.KeyEvent.TAB === e.code) {
+        if (KeyEvent.TAB === e.code) {
             var cc = this.ff(e.source, e.shiftKey ?  -1 : 1);
             if (cc != null) {
 

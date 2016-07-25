@@ -1,6 +1,3 @@
-import Layout from '../Layout';
-import Constraints from './Constraints';
-
 /**
  * Grid layout manager. can be used to split a component area to
  * number of virtual cells where children components can be placed.
@@ -38,27 +35,32 @@ import Constraints from './Constraints';
  * @class  zebkit.layout.GridLayout
  * @extends {zebkit.layout.Layout}
  */
+import Layout from '../Layout';
+import Constraints from './Constraints';
+
 export default class GridLayout implements Layout {
-    constructor(r, c, stretchRows, stretchCols) {        
+
+    colSizes: any[];
+    rowSizes: any[];
+    constraints: Constraints;
+    /**
+     * Number of virtual rows to place children components
+     * @attribute rows
+     * @readOnly
+     * @type {Integer}
+     */
+
+    /**
+     * Number of virtual columns to place children components
+     * @attribute cols
+     * @readOnly
+     * @type {Integer}
+     */
+    constructor(public rows, public cols, public stretchRows, public stretchCols) {        
         this.stretchCols = this.stretchRows = false;
-        /**
-         * Number of virtual rows to place children components
-         * @attribute rows
-         * @readOnly
-         * @type {Integer}
-         */
-        this.rows = r;
 
-        /**
-         * Number of virtual columns to place children components
-         * @attribute cols
-         * @readOnly
-         * @type {Integer}
-         */
-        this.cols = c;
-
-        this.colSizes = Array(c + 1);
-        this.rowSizes = Array(r + 1);
+        this.colSizes = Array(cols + 1);
+        this.rowSizes = Array(rows + 1);
 
         /**
          * Default constraints that is applied for children components
@@ -66,7 +68,7 @@ export default class GridLayout implements Layout {
          * @type {zebkit.layout.Constraints}
          * @attribute constraints
          */
-        this.constraints = new pkg.Constraints();
+        this.constraints = new Constraints();
 
         if (arguments.length > 2) this.stretchRows = stretchRows === true;
         if (arguments.length > 3) this.stretchCols = stretchCols === true;

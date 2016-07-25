@@ -13,6 +13,8 @@
  */
 import Panel from './Panel';
 import * as types from '../../types';
+import $view from './';
+import * as web from '../../web';
 
 const $store = [
     "paddingTop","paddingLeft","paddingBottom","paddingRight",
@@ -23,10 +25,9 @@ const $store = [
 ];
 
 export default class HtmlElement extends Panel {
-    $clazz = {
-        CLASS_NAME: null,
-        $bodyFontSize: window.getComputedStyle(document.body, null).getPropertyValue('font-size')        
-    }
+
+    static CLASS_NAME = null;
+    static $bodyFontSize = window.getComputedStyle(document.body, null).getPropertyValue('font-size');        
 
     $container: any;
     $canvas: any;
@@ -37,6 +38,8 @@ export default class HtmlElement extends Panel {
     element: any; // DOM element
     $blockElement: any; // DOM element
     border: string;
+    width: number;
+    height: number;
 
     constructor(e) {
         super();
@@ -155,7 +158,7 @@ export default class HtmlElement extends Panel {
         if (fe != null) {
             var $this = this;
 
-            zebkit.web.$focusin(fe, function(e) {
+            web.$focusin(fe, function(e) {
 
                 // sync native focus with zebkit focus if necessary
                 if ($this.hasFocus() === false) {
@@ -163,11 +166,11 @@ export default class HtmlElement extends Panel {
                 }
             }, false);
 
-            zebkit.web.$focusout(fe, function(e) {
+            web.$focusout(fe, function(e) {
 
                 // sync native focus with zebkit focus if necessary
                 if ($this.hasFocus()) {
-                    pkg.focusManager.requestFocus(null);
+                    focusManager.requestFocus(null);
                 }
             }, false);
         }
@@ -443,7 +446,7 @@ export default class HtmlElement extends Panel {
     }
 
     setBorder(b) {
-        b = pkg.$view(b);
+        b = $view(b);
 
         if (b == null) {
            this.setStyle("border", "none");

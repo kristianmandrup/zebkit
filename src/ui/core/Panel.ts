@@ -380,10 +380,14 @@
   * @event clipPaste
   */
 
-import layout from '../layout';
-import html from '../html';
+import * as layout from '../../layout';
+import * as html from '../../html';
+import * as views from '../../views';
+
 import HtmlElement from './HtmlElement';
-import views from '../views';
+import Bag from './Bag';
+
+import { COMP_EVENT } from './events';
 
 var temporary = { x:0, y:0, width:0, height:0 }
 
@@ -393,6 +397,9 @@ export default class Panel extends layout.Layoutable {
     left: number;
     right: number; 
     bottom: number;
+    width: number;
+    height: number;
+
     kids: any[];
     layout: any; // Layout;
     clazz: any;
@@ -525,7 +532,7 @@ export default class Panel extends layout.Layoutable {
             if (w > 0 && h > 0) {
                 var r = pkg.$cvp(this, temporary);
                 if (r != null) {
-                    zebkit.util.intersection(r.x, r.y, r.width, r.height, x, y, w, h, r);
+                    util.intersection(r.x, r.y, r.width, r.height, x, y, w, h, r);
                     if (r.width > 0 && r.height > 0) {
                         x = r.x;
                         y = r.y;

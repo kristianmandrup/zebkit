@@ -1,6 +1,6 @@
-import util from '../util';
-import web from '../web';
-import zebkit from '../';
+import * as util from '../../util';
+import * as web from '../../web';
+import * as zebkit from '../';
 
 export default class Bag extends util.Bag {
     url: string;

@@ -75,6 +75,10 @@
  */
 import { SHORTCUT_EVENT } from './events';
 import Manager from './Manager';
+import { environment } from '../../';
+import events from '../../';
+import focusManager from '../';
+import KeyEvent from '../web/keys/KeyEvent';
 
 export default class ShortcutManager extends Manager {
     keyCommands: {};
@@ -83,9 +87,9 @@ export default class ShortcutManager extends Manager {
         super();
         this.keyCommands = {};
         if (commands != null) {
-            pkg.events._.addEvents("commandFired");
+            events._.addEvents("commandFired");
             this.setCommands(commands.common);
-            if (zebkit.isMacOS === true && commands.osx != null) {
+            if (environment.isMacOS === true && commands.osx != null) {
                 this.setCommands(commands.osx);
             }
         }        
@@ -96,7 +100,7 @@ export default class ShortcutManager extends Manager {
      * @method keyPressed
      */
     keyPressed(e) {
-        var fo = pkg.focusManager.focusOwner;
+        var fo = focusManager.focusOwner;
         if (fo != null && this.keyCommands[e.code]) {
             var c = this.keyCommands[e.code];
             if (c && c[e.mask] != null) {
@@ -104,7 +108,7 @@ export default class ShortcutManager extends Manager {
 
                 SHORTCUT_EVENT.source  = fo;
                 SHORTCUT_EVENT.command = c;
-                pkg.events.fireEvent( "commandFired", SHORTCUT_EVENT);
+                events.fireEvent( "commandFired", SHORTCUT_EVENT);
 
                 if (fo[c.command] != null) {
                     if (c.args && c.args.length > 0) {
@@ -121,11 +125,11 @@ export default class ShortcutManager extends Manager {
         var m = 0, c = 0, r = k.split("+");
         for(var i = 0; i < r.length; i++) {
             var ch = r[i].trim().toUpperCase();
-            if (pkg.KeyEvent.hasOwnProperty("M_" + ch)) {
-                m += pkg.KeyEvent["M_" + ch];
+            if (KeyEvent.hasOwnProperty("M_" + ch)) {
+                m += KeyEvent["M_" + ch];
             } else {
-                if (pkg.KeyEvent.hasOwnProperty(ch)) {
-                    c = pkg.KeyEvent[ch];
+                if (KeyEvent.hasOwnProperty(ch)) {
+                    c = KeyEvent[ch];
                 } else {
                     c = parseInt(ch);
                     if (c == NaN) {

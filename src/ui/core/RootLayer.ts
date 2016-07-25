@@ -6,15 +6,14 @@
  *  @extends {zebkit.ui.CanvasLayer}
  */
 import CanvasLayer from './CanvasLayer';
+import * as layout from '../../layout'
 
-class RootLayer extends CanvasLayer {
-    $clazz = {
-        ID: 'root',
-        layout: new zebkit.layout.RasterLayout()
-    }
+export default class RootLayer extends CanvasLayer {    
+    static ID = 'root';
+    static layout = new layout.RasterLayout();
 
-    constructor() {
-        super();
+    constructor(e) {
+        super(e);
     }
 
     getFocusRoot() {

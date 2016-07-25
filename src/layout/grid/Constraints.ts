@@ -8,8 +8,17 @@
  * @constructor
  * @class zebkit.layout.Constraints
  */
+import util from '../../util';
+
 export default class Constraints {
-    constructor(ax, ay, p) {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+    rowSpan: number;
+    colSpan: number;
+    
+    constructor(public ax, public ay, p) {
         /**
          * Top cell padding
          * @attribute top
@@ -61,8 +70,8 @@ export default class Constraints {
             if (arguments.length > 1) this.ay = ay;
             if (arguments.length > 2) this.setPadding(p);
 
-            zebkit.util.$validateValue(this.ax, "stretch", "left", "center", "right");
-            zebkit.util.$validateValue(this.ay, "stretch", "top", "center", "bottom");
+            util.$validateValue(this.ax, "stretch", "left", "center", "right");
+            util.$validateValue(this.ay, "stretch", "top", "center", "bottom");
         }
     }
 

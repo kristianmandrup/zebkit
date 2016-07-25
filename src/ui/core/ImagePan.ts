@@ -7,9 +7,10 @@
  *  @constructor
  *  @extends zebkit.ui.ViewPan
  */
+import ViewPan from './ViewPan';
 import Picture from './Picture';
-import web from '../web';
-import utils from '../utils';
+import * as web from '../../web';
+import * as utils from '../utils';
 
 export default class ImagePan extends ViewPan {
     $runner: any;
