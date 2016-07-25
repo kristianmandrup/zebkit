@@ -14,6 +14,11 @@ export class CompEvent extends Event {
     }
 }
 
+export const COMP_EVENT = new CompEvent();
+export const FOCUS_EVENT = new FocusEvent();
+export const SHORTCUT_EVENT = new Event();
+
+
 import PointerEvent from './PointerEvent';
 
 //
@@ -101,8 +106,3 @@ PointerEvent.extend([
     }
 }
 
-export const events = {
-  COMP_EVENT: new CompEvent(),
-  FOCUS_EVENT: new FocusEvent(),
-  SHORTCUT_EVENT: new Event()
-}

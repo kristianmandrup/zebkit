@@ -44,7 +44,7 @@ import ScrollPan from '../ui/ScrollPan';
  * @extends zebkit.ui.ScrollPan
  * @class  zebkit.ui.Combo.ComboPadPan
  */
- class ComboPadPan extends ScrollPan {
+ export class ComboPadPan extends ScrollPan {
     $closeTime: number;
     adjustToComboSize: boolean;
     

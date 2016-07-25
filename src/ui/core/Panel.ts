@@ -385,6 +385,8 @@ import html from '../html';
 import HtmlElement from './HtmlElement';
 import views from '../views';
 
+var temporary = { x:0, y:0, width:0, height:0 }
+
 export default class Panel extends layout.Layoutable {
     isEnabled: boolean;
     top: number;
