@@ -1,4 +1,4 @@
-class Bootstrap {
+export default class Bootstrap {
     constructor(urlPath = './zebkit.json') {
         this.urlPath = urlPath;
     }

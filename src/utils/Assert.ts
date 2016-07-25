@@ -1,35 +1,43 @@
-    function AssertionError(msg) {
+class AssertionError extends Error {
+    err: any;
+
+    constructor(msg) {
+        super();
         Error.call(this, msg);
+        this.err = new Error();
         this.message = msg;
     }
-    AssertionError.prototype = new Error();
 
-    pkg.assertTrue = function(c, lab) {
-        pkg.assert(c, true, lab, "AssertTrue");
-    };
+    assert(c, bool, lab, type) {
+        this.err.assert(c, bool, lab, type);
+    }
 
-    pkg.assertFalse = function(c, lab) {
-        pkg.assert(c, false, lab, "AssertFalse");
-    };
+    assertTrue(c, lab) {
+        this.assert(c, true, lab, "AssertTrue");
+    }    
 
-    pkg.assertNull = function(c, lab) {
-        pkg.assert(c, null, lab,  "AssertNull");
-    };
+    assertFalse(c, lab) {
+        this.assert(c, false, lab, "AssertFalse");
+    }
 
-    pkg.assertDefined = function(o, p, lab) {
-        pkg.assert(typeof o[p] !== "undefined", true, lab,  "AssertDefined");
-    };
+    assertNull(c, lab) {
+        this.assertIt(c, null, lab,  "AssertNull");
+    }
 
-    pkg.assertFDefined = function(o, f, lab) {
+    assertDefined(o, p, lab) {
+        this.assertIt(typeof o[p] !== "undefined", true, lab,  "AssertDefined");
+    }
+
+    assertFDefined(o, f, lab) {
         var b = typeof o[f] !== "undefined" && typeof o[f] === "function";
         if (!b && zebkit.isIE) b = !!o[f] && typeof o[f].toString==="undefined" && /^\s*\bfunction\b/.test(o[f]);
-        pkg.assert(b, true, lab, "AssertFunctionDefined");
-    };
+        this.assertIt(b, true, lab, "AssertFunctionDefined");
+    }
 
-    pkg.assertObjEqual = function(obj1, obj2, lab) {
+    assertObjEqual(obj1, obj2, lab) {
         function cmp(obj1, obj2, path) {
             function isNumeric(n) {
-              return !isNaN(parseFloat(n)) && isFinite(n);
+                return !isNaN(parseFloat(n)) && isFinite(n);
             }
 
             if (obj1 === obj2) return true;
@@ -65,19 +73,19 @@
             return true;
         }
 
-        pkg.assert(cmp(obj1, obj2, "") && cmp(obj2, obj1, ""), true, lab, "AssertObjectEqual");
+        this.assertIt(cmp(obj1, obj2, "") && cmp(obj2, obj1, ""), true, lab, "AssertObjectEqual");
     };
 
-    pkg.assert = function(c, er, lab, assertLab) {
+    assertIt(c, er, lab, assertLab) {
         if (typeof assertLab === "undefined") {
             assertLab = "Assert";
         }
         if (c !== er) {
             throw new AssertionError((lab ? "'" + lab + "' ":"") + assertLab + " result = '" + c  + "' expected = '" + er + "'");
         }
-    };
+    }
 
-    pkg.assertException = function(f, et, lab) {
+    assertException(f, et, lab) {
         if (!(f instanceof Function)) throw new WrongArgument("Function as input is expected");
 
         if (zebkit.isString(et)) lab = et;
@@ -89,12 +97,17 @@
             throw e;
         }
         throw new AssertionError((lab ? "'" + lab + "'":"") + " in\n" + f + "\n" + "method. '" + et.name + "' exception is expected");
-    };
+    }
 
-    pkg.assertNoException = function(f, lab) {
+    assertNoException(f, lab) {
         if (!(f instanceof Function)) throw new WrongArgument("Function as input is expected");
         try { f(); }
         catch(e) {
             throw new AssertionError((lab ? "'" + lab + "'":"") + " in\n" + f + "\n" + "method. '" + e.toString() + "' exception is not expected");
         }
-    };
+    }    
+}
+
+
+
+

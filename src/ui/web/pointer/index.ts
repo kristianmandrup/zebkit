@@ -1,4 +1,5 @@
-zebkit.package("ui", function(pkg, Class) {
+export { default as MouseWheel } from './MouseWheelSupport';
+export { default as PointerEvent } from './PointerEvent';
 
 // TODO List:
 //    [+] add pressure level field to pointer events
@@ -24,108 +25,6 @@ var PI4                      = Math.PI/4,  // used to calculate touch event gamm
     LMOUSE = "lmouse",
     RMOUSE = "rmouse";
 
-/**
- * Mouse and touch screen input event class. The input event is
- * triggered by a mouse or touch screen.
- * @param {zebkit.ui.Panel} source a source of the mouse input event
- * @param {Integer} ax an absolute (relatively to a canvas where the source
- * UI component is hosted) mouse pointer x coordinate
- * @param {Integer} ax an absolute (relatively to a canvas where the source
- * UI component is hosted) mouse pointer y coordinate
- * @param {Integer} mask a bits mask of pressed mouse buttons:
-
-         zebkit.ui.PointerEvent.LEFT_BUTTON
-         zebkit.ui.PointerEvent.RIGHT_BUTTON
-
- * @class  zebkit.ui.PointerEvent
- * @constructor
- */
-pkg.PointerEvent = Class(zebkit.util.Event, [
-    function $prototype() {
-        /**
-         * Pointer type. Can be "mouse", "touch", "pen"
-         * @attribute  poiterType
-         * @type {String}
-         */
-        this.pointerType = "mouse";
-
-        /**
-         * Touch counter
-         * @attribute touchCounter
-         * @type {Integer}
-         * @default 0
-         */
-        this.touchCounter = 0;
-
-        /**
-         * Page x
-         * @attribute pageX
-         * @type {Integer}
-         * @default -1
-         */
-        this.pageX = -1;
-
-        /**
-         * Page y
-         * @attribute pageY
-         * @type {Integer}
-         * @default -1
-         */
-        this.pageY = -1;
-
-        /**
-         * Target DOM element
-         * @attribute target
-         * @type {DOMElement}
-         * @default null
-         */
-        this.target = null;
-
-        /**
-         * Pointer identifier
-         * @attribute identifier
-         * @type {Object}
-         * @default null
-         */
-        this.identifier = null;
-
-        this.shiftKey = this.altKey = this.metaKey = this.ctrlKey = false;
-
-        this.pressure = 0.5;
-
-        this.isAction = function() {
-            return this.identifier !== RMOUSE && this.touchCounter === 1;
-        };
-
-        this.$fillWith = function(identifier, e) {
-            this.pageX      = Math.floor(e.pageX);
-            this.pageY      = Math.floor(e.pageY);
-            this.target     = e.target;
-            this.identifier = identifier;
-            this.altKey     = typeof e.altKey   !== 'undefined' ? e.altKey   : false;
-            this.shiftKey   = typeof e.shiftKey !== 'undefined' ? e.shiftKey : false;
-            this.ctrlKey    = typeof e.ctrlKey  !== 'undefined' ? e.ctrlKey  : false;
-            this.metaKey    = typeof e.metaKey  !== 'undefined' ? e.metaKey  : false;
-            this.pressure   = typeof e.pressure !== 'undefined' ? e.pressure : 0.5;
-        };
-
-        this.getTouches = function() {
-            var touches = [], i = 0;
-            for(var k in pkg.$pointerPressedEvents) {
-                var pe = pkg.$pointerPressedEvents[k];
-                touches[i++] = {
-                    pageX      : pe.pageX,
-                    pageY      : pe.pageY,
-                    identifier : pe.identifier,
-                    target     : pe.target,
-                    pressure   : pe.pressure,
-                    pointerType: pe.stub.pointerType
-                }
-            }
-            return touches;
-        };
-    }
-]);
 
 var ME_STUB      = new pkg.PointerEvent(), // instance of mouse event
     TOUCH_STUB   = new pkg.PointerEvent(), // instance of touch event
@@ -136,87 +35,7 @@ ME_STUB.pointerType      = "mouse";
 TOUCH_STUB.pointerType   = "touch";
 POINTER_STUB.pointerType = "unknown"; // type of pointer events have to be copied from original WEB PointerEvent
 
-/**
- *  Mouse wheel support class. Installs necessary mouse wheel
- *  listeners and handles mouse wheel events in zebkit UI. The
- *  mouse wheel support is plugging that is configured by a
- *  JSON configuration.
- *  @class zebkit.ui.MouseWheelSupport
- *  @param  {zebkit.ui.zCanvas} canvas a zCanvas UI component
- *  @constructor
- */
-pkg.MouseWheelSupport = Class([
-    function $clazz() {
-        this.dxZoom = this.dyZoom = 20;
-        this.dxNorma = this.dyNorma = 80;
 
-        this.$META = {
-            wheel: {
-                dy  : "deltaY",
-                dx  : "deltaX",
-                dir : 1,
-                test: function() {
-                    return "WheelEvent" in window;
-                }
-            },
-            mousewheel: {
-                dy  : "wheelDelta",
-                dx  : "wheelDeltaX",
-                dir : -1,
-                test: function() {
-                    return document.onmousewheel !== undefined;
-                }
-            },
-            DOMMouseScroll: {
-                dy  : "detail",
-                dir : 1,
-                test: function() {
-                    return true;
-                }
-            }
-        };
-    },
-
-    function $prototype() {
-        this.naturalDirection = true;
-    },
-
-    function(element, destination) {
-        var META = this.clazz.$META;
-        for(var k in META) {
-            if (META[k].test()) {
-                var $wheelMeta = META[k], $clazz = this.clazz;
-                element.addEventListener(k,
-                    function(e) {
-                        var dy = e[$wheelMeta.dy] != null ? e[$wheelMeta.dy] * $wheelMeta.dir : 0,
-                            dx = e[$wheelMeta.dx] != null ? e[$wheelMeta.dx] * $wheelMeta.dir : 0;
-
-                        // some version of FF can generates dx/dy  < 1
-                        if (Math.abs(dy) < 1) {
-                            dy *= $clazz.dyZoom;
-                        }
-
-                        if (Math.abs(dx) < 1) {
-                            dx *= $clazz.dxZoom;
-                        }
-
-                        dy = Math.abs(dy) > $clazz.dyNorma ? dy % $clazz.dyNorma : dy;
-                        dx = Math.abs(dx) > $clazz.dxNorma ? dx % $clazz.dxNorma : dx;
-
-
-                        // do floor since some mouse devices can fire float as
-                        if (destination.$doScroll(Math.floor(dx),
-                                                  Math.floor(dy), "wheel"))
-                        {
-                            e.preventDefault();
-                        }
-                    },
-                    false);
-                break;
-            }
-        }
-    }
-]);
 
 // !!!
 // global mouse move events handler (registered by drag out a canvas surface)
