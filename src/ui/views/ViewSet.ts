@@ -1,3 +1,6 @@
+import View from './View';
+import CompositeView from './CompositeView';
+
 /**
 * ViewSet view. The view set is a special view container that includes
 * number of views accessible by a key and allows only one view be active
@@ -10,85 +13,87 @@
 * @class zebkit.ui.ViewSet
 * @extends zebkit.ui.CompositeView
 */
-pkg.ViewSet = Class(pkg.CompositeView, [
-    function $prototype() {
-        this.paint = function(g,x,y,w,h,d) {
-            if (this.activeView != null) {
-                this.activeView.paint(g, x, y, w, h, d);
-            }
-        };
+export default class ViewSet extends CompositeView {
+    views: {};
+    activeView: View;
+
+    constructor(args) {
+        super();
+        if (args == null) {
+            throw new Error("" + args);
+        }
 
         /**
-         * Activate the given view from the given set.
-         * @param  {String} id a key of a view from the set to be activated. Pass
-         * null to make current view to undefined state
-         * @return {Boolean} true if new view has been activated, false otherwise
-         * @method activate
-         */
-        this.activate = function (id) {
-            var old = this.activeView;
+         * Views set
+         * @attribute views
+         * @type Object
+         * @default {}
+         * @readOnly
+        */
+        this.views = {};
 
-            if (id == null) {
-                return (this.activeView = null) != old;
-            }
+        /**
+         * Active in the set view
+         * @attribute activeView
+         * @type View
+         * @default null
+         * @readOnly
+        */
+        this.activeView = null;
 
-            if (typeof this.views[id] !== 'undefined') {
-                return (this.activeView = this.views[id]) != old;
-            }
+        for(var k in args) {
+            this.views[k] = pkg.$view(args[k]);
+            if (this.views[k] != null) this.$recalc(this.views[k]);
+        }
+        this.activate("*");        
+    }
 
-            if (id.length > 1 && id[0] !== '*' && id[id.length-1] !== '*') {
-                var i = id.indexOf('.');
-                if (i > 0) {
-                    var k = id.substring(0, i + 1) + '*';
-                    if (typeof this.views[k] !== 'undefined') {
-                        return (this.activeView = this.views[k]) != old;
-                    }
+    paint(g,x,y,w,h,d) {
+        if (this.activeView != null) {
+            this.activeView.paint(g, x, y, w, h, d);
+        }
+    }
 
-                    k = "*" + id.substring(i);
-                    if (typeof this.views[k] !== 'undefined') {
-                        return (this.activeView = this.views[k]) != old;
-                    }
+    /**
+     * Activate the given view from the given set.
+     * @param  {String} id a key of a view from the set to be activated. Pass
+     * null to make current view to undefined state
+     * @return {Boolean} true if new view has been activated, false otherwise
+     * @method activate
+     */
+    activate(id) {
+        var old = this.activeView;
+
+        if (id == null) {
+            return (this.activeView = null) != old;
+        }
+
+        if (typeof this.views[id] !== 'undefined') {
+            return (this.activeView = this.views[id]) != old;
+        }
+
+        if (id.length > 1 && id[0] !== '*' && id[id.length-1] !== '*') {
+            var i = id.indexOf('.');
+            if (i > 0) {
+                var k = id.substring(0, i + 1) + '*';
+                if (typeof this.views[k] !== 'undefined') {
+                    return (this.activeView = this.views[k]) != old;
+                }
+
+                k = "*" + id.substring(i);
+                if (typeof this.views[k] !== 'undefined') {
+                    return (this.activeView = this.views[k]) != old;
                 }
             }
+        }
 
-            return typeof this.views["*"] !== 'undefined' ? (this.activeView = this.views["*"]) != old
-                                                          : false;
-        };
-
-        this.iterate = function(f) {
-            for(var k in this.views) {
-                f.call(this, k, this.views[k]);
-            }
-        };
-
-        this[''] = function(args) {
-            if (args == null) {
-                throw new Error("" + args);
-            }
-
-            /**
-             * Views set
-             * @attribute views
-             * @type Object
-             * @default {}
-             * @readOnly
-            */
-            this.views = {};
-
-            /**
-             * Active in the set view
-             * @attribute activeView
-             * @type View
-             * @default null
-             * @readOnly
-            */
-            this.activeView = null;
-
-            for(var k in args) {
-                this.views[k] = pkg.$view(args[k]);
-                if (this.views[k] != null) this.$recalc(this.views[k]);
-            }
-            this.activate("*");
-        };
+        return typeof this.views["*"] !== 'undefined' ? (this.activeView = this.views["*"]) != old
+                                                        : false;
     }
-]);
+
+    iterate(f) {
+        for(var k in this.views) {
+            f.call(this, k, this.views[k]);
+        }
+    }
+}

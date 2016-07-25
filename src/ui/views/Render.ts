@@ -11,8 +11,13 @@ import View from './View';
  * @extends zebkit.ui.View
  * @class zebkit.ui.Render
  */
-class Render extends View {
-    function $prototype() {
+export default class Render extends View {
+    target: any;
+
+    constructor(target) {
+        super();
+        this.setTarget(target);
+        
         /**
          * Target object to be visualized
          * @attribute target
@@ -22,26 +27,24 @@ class Render extends View {
          */
         this.target = null;
 
-        this[''] = function(target) {
-            this.setTarget(target);
-        };
+        
+    }
 
-        /**
-         * Set the given target object. The method triggers
-         * "targetWasChanged(oldTarget, newTarget)" execution if
-         * the method is declared. Implement the method if you need
-         * to track a target object updating.
-         * @method setTarget
-         * @param  {Object} o a target object to be visualized
-         */
-        this.setTarget = function(o) {
-            if (this.target != o) {
-                var old = this.target;
-                this.target = o;
-                if (this.targetWasChanged != null) {
-                    this.targetWasChanged(old, o);
-                }
+    /**
+     * Set the given target object. The method triggers
+     * "targetWasChanged(oldTarget, newTarget)" execution if
+     * the method is declared. Implement the method if you need
+     * to track a target object updating.
+     * @method setTarget
+     * @param  {Object} o a target object to be visualized
+     */
+    setTarget(o) {
+        if (this.target != o) {
+            var old = this.target;
+            this.target = o;
+            if (this.targetWasChanged != null) {
+                this.targetWasChanged(old, o);
             }
-        };
+        }
     }
 }

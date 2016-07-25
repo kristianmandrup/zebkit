@@ -74,12 +74,10 @@
  * @param {Integer}  lines a number of lines that has been affected
  * by the text model update
  */
- class TextModel {
-    $clazz = () {
-      // hack to detect text model class
-      this.isTextModel = true;
-      this.Listeners = zebkit.util.ListenersClass("textUpdated");
-    }
+ export default class TextModel {    
+    // hack to detect text model class
+    isTextModel = true;
+    Listeners = zebkit.util.ListenersClass("textUpdated");
  }
 
 

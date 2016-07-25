@@ -1,3 +1,4 @@
+import View from './View';
 /**
 * Dotted border view
 * @class zebkit.ui.Dotted
@@ -6,7 +7,10 @@
 * @extends zebkit.ui.View
 */
 class Dotted extends View {
-    function $prototype() {
+    color: string;
+
+    constructor(c){            
+        super();
         /**
          * @attribute color
          * @readOnly
@@ -14,14 +18,11 @@ class Dotted extends View {
          * @default "black"
          */
         this.color = "black";
-
-        this.paint = function(g,x,y,w,h,d){
-            g.setColor(this.color);
-            g.drawDottedRect(x, y, w, h);
-        };
-
-        this[''] = function (c){
-            if (arguments.length > 0) this.color = c;
-        };
+        if (arguments.length > 0) this.color = c;
+    }
+    
+    paint(g ,x:number,y:number,w:number,h:number,d:number) {
+        g.setColor(this.color);
+        g.drawDottedRect(x, y, w, h);
     }
 }

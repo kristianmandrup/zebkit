@@ -41,26 +41,40 @@ import BaseTree from './BaseTree';
  * @param {Boolean} [b] the tree component items toggle state. true to have all items
  * in opened state.
  */
-classCompTree extends BaseTree {
-    function $clazz() {
-        this.Label = Class(ui.Label, [
-            function $prototype() {
-                this.canHaveFocus = true;
-            }
-        ]);
 
-        this.Checkbox = Class(ui.Checkbox, []);
+import ui from '../ui';
+import utils from '../utils';
+import data from '../data';
 
-        this.Combo = Class(ui.Combo, [
-            function keyPressed(e) {
-                if (e.code != ui.KeyEvent.UP && e.code != ui.KeyEvent.DOWN) {
-                    this.$super(e);
-                }
-            }
-        ]);
+class Label extends ui.Label {
+    canHaveFocus: boolean;
+    constructor() {
+        super()
+        this.canHaveFocus = true;
+    }
+}
 
-        this.createModel = function(item, root, tree) {
-            var mi = new zebkit.data.Item();
+class Checkbox extends ui.Checkbox {
+
+}
+
+class Combo extends ui.Combo {
+    keyPressed(e) {
+        if (e.code != ui.KeyEvent.UP && e.code != ui.KeyEvent.DOWN) {
+            super.keyPressed(e);
+        }
+    }
+}
+
+
+export default class CompTree extends BaseTree {
+    $clazz = {
+        Label: Label,
+        CheckBox: Checkbox, 
+        Combo: Combo,
+
+        createModel: function(item, root, tree) {
+            var mi = new data.Item();
 
             if (typeof item.value !== "undefined") {
                 mi.value = item.value != null ? item.value : "";
@@ -70,7 +84,7 @@ classCompTree extends BaseTree {
 
             mi.value = ui.$component(mi.value, tree);
             mi.parent = root;
-            if (item.kids != null && item.kids.length > 0 && zebkit.instanceOf(item, ui.Panel) === false) {
+            if (item.kids != null && item.kids.length > 0 && utils.instanceOf(item, ui.Panel) === false) {
                 for (var i = 0; i < item.kids.length; i++) {
                     mi.kids[i] = this.createModel(item.kids[i], mi, tree);
                 }
@@ -78,134 +92,148 @@ classCompTree extends BaseTree {
 
             return mi;
         }
-    },
+    }
 
-    function $prototype() {
+    $blockCIE: boolean;
+    canHaveFocus: boolean;
+    isSelectable: boolean;
+    font: any; // Font
+    selected: any;
+
+    constructor() {
+        super();
         this.$blockCIE = false;
         this.canHaveFocus = false;
+    }
 
-        this.getItemPreferredSize = function(root) {
-            return root.value.getPreferredSize();
-        };
 
-        this.childKeyTyped = function(e) {
-            if (this.selected != null){
-                switch(e.ch) {
-                    case '+': if (this.isOpen(this.selected) === false) {
-                        this.toggle(this.selected);
-                    } break;
-                    case '-': if (this.isOpen(this.selected)) {
-                        this.toggle(this.selected);
-                    } break;
-                }
+    getItemPreferredSize(root) {
+        return root.value.getPreferredSize();
+    }
+
+    childKeyTyped(e) {
+        if (this.selected != null){
+            switch(e.ch) {
+                case '+': if (this.isOpen(this.selected) === false) {
+                    this.toggle(this.selected);
+                } break;
+                case '-': if (this.isOpen(this.selected)) {
+                    this.toggle(this.selected);
+                } break;
             }
-        };
+        }
+    }
 
-        this.setFont = function(f) {
-            this.font = zebkit.isString(f) ? new zebkit.ui.Font(f) : f;
-            return this;
-        };
+    setFont(f) {
+        this.font = zebkit.isString(f) ? new zebkit.ui.Font(f) : f;
+        return this;
+    }
 
-        this.childKeyPressed = function(e) {
-            if (this.isSelectable === true){
-                var newSelection = (e.code === ui.KeyEvent.DOWN) ? this.findNext(this.selected)
-                                                                 : (e.code === ui.KeyEvent.UP) ? this.findPrev(this.selected)
-                                                                                               : null;
-                if (newSelection != null) {
-                    this.select(newSelection);
-                }
+    childKeyPressed(e) {
+        if (this.isSelectable === true){
+            var newSelection = (e.code === ui.KeyEvent.DOWN) ? this.findNext(this.selected)
+                                                                : (e.code === ui.KeyEvent.UP) ? this.findPrev(this.selected)
+                                                                                            : null;
+            if (newSelection != null) {
+                this.select(newSelection);
             }
-        };
+        }
+    }
+    
+    childFocusGained(e?) {
+        if (this.isSelectable === true && this.$blockCIE !== true) {
+            this.$blockCIE = true;
+            try {
+                var item = zebkit.data.TreeModel.findOne(this.model.root,
+                                                        zebkit.layout.getDirectChild(this,
+                                                                                    e.source));
 
-        this.childPointerPressed = this.childFocusGained = function(e) {
-            if (this.isSelectable === true && this.$blockCIE !== true) {
-                this.$blockCIE = true;
-                try {
-                    var item = zebkit.data.TreeModel.findOne(this.model.root,
-                                                            zebkit.layout.getDirectChild(this,
-                                                                                        e.source));
+                console.log("childPointerPressed()  " + item);
 
-                    console.log("childPointerPressed()  " + item);
-
-                    if (item != null) this.select(item);
-                }
-                finally {
-                    this.$blockCIE = false;
-                }
+                if (item != null) this.select(item);
             }
-        };
-
-        this.childFocusLost = function(e) {
-            if (this.isSelectable === true) {
-                this.select(null);
+            finally {
+                this.$blockCIE = false;
             }
-        };
+        }
+    }
 
-        this.catchScrolled = function(psx, psy){
-            this.vrp();
-        };
+    childPointerPressed() {
+        this.childFocusGained();
+    }
 
-        this.doLayout = function() {
-            this.vVisibility();
+    childFocusLost(e) {
+        if (this.isSelectable === true) {
+            this.select(null);
+        }
+    }
 
-            // hide all components
-            for(var i = 0; i < this.kids.length; i++) {
-                this.kids[i].setVisible(false);
-            }
+    catchScrolled(psx, psy){
+        this.vrp();
+    }
 
-            if (this.firstVisible != null) {
-                var $this = this, fvNode = this.getIM(this.firstVisible), started = 0;
+    doLayout() {
+        this.vVisibility();
 
-                this.model.iterate(this.model.root, function(item) {
-                    var node = $this.nodes[item];  // slightly improve performance
-                                                   // (instead of calling $this.getIM(...))
-
-                    if (started === 0 && item === $this.firstVisible) {
-                        started = 1;
-                    }
-
-                    if (started === 1) {
-                        var sy = $this.scrollManager.getSY();
-
-                        if (node.y + sy < $this.height) {
-                            var image = $this.getIconBounds(item),
-                                x = image.x + image.width +
-                                           (image.width > 0 || $this.getToggleSize().width > 0 ? $this.gapx : 0) +
-                                           $this.scrollManager.getSX(),
-                                y = node.y + Math.floor((node.height - node.viewHeight) / 2) + sy;
-
-                            item.value.setVisible(true);
-                            item.value.setLocation(x, y);
-                            item.value.width  = node.viewWidth;
-                            item.value.height = node.viewHeight;
-                        } else {
-                            started = 2;
-                        }
-                    }
-
-                    return (started === 2) ? 2 : (node.isOpen === false ? 1 : 0);
-                });
-            }
-        };
-
-        this.itemInserted = function(target, item) {
-            this.add(item.value);
-        };
-    },
-
-    function itemRemoved(target,item){
-        this.$super(target,item);
-        this.remove(item.value);
-    },
-
-    function setModel(model) {
-        var old = this.model;
-
-        if (model != null && zebkit.instanceOf(model, zebkit.data.TreeModel) === false) {
-            model = new zebkit.data.TreeModel(this.clazz.createModel(model, null, this));
+        // hide all components
+        for(var i = 0; i < this.kids.length; i++) {
+            this.kids[i].setVisible(false);
         }
 
-        this.$super(model);
+        if (this.firstVisible != null) {
+            var $this = this, fvNode = this.getIM(this.firstVisible), started = 0;
+
+            this.model.iterate(this.model.root, function(item) {
+                var node = $this.nodes[item];  // slightly improve performance
+                                                // (instead of calling $this.getIM(...))
+
+                if (started === 0 && item === $this.firstVisible) {
+                    started = 1;
+                }
+
+                if (started === 1) {
+                    var sy = $this.scrollManager.getSY();
+
+                    if (node.y + sy < $this.height) {
+                        var image = $this.getIconBounds(item),
+                            x = image.x + image.width +
+                                        (image.width > 0 || $this.getToggleSize().width > 0 ? $this.gapx : 0) +
+                                        $this.scrollManager.getSX(),
+                            y = node.y + Math.floor((node.height - node.viewHeight) / 2) + sy;
+
+                        item.value.setVisible(true);
+                        item.value.setLocation(x, y);
+                        item.value.width  = node.viewWidth;
+                        item.value.height = node.viewHeight;
+                    } else {
+                        started = 2;
+                    }
+                }
+
+                return (started === 2) ? 2 : (node.isOpen === false ? 1 : 0);
+            });
+        }
+    }
+
+    itemInserted(target, item) {
+        this.add(item.value);
+    }
+
+    // static methods !?
+
+    itemRemoved(target,item){
+        super.itemRemoved(target,item);
+        this.remove(item.value);
+    }
+
+    setModel(model) {
+        var old = this.model;
+
+        if (model != null && utils.instanceOf(model, data.TreeModel) === false) {
+            model = new data.TreeModel(this.clazz.createModel(model, null, this));
+        }
+
+        super.setModel(model);
 
         if (old != this.model) {
             this.removeAll();
@@ -217,12 +245,12 @@ classCompTree extends BaseTree {
             }
         }
         return this;
-    },
+    }
 
-    function recalc() {
+    recalc() {
         // track with the flag a node metrics has been updated
         this.$isMetricUpdated  = false;
-        this.$super();
+        super.recalc();
 
         // if a node size has been changed we have to force calling
         // repaint method for the whole tree component to render
@@ -230,9 +258,9 @@ classCompTree extends BaseTree {
         if (this.$isMetricUpdated) {
             this.repaint();
         }
-    },
+    }
 
-    function recalc_(x,y,parent,root,isVis) {
+    recalc_(x,y,parent,root,isVis) {
         // in a case of component tree node view size has to be synced with
         // component
         var node = this.getIM(root);
@@ -247,10 +275,10 @@ classCompTree extends BaseTree {
             node.viewWidth  = viewSize.width;
             node.viewHeight = viewSize.height;
         }
-        return this.$super(x,y,parent,root,isVis);
-    },
+        return super._recalc(x,y,parent,root,isVis);
+    }
 
-    function select(item) {
+    select(item) {
         if (this.isSelectable === true) {
             var old = this.selected;
 
@@ -258,16 +286,16 @@ classCompTree extends BaseTree {
                 ui.focusManager.requestFocus(null);
             }
 
-            this.$super(item);
+            super.select(item);
 
             if (item != null) {
                 item.value.requestFocus();
             }
         }
-    },
+    }
 
-    function makeVisible(item) {
+    makeVisible(item) {
        item.value.setVisible(true);
-       this.$super(item);
+       super.makeVisible(item);
     }
 }

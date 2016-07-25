@@ -52,66 +52,86 @@ import BaseList from './BaseList';
  * @param {Boolean} [isComboMode] true if the list navigation has to be triggered by
  * pointer cursor moving
  */
-class List extends BaseList {
-    function $clazz() {
+
+/**
+ * List view provider class. This implementation renders list item using string
+ * render. If a list item is an instance of "zebkit.ui.View" class than it will
+ * be rendered as the view.
+ * @class zebkit.ui.List.ViewProvider
+ * @constructor
+ * @param {String|zebkit.ui.Font} [f] a font to render list item text
+ * @param {String} [c] a color to render list item text
+ */
+class ViewProvider {
+    constructor(f, c) {
+        // super();
         /**
-         * List view provider class. This implementation renders list item using string
-         * render. If a list item is an instance of "zebkit.ui.View" class than it will
-         * be rendered as the view.
-         * @class zebkit.ui.List.ViewProvider
-         * @constructor
-         * @param {String|zebkit.ui.Font} [f] a font to render list item text
-         * @param {String} [c] a color to render list item text
+         * Reference to text render that is used to paint a list items
+         * @type {zebkit.ui.StringRender}
+         * @attribute text
+         * @readOnly
          */
-        this.ViewProvider = Class([
-            function $prototype() {
-                this[''] = function(f, c) {
-                    /**
-                     * Reference to text render that is used to paint a list items
-                     * @type {zebkit.ui.StringRender}
-                     * @attribute text
-                     * @readOnly
-                     */
 
-                    this.text = new pkg.StringRender("");
-                    zebkit.properties(this, this.clazz);
-                    if (f != null) this.text.setFont(f);
-                    if (c != null) this.text.setColor(c);
-                };
+        this.text = new pkg.StringRender("");
+        zebkit.properties(this, this.clazz);
+        if (f != null) this.text.setFont(f);
+        if (c != null) this.text.setColor(c);
+    }
 
 
-                this.setColor = function(c) {
-                    this.text.setColor(c);
-                };
+    setColor(c) {
+        this.text.setColor(c);
+    }
 
-                this.setFont = function(f) {
-                    this.text.setFont(f);
-                };
+    setFont(f) {
+        this.text.setFont(f);
+    }
 
-                /**
-                 * Get a view for the given model data element of the
-                 * specified list component
-                 * @param  {zebkit.ui.List} target a list component
-                 * @param  {Object} value  a data model value
-                 * @param  {Integer} i  an item index
-                 * @return {zebkit.ui.View}  a view to be used to render
-                 * the given list component item
-                 * @method getView
-                 */
-                this.getView = function(target, value, i) {
-                    if (value != null && value.paint != null) return value;
-                    this.text.setValue(value == null ? "<null>" : value.toString());
-                    return this.text;
-                };
-            }
-        ]);
+    /**
+     * Get a view for the given model data element of the
+     * specified list component
+     * @param  {zebkit.ui.List} target a list component
+     * @param  {Object} value  a data model value
+     * @param  {Integer} i  an item index
+     * @return {zebkit.ui.View}  a view to be used to render
+     * the given list component item
+     * @method getView
+     */
+    getView(target, value, i) {
+        if (value != null && value.paint != null) return value;
+        this.text.setValue(value == null ? "<null>" : value.toString());
+        return this.text;
+    }
+}
 
-        /**
-         * @for zebkit.ui.List
-         */
-    },
+export default class List extends BaseList {
+    $clazz = {
+        ViewProvider: ViewProvider 
+    }
 
-    function $prototype() {
+    gap: number;
+    visValid: boolean;
+
+    firstVisible: number;
+    firstVisibleY: number;
+
+    psHeight: number;
+    psWidth: number;
+
+    psWidth_: number;
+    psHeight_: number;
+
+    width: number;
+    height: number;
+
+    // TODO
+    heights: any; 
+    widths: any; 
+    vArea: any;
+    model: any;
+
+    constructor(m, b){
+        super(m, b);
         /**
          * Extra list item side gaps
          * @type {Inetger}
@@ -120,175 +140,7 @@ class List extends BaseList {
          * @readOnly
          */
         this.gap = 2;
-
-        /**
-         * Set the left, right, top and bottom a list item paddings
-         * @param {Integer} g a left, right, top and bottom a list item paddings
-         * @method setItemGap
-         */
-        this.setItemGap = function(g){
-            if (this.gap != g){
-                this.gap = g;
-                this.vrp();
-            }
-        };
-
-        this.paint = function(g){
-            this.vVisibility();
-            if (this.firstVisible >= 0){
-                var sx = this.scrollManager.getSX(),
-                    sy = this.scrollManager.getSY();
-
-                try {
-                    g.translate(sx, sy);
-                    var y        = this.firstVisibleY,
-                        x        = this.getLeft(),
-                        yy       = this.vArea.y + this.vArea.height - sy,
-                        count    = this.model.count(),
-                        dg       = this.gap * 2;
-
-                    for(var i = this.firstVisible; i < count; i++){
-                        if (i != this.selectedIndex && this.provider.getCellColor != null) {
-                            var bc = this.provider.getCellColor(this, i);
-                            if (bc != null) {
-                                g.setColor(bc);
-                                g.fillRect(x, y, this.width, this.heights[i]);
-                            }
-                        }
-
-                        this.provider.getView(this, this.model.get(i), i).paint(g, x + this.gap, y + this.gap,
-                            this.widths[i] - dg,
-                            this.heights[i]- dg, this);
-
-                        y += this.heights[i];
-                        if (y > yy) break;
-                    }
-
-                    g.translate(-sx,  -sy);
-                }
-                catch(e) {
-                    g.translate(-sx,  -sy);
-                    throw e;
-                }
-            }
-        };
-
-        this.recalc = function(){
-            this.psWidth_ = this.psHeight_ = 0;
-            if (this.model != null) {
-                var count = this.model.count();
-                if (this.heights == null || this.heights.length != count) {
-                    this.heights = Array(count);
-                }
-
-                if (this.widths  == null || this.widths.length  != count) {
-                    this.widths = Array(count);
-                }
-
-                var provider = this.provider;
-                if (provider != null) {
-                    var dg = 2*this.gap;
-                    for(var i = 0;i < count; i++){
-                        var ps = provider.getView(this, this.model.get(i), i).getPreferredSize();
-                        this.heights[i] = ps.height + dg;
-                        this.widths [i] = ps.width  + dg;
-
-                        if (this.widths[i] > this.psWidth_) {
-                            this.psWidth_ = this.widths[i];
-                        }
-                        this.psHeight_ += this.heights[i];
-                    }
-                }
-            }
-        };
-
-        this.calcPreferredSize = function(l){
-            return { width : this.psWidth_,
-                     height: this.psHeight_ };
-        };
-
-        this.vVisibility = function(){
-            this.validate();
-            var prev = this.vArea;
-            this.vArea = pkg.$cvp(this, {});
-
-            if (this.vArea == null) {
-                this.firstVisible = -1;
-                return;
-            }
-
-            if (this.visValid === false ||
-                (prev == null || prev.x != this.vArea.x ||
-                 prev.y != this.vArea.y || prev.width != this.vArea.width ||
-                 prev.height != this.vArea.height))
-            {
-                var top = this.getTop();
-                if (this.firstVisible >= 0){
-                    var dy = this.scrollManager.getSY();
-                    while (this.firstVisibleY + dy >= top && this.firstVisible > 0){
-                        this.firstVisible--;
-                        this.firstVisibleY -= this.heights[this.firstVisible];
-                    }
-                } else {
-                    this.firstVisible  = 0;
-                    this.firstVisibleY = top;
-                }
-
-                if (this.firstVisible >= 0){
-                    var count = this.model == null ? 0 : this.model.count(), hh = this.height - this.getBottom();
-
-                    for(; this.firstVisible < count; this.firstVisible++)
-                    {
-                        var y1 = this.firstVisibleY + this.scrollManager.getSY(),
-                            y2 = y1 + this.heights[this.firstVisible] - 1;
-
-                        if ((y1 >= top && y1 < hh) || (y2 >= top && y2 < hh) || (y1 < top && y2 >= hh)) {
-                            break;
-                        }
-
-                        this.firstVisibleY += (this.heights[this.firstVisible]);
-                    }
-
-                    if (this.firstVisible >= count) this.firstVisible =  -1;
-                }
-                this.visValid = true;
-            }
-        };
-
-        this.getItemLocation = function(index){
-            this.validate();
-            var y = this.getTop() + this.scrollManager.getSY();
-            for(var i = 0;i < index; i++) {
-                y += this.heights[i];
-            }
-            return { x:this.getLeft(), y : y };
-        };
-
-        this.getItemSize = function(i){
-            this.validate();
-            return { width:this.widths[i], height:this.heights[i] };
-        };
-
-        this.getItemIdxAt = function(x,y){
-            this.vVisibility();
-            if (this.vArea != null && this.firstVisible >= 0) {
-                var yy    = this.firstVisibleY + this.scrollManager.getSY(),
-                    hh    = this.height - this.getBottom(),
-                    count = this.model.count();
-
-                for(var i = this.firstVisible; i < count; i++) {
-                    if (y >= yy && y < yy + this.heights[i]) {
-                        return i;
-                    }
-                    yy += (this.heights[i]);
-                    if (yy > hh) break;
-                }
-            }
-            return  -1;
-        };
-    },
-
-    function (m, b){
+        
         /**
          * Index of the first visible list item
          * @readOnly
@@ -317,23 +169,191 @@ class List extends BaseList {
          */
         this.visValid = false;
         this.setViewProvider(new this.clazz.ViewProvider());
-        this.$super(m, b);
-    },
+    }
 
-    function invalidate(){
+    /**
+     * Set the left, right, top and bottom a list item paddings
+     * @param {Integer} g a left, right, top and bottom a list item paddings
+     * @method setItemGap
+     */
+    setItemGap(g){
+        if (this.gap != g){
+            this.gap = g;
+            this.vrp();
+        }
+    }
+
+    paint(g){
+        this.vVisibility();
+        if (this.firstVisible >= 0){
+            var sx = this.scrollManager.getSX(),
+                sy = this.scrollManager.getSY();
+
+            try {
+                g.translate(sx, sy);
+                var y        = this.firstVisibleY,
+                    x        = this.getLeft(),
+                    yy       = this.vArea.y + this.vArea.height - sy,
+                    count    = this.model.count(),
+                    dg       = this.gap * 2;
+
+                for(var i = this.firstVisible; i < count; i++){
+                    if (i != this.selectedIndex && this.provider.getCellColor != null) {
+                        var bc = this.provider.getCellColor(this, i);
+                        if (bc != null) {
+                            g.setColor(bc);
+                            g.fillRect(x, y, this.width, this.heights[i]);
+                        }
+                    }
+
+                    this.provider.getView(this, this.model.get(i), i).paint(g, x + this.gap, y + this.gap,
+                        this.widths[i] - dg,
+                        this.heights[i]- dg, this);
+
+                    y += this.heights[i];
+                    if (y > yy) break;
+                }
+
+                g.translate(-sx,  -sy);
+            }
+            catch(e) {
+                g.translate(-sx,  -sy);
+                throw e;
+            }
+        }
+    }
+
+    recalc(){
+        this.psWidth_ = this.psHeight_ = 0;
+        if (this.model != null) {
+            var count = this.model.count();
+            if (this.heights == null || this.heights.length != count) {
+                this.heights = Array(count);
+            }
+
+            if (this.widths  == null || this.widths.length  != count) {
+                this.widths = Array(count);
+            }
+
+            var provider = this.provider;
+            if (provider != null) {
+                var dg = 2*this.gap;
+                for(var i = 0;i < count; i++){
+                    var ps = provider.getView(this, this.model.get(i), i).getPreferredSize();
+                    this.heights[i] = ps.height + dg;
+                    this.widths [i] = ps.width  + dg;
+
+                    if (this.widths[i] > this.psWidth_) {
+                        this.psWidth_ = this.widths[i];
+                    }
+                    this.psHeight_ += this.heights[i];
+                }
+            }
+        }
+    }
+
+    calcPreferredSize(l){
+        return { width : this.psWidth_,
+                    height: this.psHeight_ };
+    }
+
+    vVisibility(){
+        this.validate();
+        var prev = this.vArea;
+        this.vArea = pkg.$cvp(this, {});
+
+        if (this.vArea == null) {
+            this.firstVisible = -1;
+            return;
+        }
+
+        if (this.visValid === false ||
+            (prev == null || prev.x != this.vArea.x ||
+                prev.y != this.vArea.y || prev.width != this.vArea.width ||
+                prev.height != this.vArea.height))
+        {
+            var top = this.getTop();
+            if (this.firstVisible >= 0){
+                var dy = this.scrollManager.getSY();
+                while (this.firstVisibleY + dy >= top && this.firstVisible > 0){
+                    this.firstVisible--;
+                    this.firstVisibleY -= this.heights[this.firstVisible];
+                }
+            } else {
+                this.firstVisible  = 0;
+                this.firstVisibleY = top;
+            }
+
+            if (this.firstVisible >= 0){
+                var count = this.model == null ? 0 : this.model.count(), hh = this.height - this.getBottom();
+
+                for(; this.firstVisible < count; this.firstVisible++)
+                {
+                    var y1 = this.firstVisibleY + this.scrollManager.getSY(),
+                        y2 = y1 + this.heights[this.firstVisible] - 1;
+
+                    if ((y1 >= top && y1 < hh) || (y2 >= top && y2 < hh) || (y1 < top && y2 >= hh)) {
+                        break;
+                    }
+
+                    this.firstVisibleY += (this.heights[this.firstVisible]);
+                }
+
+                if (this.firstVisible >= count) this.firstVisible =  -1;
+            }
+            this.visValid = true;
+        }
+    }
+
+    getItemLocation(index){
+        this.validate();
+        var y = this.getTop() + this.scrollManager.getSY();
+        for(var i = 0;i < index; i++) {
+            y += this.heights[i];
+        }
+        return { x:this.getLeft(), y : y };
+    };
+
+    getItemSize(i){
+        this.validate();
+        return { width:this.widths[i], height:this.heights[i] };
+    }
+
+    // static?
+
+    getItemIdxAt(x,y){
+        this.vVisibility();
+        if (this.vArea != null && this.firstVisible >= 0) {
+            var yy    = this.firstVisibleY + this.scrollManager.getSY(),
+                hh    = this.height - this.getBottom(),
+                count = this.model.count();
+
+            for(var i = this.firstVisible; i < count; i++) {
+                if (y >= yy && y < yy + this.heights[i]) {
+                    return i;
+                }
+                yy += (this.heights[i]);
+                if (yy > hh) break;
+            }
+        }
+        return  -1;
+    }
+
+    
+    invalidate(){
         this.visValid = false;
         this.firstVisible = -1;
-        this.$super();
-    },
+        super.invalidate();
+    }
 
 
-    function drawView(g,id,v,x,y,w,h) {
-        this.$super(g, id, v, x, y, this.width - this.getRight() - x, h);
-    },
+    drawView(g,id,v,x,y,w,h) {
+        super.drawView(g, id, v, x, y, this.width - this.getRight() - x, h);
+    }
 
-    function catchScrolled(psx,psy){
+    catchScrolled(psx,psy){
         this.firstVisible = -1;
         this.visValid = false;
-        this.$super(psx, psy);
+        super.catchScrolled(psx, psy);
     }
 }

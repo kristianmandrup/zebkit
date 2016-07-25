@@ -1,5 +1,11 @@
 import TextModel from './TextModel';
 
+//  toString for array.join method
+Text.Line.prototype.toString = function() {
+    return this.s;
+};
+
+
 /**
  * Multi-lines text model implementation
  * @class zebkit.data.Text
@@ -8,17 +14,16 @@ import TextModel from './TextModel';
  * @extends zebkit.data.TextModel
  */
 class Text extends TextModel {
-    $clazz = () {
-        this.Line = function(s) {
-            this.s = s;
-        };
+    static Line = function(s) {
+        this.s = s;
+    };
 
-        //  toString for array.join method
-        this.Line.prototype.toString = function() {
-            return this.s;
-        };
+    textLength: number;
+    lines: [];
+
+    clazz() {
+        return Text;
     }
-
 
     constructor(s) {
         super();

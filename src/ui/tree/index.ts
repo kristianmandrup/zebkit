@@ -1,3 +1,8 @@
+export { default as BaseTree } from './BaseTree';
+export { default as CompTree } from './CompTree';
+export { default as DefEditors } from './DefaultEditors';
+export { default as DefViews } from './DefaultViews'; 
+
 /**
  * Tree UI components and all related to the component classes and interfaces.
  * Tree components are graphical representation of a tree model that allows a user
@@ -49,7 +54,7 @@
  * @private
  * @class zebkit.ui.tree.$IM
  */
-export $IM = function(b) {
+export function $IM(b) {
     /**
      *  The whole width of tree node that includes a rendered item preferred
      *  width, all icons and gaps widths
@@ -93,8 +98,3 @@ export $IM = function(b) {
     this.viewWidth = -1;
     this.isOpen = b;
 };
-
-
-
-
-

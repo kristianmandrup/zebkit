@@ -9,12 +9,10 @@ import View from './View';
 * @extends zebkit.ui.View
 */
 class Etched extends View {
-    function (brightest, middle) {
-        if (arguments.length > 0) this.brightest = brightest;
-        if (arguments.length > 1) this.middle    = middle;
-    },
+    brightest: string;
+    middle: string;    
 
-    function $prototype() {
+    constructor(brightest, middle) {
         /**
          * Brightest border line color
          * @attribute brightest
@@ -30,22 +28,27 @@ class Etched extends View {
          * @type {String}
          * @default "gray"
          */
+
+        super();
         this.brightest = "white";
         this.middle    = "gray" ;
 
-        this.paint = function(g,x1,y1,w,h,d){
-            var x2 = x1 + w - 1, y2 = y1 + h - 1;
-            g.setColor(this.middle);
-            g.drawLine(x1, y1, x1, y2 - 1);
-            g.drawLine(x2 - 1, y1, x2 - 1, y2);
-            g.drawLine(x1, y1, x2, y1);
-            g.drawLine(x1, y2 - 1, x2 - 1, y2 - 1);
+        if (arguments.length > 0) this.brightest = brightest;
+        if (arguments.length > 1) this.middle    = middle;
+    }
 
-            g.setColor(this.brightest);
-            g.drawLine(x2, y1, x2, y2);
-            g.drawLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
-            g.drawLine(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
-            g.drawLine(x1, y2, x2 + 1, y2);
-        };
+    paint(g,x1,y1,w,h,d){
+        var x2 = x1 + w - 1, y2 = y1 + h - 1;
+        g.setColor(this.middle);
+        g.drawLine(x1, y1, x1, y2 - 1);
+        g.drawLine(x2 - 1, y1, x2 - 1, y2);
+        g.drawLine(x1, y1, x2, y1);
+        g.drawLine(x1, y2 - 1, x2 - 1, y2 - 1);
+
+        g.setColor(this.brightest);
+        g.drawLine(x2, y1, x2, y2);
+        g.drawLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
+        g.drawLine(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
+        g.drawLine(x1, y2, x2 + 1, y2);
     }
 }
