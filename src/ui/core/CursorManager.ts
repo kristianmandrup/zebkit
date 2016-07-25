@@ -25,6 +25,8 @@
  *  @constructor
  *  @extends {zebkit.ui.Manager}
  */
+import Manager from './Manager';
+
 export default class CursorManager extends Manager {
     cursorType: string;
     source: any;

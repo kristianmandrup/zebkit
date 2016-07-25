@@ -20,11 +20,13 @@ export default class Bag extends util.Bag {
         return web.$loadImage(path);
     }
 
+    // static
+
     load = (s, cb) => {
       if (cb != null) {
           zebkit.busy();
           try {
-              return this.$super(s, function(e) {
+              return super.load(s, function(e) {
                   // if an error during loading has happened callback method
                   // gets the error as a single argument. The problem callback itself
                   // can triggers the error and than be called second time but
@@ -42,6 +44,6 @@ export default class Bag extends util.Bag {
           }
       }
 
-      return this.$super(s, null);
+      return super.load(s, null);
     }
 }

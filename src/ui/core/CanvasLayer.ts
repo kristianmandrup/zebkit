@@ -15,11 +15,13 @@
  * @class zebkit.ui.CanvasLayer
  * @extends {zebkit.ui.Panel}
  */
+import HtmlCanvas from './HtmlCanvas';
+
 export default class CanvasLayer extends HtmlCanvas {
     id: string;
 
-    constructor() {
-        super();
+    constructor(e) {
+        super(e);
 
         this.id = this.clazz.ID;
         /**

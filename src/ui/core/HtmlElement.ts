@@ -1,14 +1,3 @@
-import Panel from './Panel';
-
-const $store = [
-    "paddingTop","paddingLeft","paddingBottom","paddingRight",
-    "border","borderStyle","borderWidth", "borderTopStyle",
-    "borderTopWidth", "borderBottomStyle","borderBottomWidth",
-    "borderLeftStyle","borderLeftWidth", "borderRightStyle",
-    "visibility", "borderRightWidth", "width", "height", "position"
-];
-
-
 /**
  * HTML element UI component wrapper class. The class represents
  * an HTML element as if it is standard UI component. It helps to use
@@ -22,6 +11,17 @@ const $store = [
  * will be created.
  * @extends {zebkit.ui.Panel}
  */
+import Panel from './Panel';
+import * as types from '../../types';
+
+const $store = [
+    "paddingTop","paddingLeft","paddingBottom","paddingRight",
+    "border","borderStyle","borderWidth", "borderTopStyle",
+    "borderTopWidth", "borderBottomStyle","borderBottomWidth",
+    "borderLeftStyle","borderLeftWidth", "borderRightStyle",
+    "visibility", "borderRightWidth", "width", "height", "position"
+];
+
 export default class HtmlElement extends Panel {
     $clazz = {
         CLASS_NAME: null,
@@ -38,7 +38,7 @@ export default class HtmlElement extends Panel {
     $blockElement: any; // DOM element
     border: string;
 
-    constructor() {
+    constructor(e) {
         super();
         this.$container = this.$canvas = null;
         this.ePsW = this.ePsH = 0;
@@ -46,6 +46,131 @@ export default class HtmlElement extends Panel {
                                     // and manage its visibility
 
         this.$sizeAdjusted = false;
+
+        if (e == null) {
+            e = "div";
+        }
+
+        if (types.isString(e)) {
+            e = document.createElement(e);
+            if (this.clazz.CLASS_NAME != null) {
+                e.setAttribute("class", this.clazz.CLASS_NAME);
+            }
+            e.style.border   = "0px solid transparent";   // clean up border
+            e.style.fontSize = this.clazz.$bodyFontSize;  // DOM element is wrapped with a container that
+                                                          // has zero sized font, so let's set body  font
+                                                          // for the created element
+        }
+
+        // sync padding and margin of the DOM element with
+        // what appropriate properties are set
+        e.style.margin = e.style.padding = "0px";
+
+        /**
+         * Reference to HTML element the UI component wraps
+         * @attribute element
+         * @readOnly
+         * @type {HTMLElement}
+         */
+        this.element = e;
+
+        // this is set to make possible to use set z-index for HTML element
+        this.element.style.position = "relative";
+
+
+        if (e.parentNode != null && e.parentNode.getAttribute("data-zebcont") != null) {
+            throw new Error("DOM element '" + e + "' already has container");
+        }
+
+        // container is a DIV element that is used as a wrapper around original one
+        // it is done to make HtmlElement implementation more universal making
+        // all DOM elements capable to be a container for another one
+        this.$container = document.createElement("div");
+
+        // prevent stretching to a parent container element
+        this.$container.style.display = "inline-block";
+
+        // cut content
+        this.$container.style.overflow = "hidden";
+
+        // it fixes problem with adding, for instance, DOM element as window what can prevent
+        // showing components added to popup layer
+        this.$container.style["z-index"] = "0";
+
+
+        // coordinates have to be set to initial zero value in CSS
+        // otherwise the DOM layout can be wrong !
+        this.$container.style.left = this.$container.style.top = "0px";
+
+        this.$container.visibility = "hidden";  // before the component will be attached
+                                                // to parent hierarchy the component has to be hidden
+
+        // container div will always few pixel higher than its content
+        // to prevent the bloody effect set font to zero
+        // border and margin also have to be zero
+        this.$container.style.fontSize = this.$container.style.padding = this.$container.style.padding = "0px";
+
+        // add id
+        this.$container.setAttribute("id", "container-" + this.toString());
+
+        // mark wrapper with a special attribute to recognize it exists later
+        this.$container.setAttribute("data-zebcont", "true");
+
+        // let html element interact
+        this.$container.style["pointer-events"] = "auto";
+
+        // if passed DOM element already has parent
+        // attach it to container first and than
+        // attach the container to the original parent element
+        if (e.parentNode != null) {
+            // !!!
+            // Pay attention container position cannot be set to absolute
+            // since how the element has to be laid out is defined by its
+            // original parent
+            e.parentNode.replaceChild(this.$container, e);
+            this.$container.appendChild(e);
+        } else {
+            // to force all children element be aligned
+            // relatively to the wrapper we have to set
+            // position CSS to absolute or absolute
+            this.$container.style.position = "absolute";
+            this.$container.appendChild(e);
+        }
+
+        // set ID if it has not been already defined
+        if (e.getAttribute("id") == null) {
+            e.setAttribute("id", this.toString());
+        }
+
+        // attach listeners
+        if (this.$initListeners != null) {
+            this.$initListeners();
+        }
+
+        var fe = this.$getElementRootFocus();
+
+        // TODO: may be this code should be moved to web place
+        //
+        // reg native focus listeners for HTML element that can hold focus
+        if (fe != null) {
+            var $this = this;
+
+            zebkit.web.$focusin(fe, function(e) {
+
+                // sync native focus with zebkit focus if necessary
+                if ($this.hasFocus() === false) {
+                    $this.requestFocus();
+                }
+            }, false);
+
+            zebkit.web.$focusout(fe, function(e) {
+
+                // sync native focus with zebkit focus if necessary
+                if ($this.hasFocus()) {
+                    pkg.focusManager.requestFocus(null);
+                }
+            }, false);
+        }
     }
 
     /**
@@ -366,143 +491,14 @@ export default class HtmlElement extends Panel {
         super.validate();
     }
 
-    function focused() {
-        this.$super();
+    focused() {
+        super.focused();
 
         // sync state of native focus and zebkit focus
         if (this.hasFocus()) {
             this.$focus();
         } else {
             this.$blur();
-        }
-    },
-
-    function(e) {
-        if (e == null) {
-            e = "div";
-        }
-
-        if (zebkit.isString(e)) {
-            e = document.createElement(e);
-            if (this.clazz.CLASS_NAME != null) {
-                e.setAttribute("class", this.clazz.CLASS_NAME);
-            }
-            e.style.border   = "0px solid transparent";   // clean up border
-            e.style.fontSize = this.clazz.$bodyFontSize;  // DOM element is wrapped with a container that
-                                                          // has zero sized font, so let's set body  font
-                                                          // for the created element
-        }
-
-        // sync padding and margin of the DOM element with
-        // what appropriate properties are set
-        e.style.margin = e.style.padding = "0px";
-
-        /**
-         * Reference to HTML element the UI component wraps
-         * @attribute element
-         * @readOnly
-         * @type {HTMLElement}
-         */
-        this.element = e;
-
-        // this is set to make possible to use set z-index for HTML element
-        this.element.style.position = "relative";
-
-
-        if (e.parentNode != null && e.parentNode.getAttribute("data-zebcont") != null) {
-            throw new Error("DOM element '" + e + "' already has container");
-        }
-
-        // container is a DIV element that is used as a wrapper around original one
-        // it is done to make HtmlElement implementation more universal making
-        // all DOM elements capable to be a container for another one
-        this.$container = document.createElement("div");
-
-        // prevent stretching to a parent container element
-        this.$container.style.display = "inline-block";
-
-        // cut content
-        this.$container.style.overflow = "hidden";
-
-        // it fixes problem with adding, for instance, DOM element as window what can prevent
-        // showing components added to popup layer
-        this.$container.style["z-index"] = "0";
-
-
-        // coordinates have to be set to initial zero value in CSS
-        // otherwise the DOM layout can be wrong !
-        this.$container.style.left = this.$container.style.top = "0px";
-
-        this.$container.visibility = "hidden";  // before the component will be attached
-                                                // to parent hierarchy the component has to be hidden
-
-        // container div will always few pixel higher than its content
-        // to prevent the bloody effect set font to zero
-        // border and margin also have to be zero
-        this.$container.style.fontSize = this.$container.style.padding = this.$container.style.padding = "0px";
-
-        // add id
-        this.$container.setAttribute("id", "container-" + this.toString());
-
-        // mark wrapper with a special attribute to recognize it exists later
-        this.$container.setAttribute("data-zebcont", "true");
-
-        // let html element interact
-        this.$container.style["pointer-events"] = "auto";
-
-        // if passed DOM element already has parent
-        // attach it to container first and than
-        // attach the container to the original parent element
-        if (e.parentNode != null) {
-            // !!!
-            // Pay attention container position cannot be set to absolute
-            // since how the element has to be laid out is defined by its
-            // original parent
-            e.parentNode.replaceChild(this.$container, e);
-            this.$container.appendChild(e);
-        } else {
-            // to force all children element be aligned
-            // relatively to the wrapper we have to set
-            // position CSS to absolute or absolute
-            this.$container.style.position = "absolute";
-            this.$container.appendChild(e);
-        }
-
-        // set ID if it has not been already defined
-        if (e.getAttribute("id") == null) {
-            e.setAttribute("id", this.toString());
-        }
-
-        this.$super();
-
-        // attach listeners
-        if (this.$initListeners != null) {
-            this.$initListeners();
-        }
-
-        var fe = this.$getElementRootFocus();
-
-        // TODO: may be this code should be moved to web place
-        //
-        // reg native focus listeners for HTML element that can hold focus
-        if (fe != null) {
-            var $this = this;
-
-            zebkit.web.$focusin(fe, function(e) {
-
-                // sync native focus with zebkit focus if necessary
-                if ($this.hasFocus() === false) {
-                    $this.requestFocus();
-                }
-            }, false);
-
-            zebkit.web.$focusout(fe, function(e) {
-
-                // sync native focus with zebkit focus if necessary
-                if ($this.hasFocus()) {
-                    pkg.focusManager.requestFocus(null);
-                }
-            }, false);
         }
     }
 }

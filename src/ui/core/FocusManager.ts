@@ -7,6 +7,7 @@
  */
 import { FOCUS_EVENT } from './events';
 import Manager from './Manager';
+import * as layout from '../../layout';
 
 export default class FocusManager extends Manager {
     focusOwner: any;
@@ -24,7 +25,7 @@ export default class FocusManager extends Manager {
 
     $freeFocus(comp) {
         if ( this.focusOwner != null &&
-            (this.focusOwner === comp || zebkit.layout.isAncestorOf(comp, this.focusOwner)))
+            (this.focusOwner === comp || layout.isAncestorOf(comp, this.focusOwner)))
         {
             this.requestFocus(null);
         }

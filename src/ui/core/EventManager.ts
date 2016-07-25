@@ -7,39 +7,41 @@
  * @constructor
  * @extends {zebkit.ui.Manager}
  */
+import Manager from './Manager';
+
+var eventNames = [
+    'keyTyped',
+    'keyReleased',
+    'keyPressed',
+    'pointerDragged',
+    'pointerDragStarted',
+    'pointerDragEnded',
+    'pointerMoved',
+    'pointerClicked',
+    'pointerDoubleClicked',
+    'pointerPressed',
+    'pointerReleased',
+    'pointerEntered',
+    'pointerExited',
+
+    'focusLost',
+    'focusGained',
+
+    'compSized',
+    'compMoved',
+    'compEnabled',
+    'compShown',
+    'compAdded',
+    'compRemoved',
+
+    'winOpened',
+    'winActivated',
+
+    'menuItemSelected'
+];
+
 export default class EventManager extends Manager {
-    $clazz = (argument) {
-        var eventNames = [
-            'keyTyped',
-            'keyReleased',
-            'keyPressed',
-            'pointerDragged',
-            'pointerDragStarted',
-            'pointerDragEnded',
-            'pointerMoved',
-            'pointerClicked',
-            'pointerDoubleClicked',
-            'pointerPressed',
-            'pointerReleased',
-            'pointerEntered',
-            'pointerExited',
-
-            'focusLost',
-            'focusGained',
-
-            'compSized',
-            'compMoved',
-            'compEnabled',
-            'compShown',
-            'compAdded',
-            'compRemoved',
-
-            'winOpened',
-            'winActivated',
-
-            'menuItemSelected'
-        ];
-
+    $clazz = (argument) => {
         this.$CHILD_EVENTS_MAP = {};
 
         // add child<eventName> events names

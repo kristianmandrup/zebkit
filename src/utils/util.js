@@ -3,10 +3,8 @@
  * @module util
  * @requires zebkit
  */
-(function(pkg, Class, Interface) {
 
-
-pkg.$validateValue = function(value) {
+export const $validateValue = function(value) {
     if (arguments.length < 2) {
         throw new Error("Invalid arguments list. List of valid values is expected");
     }
@@ -20,7 +18,7 @@ pkg.$validateValue = function(value) {
 };
 
 
-pkg.format = function(s, obj, ph) {
+export const format = function(s, obj, ph) {
     if (arguments.length < 3) ph = '';
 
     var rg = /\$\{([0-9]+\s*,)?(.?,)?([a-zA-Z_][a-zA-Z0-9_]*)\}/g,
@@ -67,12 +65,6 @@ pkg.format = function(s, obj, ph) {
     }
     return s;
 };
-
-pkg.Event = Class([
-    function $prototype() {
-        this.source = null;
-    }
-]);
 
 /**
  * Sequential tasks runner. Allows developers to execute number of tasks (async and sync) in the

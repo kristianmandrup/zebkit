@@ -176,7 +176,7 @@ class $ContextMethods {
 
 import HtmlElement from './HtmlElement';
 import Panel from './Panel';
-import web from '../web';
+import * as web from '../../web';
 
 export default class HtmlCanvas extends HtmlElement {
     $clazz = new $ContextMethods();
@@ -196,7 +196,7 @@ export default class HtmlCanvas extends HtmlElement {
 
     // e is a DOM element
     constructor(e) {
-        super();
+        super(e == null ? "canvas" : e);
 
         this.$rotateValue = 0;
         this.$scaleX = 1;
@@ -216,8 +216,6 @@ export default class HtmlCanvas extends HtmlElement {
                 { x:Integer, y:Integer, width:Integer, height:Integer }
          */
         this.$da = { x: 0, y: 0, width: -1, height: 0 };
-
-        this.$super(e == null ? "canvas" : e);
 
         // let HTML Canvas be WEB event transparent
         this.$container.style["pointer-events"] = "none";

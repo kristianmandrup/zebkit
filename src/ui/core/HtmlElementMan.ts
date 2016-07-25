@@ -1,4 +1,5 @@
 import Manager from './Manager';
+import * as web from '../../web';
 
 export default class HtmlElementMan extends Manager {
 //
@@ -65,7 +66,7 @@ export default class HtmlElementMan extends Manager {
             c.width       <= 0              ||
             c.height      <= 0              ||
             c.parent      == null           ||
-            zebkit.web.$contains(c.$container) === false)
+            web.$contains(c.$container) === false)
         {
             return true;
         }

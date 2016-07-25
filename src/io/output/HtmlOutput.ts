@@ -1,4 +1,5 @@
 import Output from './Output';
+import types from '../../types';
 
 export default class HtmlOutput extends Output {
     constructor(element) {
@@ -7,7 +8,7 @@ export default class HtmlOutput extends Output {
         if (arguments.length === 0) element = null;
 
         element = element || "zebkit.out";
-        if (type.isString(element)) {
+        if (types.isString(element)) {
             this.el = document.getElementById(element);
             if (this.el == null) {
                 this.el = document.createElement('div');
