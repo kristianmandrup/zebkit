@@ -37,10 +37,13 @@
  * @extends {zebkit.layout.Layout}
  */
 import Layout from './Layout';
+import { $validateValue } from '../utils/validate';
 
 export default class FlowLayout implements Layout {
-    constructor(ax, ay, dir, g) {
-        super();
+    gap: number | string;
+    stretchLast: boolean;    
+
+    constructor(public ax : string | number, public ay : string | number, public direction : string, g) {
         /**
          * Gap between laid out components
          * @attribute gap
@@ -79,15 +82,16 @@ export default class FlowLayout implements Layout {
 
         this.stretchLast = false;
         
-        if (arguments.length === 1) this.gap = ax;
-        else {
+        if (arguments.length === 1) {
+            this.gap = ax;
+        } else {
             if (arguments.length > 1) {
                 this.ax = ax;
                 this.ay = ay;
             }
 
             if (arguments.length > 2)  {
-                this.direction = zebkit.util.$validateValue(dir, "horizontal", "vertical");
+                this.direction = $validateValue(direction, "horizontal", "vertical");
             }
 
             if (arguments.length > 3) this.gap = g;

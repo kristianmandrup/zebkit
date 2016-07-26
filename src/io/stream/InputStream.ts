@@ -1,10 +1,18 @@
-import io from '../'
+import { types } from '../../utils';
+import { b64 } from '../';
+
+var isBA = typeof(ArrayBuffer) !== 'undefined';
 
 export default class InputStream {
+    data: any;
+    marked: any;
+    pos: any;
+
     constructor(container) {
-        if (isBA && container instanceof ArrayBuffer) this.data = new Uint8Array(container);
-        else {
-            if (zebkit.isString(container)) {
+        if (isBA && container instanceof ArrayBuffer) {
+            this.data = new Uint8Array(container);
+        } else {
+            if (types.isString(container)) {
                 this.extend([
                     function read() {
                         return this.available() > 0 ? this.data.charCodeAt(this.pos++) & 0xFF : -1;
@@ -85,5 +93,5 @@ export default class InputStream {
     }
 
     available() { return this.data === null ? -1 : this.data.length - this.pos; }
-    toBase64() { return io.b64encode(this.data); }
+    toBase64() { return b64.b64encode(this.data); }
 }

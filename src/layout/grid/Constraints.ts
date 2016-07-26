@@ -8,7 +8,8 @@
  * @constructor
  * @class zebkit.layout.Constraints
  */
-import util from '../../util';
+
+import { $validateValue } from '../../utils/validate';
 
 export default class Constraints {
     top: number;
@@ -70,8 +71,8 @@ export default class Constraints {
             if (arguments.length > 1) this.ay = ay;
             if (arguments.length > 2) this.setPadding(p);
 
-            util.$validateValue(this.ax, "stretch", "left", "center", "right");
-            util.$validateValue(this.ay, "stretch", "top", "center", "bottom");
+            $validateValue(this.ax, "stretch", "left", "center", "right");
+            $validateValue(this.ay, "stretch", "top", "center", "bottom");
         }
     }
 
@@ -89,7 +90,7 @@ export default class Constraints {
      * @param  {Integer} r a right padding
      * @method setPadding
      */
-    setPadding(t,l,b,r) {
+    setPadding(t, l?, b?, r?) {
         if (arguments.length === 1) {
             this.top = this.bottom = this.left = this.right = t;
         } else {

@@ -4,7 +4,7 @@
  * @requires zebkit
  */
 
-export const $validateValue = function(value) {
+export const $validateValue = function(value, x, x2?, x3?, x4?) {
     if (arguments.length < 2) {
         throw new Error("Invalid arguments list. List of valid values is expected");
     }

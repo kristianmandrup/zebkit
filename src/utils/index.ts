@@ -25,5 +25,6 @@ export { default as mix } from './mix';
 export { default as Assert } from './Assert';
 export { default as Bag } from './Bag';
 export { default as Runner } from './Runner';
+export { default as URL } from './URL';
 export { findInTree } from './findInTree';
 export { format } from './format';

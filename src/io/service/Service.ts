@@ -1,4 +1,3 @@
-
 /**
  * A remote service connector class. It is supposed the class has to be extended with
  * different protocols like RPC, JSON etc. The typical pattern of connecting to
@@ -40,8 +39,12 @@
  * @param {String} url an URL of remote service
  * @param {Array} methods a list of methods names the remote service provides
  */
+import { HTTP } from '../Http';
+
 export default class Service {
-    constructor(url, methods) {
+    contentType: string;
+
+    constructor(public url : string, methods) {
         var $this = this;
         /**
          * Remote service url
@@ -119,7 +122,7 @@ export default class Service {
       * @method  send
       */
     send(url, data, callback) {
-        var http = new pkg.HTTP(url);
+        var http = new HTTP(url);
         if (this.contentType != null) {
             http.header['Content-Type'] = this.contentType;
         }

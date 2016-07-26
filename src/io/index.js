@@ -39,8 +39,8 @@ export const b64;
 import * as date from './date';
 export const date;
 
-import * as xml from './date';
-export const xml;
+import * as extras from './extras';
+export const extras;
 
 import * as http from './Http';
 export const http;

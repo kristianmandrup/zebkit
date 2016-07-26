@@ -1,5 +1,7 @@
 import InputStream from './InputStream';
-import io from '../';
+import { getMethod } from '../extras';
+
+var isBA = typeof(ArrayBuffer) !== 'undefined';
 
 export default class URLInputStream extends InputStream {
     constructor(url, f) {
@@ -17,7 +19,7 @@ export default class URLInputStream extends InputStream {
             r.onreadystatechange = function() {
                 if (r.readyState == 4) {
                     if (r.status != 200)  throw new Error(url);
-                    zebkit.getMethod($this.clazz.$parent, '', 1).call($this, isBA ? r.response : r.responseText); // $this.$super(res);
+                    getMethod($this.clazz.$parent, '', 1).call($this, isBA ? r.response : r.responseText); // $this.$super(res);
                     f($this.data, r);
                 }
             };
@@ -26,7 +28,7 @@ export default class URLInputStream extends InputStream {
         else {
             r.send(null);
             if (r.status != 200) throw new Error(url);
-            this.$super(r.responseText);
+            super(r.responseText);
         }
     }
 

@@ -1,6 +1,5 @@
-import {types, environment} from '../utils';
-import { default as QS} from '../io/parser/QueryString';
-import URL
+import {types, environment, URL} from '../utils';
+import { default as QS} from '../io/parser/QueryString'; 
 
 export const getRequest = function() {
     if (typeof XMLHttpRequest !== "undefined") {

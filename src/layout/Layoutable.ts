@@ -11,6 +11,8 @@
  * @extends {zebkit.layout.Layout}
  */
 import Layout from './Layout';
+import { findInTree } from '../utils/findInTree';
+import { types } from '../utils';
 
 export default class Layoutable implements Layout {
       /**
@@ -68,8 +70,25 @@ export default class Layoutable implements Layout {
       * @readOnly
       * @type {zebkit.layout.Layoutable}
       */
+
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+    cachedHeight: number;
+    cachedWidth: number;
+    psWidth: number;
+    psHeight: number;
+    isLayoutValid: boolean;
+    isValid: boolean;
+    isVisible: boolean;
+
+    constraints: any;
+    parent: any;
+    layout: Layout;
+    kids: any[];
+
     constructor() {
-        super();
 
         this.x = this.y = this.height = this.width = this.cachedHeight= 0;
 
@@ -106,7 +125,7 @@ export default class Layoutable implements Layout {
         this.layout = this;        
     }
 
-    $normPath = (p) {
+    static $normPath(p) {
         p = p.trim();
         if (p[0] === '/') return p;
         if (p[0] === '#') return "//*[@id='" + p.substring(1).trim() + "']";
@@ -132,11 +151,11 @@ export default class Layoutable implements Layout {
       * @return {zebkit.layout.Layoutable} found children component or null if
       * no children component can be found
       */
-    find(path){
+    static find(path){
         var res = null;
-        zebkit.util.findInTree(this, $normPath(path),
+        findInTree(this, this.$normPath(path),
             function(node, name) {
-                return node.clazz != null && zebkit.instanceOf(node, zebkit.Class.forName(name));
+                return node.clazz != null && types.instanceOf(node, zebkit.Class.forName(name));
             },
 
             function(kid) {
@@ -166,7 +185,7 @@ export default class Layoutable implements Layout {
       * @return {Array}  return array of found children components if
       * passed function has not been passed
       */
-    findAll(path, callback){
+    static findAll(path, callback){
         var res = [];
         if (arguments.length < 2) {
             callback =  function(kid) {
@@ -175,9 +194,9 @@ export default class Layoutable implements Layout {
             };
         }
 
-        util.findInTree(this, $normPath(path),
+        findInTree(this, this.$normPath(path),
             function(node, name) {
-                return node.clazz != null && zebkit.instanceOf(node, zebkit.Class.forName(name));
+                return node.clazz != null && types.instanceOf(node, zebkit.Class.forName(name));
             }, callback);
         return res;
     }

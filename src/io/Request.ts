@@ -1,3 +1,5 @@
+import { URL, XDomainRequest } from '../utils';
+
 export default function $Request() {
     this.responseText = this.statusText = "";
     this.onreadystatechange = this.responseXml = null;
@@ -5,35 +7,25 @@ export default function $Request() {
 };
 
 $Request.prototype.open = function(method, url, async, user, password) {
-    if (location.protocol.toLowerCase() == "file:" ||
-        (new zebkit.URL(url)).host.toLowerCase() == location.host.toLowerCase())
-    {
-        this._request = new XMLHttpRequest();
-        this._xdomain = false;
+    this._request = new XMLHttpRequest();
+    this._xdomain = false;
 
-        var $this = this;
-        this._request.onreadystatechange = function() {
-            $this.readyState = $this._request.readyState;
-            if ($this._request.readyState == 4) {
-                $this.responseText = $this._request.responseText;
-                $this.responseXml  = $this._request.responseXml;
-                $this.status     = $this._request.status;
-                $this.statusText = $this._request.statusText;
-            }
+    var $this = this;
+    this._request.onreadystatechange = function() {
+        $this.readyState = $this._request.readyState;
+        if ($this._request.readyState == 4) {
+            $this.responseText = $this._request.responseText;
+            $this.responseXml  = $this._request.responseXml;
+            $this.status     = $this._request.status;
+            $this.statusText = $this._request.statusText;
+        }
 
-            if ($this.onreadystatechange) {
-                $this.onreadystatechange();
-            }
-        };
+        if ($this.onreadystatechange) {
+            $this.onreadystatechange();
+        }
+    };
 
-        return this._request.open(method, url, (async !== false), user, password);
-    }
-    else {
-        this._xdomain = true;
-        this._async = (async === true);
-        this._request = new XDomainRequest();
-        return this._request.open(method, url);
-    }
+    return this._request.open(method, url, (async !== false), user, password);
 };
 
 $Request.prototype.send = function(data) {
@@ -69,7 +61,7 @@ $Request.prototype.send = function(data) {
             originalReq.send(data);
 
             while (this.status === 0) {
-                pkg.$sleep();
+                $sleep();
             }
 
             this.readyState = 4;

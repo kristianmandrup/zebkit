@@ -22,7 +22,8 @@
  * @param {Array} methods a list of methods names the remote service provides
  */
 import Service from './Service';
-import type from '../../type';
+import { types } from '../../utils';
+import { date, b64, xml } from '../';
 
 export default class XRPC extends Service {
     contentType: string;
@@ -48,20 +49,20 @@ export default class XRPC extends Service {
             throw new Error("Null is not allowed");
         }
 
-        if (type.isString(v)) {
+        if (types.isString(v)) {
             v = v.replace("<", "&lt;");
             v = v.replace("&", "&amp;");
             p.push("<string>", v, "</string>");
         }
         else {
-            if (type.isNumber(v)) {
+            if (types.isNumber(v)) {
                 if (Math.round(v) == v) p.push("<i4>", v.toString(), "</i4>");
                 else                    p.push("<double>", v.toString(), "</double>");
             }
             else {
-                if (type.isBoolean(v)) p.push("<boolean>", v?"1":"0", "</boolean>");
+                if (types.isBoolean(v)) p.push("<boolean>", v?"1":"0", "</boolean>");
                 else {
-                    if (v instanceof Date)  p.push("<dateTime.iso8601>", pkg.dateToISO8601(v), "</dateTime.iso8601>");
+                    if (v instanceof Date)  p.push("<dateTime.iso8601>", date.dateToISO8601(v), "</dateTime.iso8601>");
                     else {
                         if (Array.isArray(v))  {
                             p.push("<array><data>");
@@ -73,7 +74,7 @@ export default class XRPC extends Service {
                             p.push("</data></array>");
                         }
                         else {
-                            if (v instanceof pkg.Base64) p.push("<base64>", v.toString(), "</base64>");
+                            if (v instanceof b64.Base64) p.push("<base64>", v.toString(), "</base64>");
                             else {
                                 p.push("<struct>");
                                 for(var k in v) {
@@ -115,13 +116,13 @@ export default class XRPC extends Service {
 
         var v = node.childNodes[0].nodeValue.trim();
         switch (tag) {
-            case "datetime.iso8601": return pkg.ISO8601toDate(v);
+            case "datetime.iso8601": return date.ISO8601toDate(v);
             case "boolean": return v == "1";
             case "int":
             case "i4":     return parseInt(v, 10);
             case "double": return Number(v);
             case "base64":
-                var b64 = new pkg.Base64();
+                var b64 = new b64.Base64();
                 b64.encoded = v;
                 return b64;
             case "string": return v;
@@ -130,7 +131,7 @@ export default class XRPC extends Service {
     }
 
     decode(r) {
-        var p = pkg.parseXML(r),
+        var p = xml.parseXML(r),
             c = p.getElementsByTagName("fault");
 
         if (c.length > 0) {
