@@ -31,7 +31,7 @@ export default class Pattern extends Render {
         g.closePath();
         g.fillStyle = this.pattern;
         g.fill();
-    };
+    }
 
     targetWasChanged(o, n) {
         this.pattern = null;

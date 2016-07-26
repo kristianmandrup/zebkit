@@ -13,7 +13,7 @@
 import Render from './Render';
 
 export default class Picture extends Render {
-    constructor(img,x,y,w,h) {
+    constructor(img, public x : number, public y : number, public width : number, public height : number) {
         super();
         /**
          * A x coordinate of the image part that has to be rendered
@@ -51,8 +51,8 @@ export default class Picture extends Render {
         if (arguments.length > 4) {
             this.x = x;
             this.y = y;
-            this.width  = w;
-            this.height = h;
+            this.width  = width;
+            this.height = height;
         }
         else {
             this.x = this.y = this.width = this.height = 0;
