@@ -19,7 +19,7 @@ export default class CompositeView extends View {
 
     views: View[];
 
-    constructor() {
+    constructor(e?) {
         super();
         /**
          * Left padding

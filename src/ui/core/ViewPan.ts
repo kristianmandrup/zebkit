@@ -9,6 +9,8 @@
  */
 
 import Panel from './Panel';
+// import View from './View';
+import $view from '../views';
 
 export default class ViewPan extends Panel {
     view: any;
@@ -25,6 +27,7 @@ export default class ViewPan extends Panel {
         this.view = null;
     }
 
+    // Canvas
     paint(g) {
         if (this.view !== null){
             var l = this.getLeft(),
@@ -42,9 +45,9 @@ export default class ViewPan extends Panel {
      * @method setView
      * @chainable
      */
-    setView(v) {
+    setView(v : any) {
         var old = this.view;
-        v = pkg.$view(v);
+        v = $view(v);
 
         if (v !== old) {
             this.view = v;
@@ -64,7 +67,7 @@ export default class ViewPan extends Panel {
           { width: {Integer}, height:{Integer} }
       * @method  calcPreferredSize
       */
-    calcPreferredSize(t) {
+    calcPreferredSize(t : Panel): {width: number, height: number} {
         return this.view !== null ? this.view.getPreferredSize() : { width:0, height:0 };
     }
 }

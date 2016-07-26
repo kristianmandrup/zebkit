@@ -81,9 +81,9 @@ import focusManager from '../';
 import KeyEvent from '../web/keys/KeyEvent';
 
 export default class ShortcutManager extends Manager {
-    keyCommands: {};
+    keyCommands: any;
 
-    constructor(commands){
+    constructor(commands) {
         super();
         this.keyCommands = {};
         if (commands != null) {
@@ -99,7 +99,7 @@ export default class ShortcutManager extends Manager {
      * @param  {zebkit.ui.KeyEvent} e a key event
      * @method keyPressed
      */
-    keyPressed(e) {
+    keyPressed(e : KeyEvent) : void {
         var fo = focusManager.focusOwner;
         if (fo != null && this.keyCommands[e.code]) {
             var c = this.keyCommands[e.code];
@@ -121,7 +121,7 @@ export default class ShortcutManager extends Manager {
         }
     }
 
-    $parseKey(k) {
+    $parseKey(k : string) : Array<number> {
         var m = 0, c = 0, r = k.split("+");
         for(var i = 0; i < r.length; i++) {
             var ch = r[i].trim().toUpperCase();
@@ -141,7 +141,8 @@ export default class ShortcutManager extends Manager {
         return [m, c];
     }
 
-    setCommands(commands) {
+    // list of Command?
+    setCommands(commands : any[]) : void {
         for(var i=0; i < commands.length; i++) {
             var c = commands[i],
                 p = this.$parseKey(c.key),

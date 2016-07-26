@@ -1,4 +1,4 @@
-class Rgb {
+export default class Rgb {
     paint(g,x,y,w,h,d) {
       if (this.s != g.fillStyle) {
           g.fillStyle = this.s;

@@ -8,7 +8,10 @@ import TextModel from './TextModel';
  * @extends zebkit.data.TextModel
  */
 export default class SingleLineTxt extends TextModel {
-    constructor() {
+    maxLen: number;
+    extra: number;
+    buf: string;
+    constructor(s, max) {
         super();
         this.maxLen = max == null ? -1 : max;
         this.buf = "";

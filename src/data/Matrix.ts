@@ -54,13 +54,24 @@
     *
 */
 
+import {ListenersClass} from '../utils/listen';
+
+// import descent
+// import $FN
+
 export default class Matrix {
-    $clazz = () => {
-        this.Listeners = zebkit.util.ListenersClass("matrixResized", "cellModified",
-                                                   "matrixSorted", "matrixRowInserted",
-                                                   "matrixColInserted");
+
+    get clazz() {
+        return {
+            Listeners: ListenersClass("matrixResized", "cellModified",
+                                                        "matrixSorted", "matrixRowInserted",
+                                                        "matrixColInserted");
+        }
     }
 
+    rows: any;
+    cols: any;
+    objs: any[];
     constructor() {
         /**
          * Number of rows in the matrix model
@@ -116,7 +127,7 @@ export default class Matrix {
      * @return {Object}  matrix model cell value
      */
     atIndex(i) {
-        return this.get(~~(i / this.cols), i % this.cols);
+        return this.at(~~(i / this.cols), i % this.cols);
     };
 
     /**
@@ -320,7 +331,7 @@ export default class Matrix {
      */
     sortCol(col, f) {
         if (f == null) {
-            f = pkg.descent;
+            f = descent;
         }
 
         this.objs.sort(function(a, b) {
@@ -329,7 +340,7 @@ export default class Matrix {
 
         this._.matrixSorted(this, { col : col,
                                     func: f,
-                                    name: zebkit.$FN(f).toLowerCase() });
+                                    name: $FN(f).toLowerCase() });
     }
 
 }

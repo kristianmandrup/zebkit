@@ -12,7 +12,7 @@ export default class RootLayer extends CanvasLayer {
     static ID = 'root';
     static layout = new layout.RasterLayout();
 
-    constructor(e) {
+    constructor(e?) {
         super(e);
     }
 
