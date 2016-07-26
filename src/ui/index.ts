@@ -30,7 +30,21 @@ export { default as TabView } from './TabView';
 export { default as Toolbar } from './Toolbar';
 export { default as VideoPan } from './VideoPan';
 
-// export { * as web } from './web';
+import * as _tree from './tree';
+export const tree = _tree;
+
+import * as _views from './views';
+export const views = _views;
+
+import * as _vk from './vk';
+export const vk = _vk;
+
+import * as _web from './web';
+export const web = _web;
+
+import * as _window from './window';
+export const window = _window;
+
 
 /**
  * @module  ui

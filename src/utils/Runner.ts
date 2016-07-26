@@ -26,7 +26,7 @@
 
  * @class zebkit.ui.Runner
  */
-export const Runner = function() {
+export default function Runner() {
     this.$tasks      = [];
     this.$results    = [];
     this.$error      = null;

@@ -31,7 +31,7 @@ export default class CompList extends BaseList {
     model: any;
     max: number;
 
-    constructor(m, b) {
+    constructor(m, b?) {
         super(m, b);
         this.model = this;
         this.max   = null;

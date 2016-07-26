@@ -58,8 +58,15 @@
  */
 var OVER = "over", PRESSED_OVER = "pressed.over", OUT = "out", PRESSED_OUT = "pressed.out", DISABLED = "disabled";
 
+import StatePan from './StatePan';
+import { KeyEvent } from './web/keys';
+import { layout } from '../';
+
 export default class EvStatePan extends StatePan {
-    constructor() {
+    state: string;
+    $isIn: boolean;
+
+    constructor(e?) {
         super();
         this.state = OUT;
         this.$isIn = false;
@@ -72,7 +79,7 @@ export default class EvStatePan extends StatePan {
     _keyPressed(e) {
         if (this.state !== PRESSED_OVER &&
             this.state !== PRESSED_OUT  &&
-            (e.code === pkg.KeyEvent.ENTER || e.code === pkg.KeyEvent.SPACE))
+            (e.code === KeyEvent.ENTER || e.code === KeyEvent.SPACE))
         {
             this.setState(PRESSED_OVER);
         }
@@ -106,7 +113,7 @@ export default class EvStatePan extends StatePan {
                                                                                             : OUT);
             }
             else {
-                var p = zebkit.layout.toParentOrigin(e.x, e.y, e.source, this);
+                var p = layout.toParentOrigin(e.x, e.y, e.source, this);
                 this.$isIn = p.x >= 0 && p.y >= 0 && p.x < this.width && p.y < this.height;
                 this.setState(this.$isIn ? OVER : OUT);
             }

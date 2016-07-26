@@ -39,7 +39,7 @@ export default class BorderLayout implements Layout {
      * @type {Integer}
      */
 
-    constructor(public hgap: number = 0, public vgap: number = 0) {      
+    constructor(public hgap : number = 0, public vgap: number = 0) {      
         this.hgap = hgap;
         this.vgap = vgap;
     }

@@ -7,7 +7,7 @@ export { default as PercentLayout } from './PercentLayout';
 export { default as RasterLayout } from './RasterLayout';
 export { default as StackLayout } from './StackLayout';
 
-import * as grid from './grid';
+export * from './grid';
 
 /**
  * Layout package provides number of classes, interfaces, methods and

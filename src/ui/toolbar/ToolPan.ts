@@ -1,9 +1,9 @@
 import EvStatePan from '../EvStatePan';
-import layout from '../../layout';
+import { BorderLayout } from '../../layout';
 
 export default class ToolPan extends EvStatePan {
     constructor(c) {
-        super(new layout.BorderLayout());
+        super(new BorderLayout());
         this.add("center", c);
     }
 

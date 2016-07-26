@@ -28,39 +28,45 @@
 
 import ToolPan from './toolbar/ToolPan';
 import Panel from './core/Panel';
+import { listen, types } from '../utils';
+
+function Clazz() {
+    this.ToolPan  = ToolPan; 
+    this.ImagePan = ImagePan;
+    this.Line     = Line;
+    this.Checkbox = Checkbox;
+    this.Radiobox = Radiobox;
+
+    // TODO: combo is not available in  this module yet
+    // ui + ui.list has to be combined as one package
+    //this.Combo    = Class(pkg.Combo, []);
+}
+
 
 export default class Toolbar extends Panel {
-    $clazz() {
-        this.ToolPan  = ToolPan; 
-        this.ImagePan = Class(pkg.ImagePan, []);
-        this.Line     = Class(pkg.Line, []);
-        this.Checkbox = Class(pkg.Checkbox, []);
-        this.Radiobox = Class(pkg.Radiobox, []);
+    get clazz() {
+        return new Clazz();
+    }
 
-        // TODO: combo is not available in  this module yet
-        // ui + ui.list has to be combined as one package
-        //this.Combo    = Class(pkg.Combo, []);
-    },
+    constructor() {
+        super();
+        this._ = new listen.Listeners();        
+    }
 
-    function $prototype() {
-        /**
-         * Test if the given component is a decorative element
-         * in the toolbar
-         * @param  {zebkit.ui.Panel}  c a component
-         * @return {Boolean} return true if the component is
-         * decorative element of the toolbar
-         * @method isDecorative
-         * @protected
-         */
-        this.isDecorative = function(c){
-            return zebkit.instanceOf(c, pkg.EvStatePan) === false;
-        };
-    },
+    /**
+     * Test if the given component is a decorative element
+     * in the toolbar
+     * @param  {zebkit.ui.Panel}  c a component
+     * @return {Boolean} return true if the component is
+     * decorative element of the toolbar
+     * @method isDecorative
+     * @protected
+     */
+    isDecorative(c){
+        return types.instanceOf(c, EvStatePan) === false;
+    }
 
-    function () {
-        this._ = new zebkit.util.Listeners();
-        this.$super();
-    },
+    // static
 
     /**
      * Add a radio box as the toolbar element that belongs to the

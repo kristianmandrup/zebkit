@@ -66,18 +66,46 @@
 
 import Panel from './core/Panel';
 import TabView from './TabView';
+import { intersect } from '../utils';
+import KeyEvent from './web/keys/KeyEvent'
 
 export default class Tabs extends Panel, $ViewsSetterMix {
-    $clazz = {
-      TabView: TabView
+    get clazz() {
+        return {
+            TabView: TabView
+        }      
     }
 
     canHaveFocus: boolean;
+    vgap: number;
+    hgap: number;
+   
+    repaintWidth: number;
+    repaintHeight: number;
+   
+    repaintX: number; 
+    repaintY: number;
+
+    tabAreaX: number;
+    tabAreaY: number;
+
+    sideSpace: number;
+
+    tabAreaWidth: number;
+    tabAreaHeight: number;
+
+    overTab: number;
+    selectedIndex: number;
+
+    pages: any[];
+    views: any;
+
+    orient: string;
 
     /**
      * @for zebkit.ui.Tabs
      */
-    constructor    (o) {
+    constructor(o?) {
         super();
 
         /**
@@ -126,10 +154,8 @@ export default class Tabs extends Panel, $ViewsSetterMix {
         this.pages = [];
         this.views = {};
 
-        if (pkg.Tabs.font != null) this.render.setFont(pkg.Tabs.font);
-        if (pkg.Tabs.fontColor != null) this.render.setColor(pkg.Tabs.fontColor);
-
-        this.$super();
+        if (Tabs.font != null) this.render.setFont(pkg.Tabs.font);
+        if (Tabs.fontColor != null) this.render.setColor(pkg.Tabs.fontColor);
 
         // since alignment pass as the constructor argument the setter has to be called after $super
         // because $super can re-set title alignment
@@ -141,7 +167,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @param  {zebkit.ui.PointerEvent} e a key event
      * @method pointerMoved
      */
-    this.pointerMoved = function(e) {
+    pointerMoved(e) {
         var i = this.getTabAt(e.x, e.y);
         if (this.overTab != i) {
             this.overTab = i;
@@ -150,14 +176,14 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                               this.repaintWidth, this.repaintHeight);
             }
         }
-    };
+    }
 
     /**
      * Define pointer drag ended event handler
      * @param  {zebkit.ui.PointerEvent} e a key event
      * @method pointerDragEnded
      */
-    this.pointerDragEnded = function(e) {
+    pointerDragEnded(e) {
         var i = this.getTabAt(e.x, e.y);
         if (this.overTab != i) {
             this.overTab = i;
@@ -166,14 +192,14 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                               this.repaintWidth, this.repaintHeight);
             }
         }
-    };
+    }
 
     /**
      * Define pointer exited event handler
      * @param  {zebkit.ui.PointerEvent} e a key event
      * @method pointerExited
      */
-    this.pointerExited = function(e) {
+    pointerExited(e) {
         if (this.overTab >= 0) {
             this.overTab = -1;
             if (this.views.tabover != null) {
@@ -181,7 +207,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                               this.repaintWidth, this.repaintHeight);
             }
         }
-    };
+    }
 
     /**
      * Navigate to a next tab page following the given direction starting
@@ -192,14 +218,14 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @return {Integer}      a new tab page index
      * @method next
      */
-    this.next =  function (page, d){
+    next(page, d){
         for(; page >= 0 && page < Math.floor(this.pages.length / 2); page += d) {
             if (this.isTabEnabled(page) === true) return page;
         }
         return -1;
-    };
+    }
 
-    this.getTitleInfo = function(){
+    getTitleInfo(){
         var b   = (this.orient === "left" || this.orient === "right"),
             res = b ? { x      : this.tabAreaX,
                         y      : 0,
@@ -224,7 +250,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
             }
         }
         return res;
-    };
+    }
 
     /**
      * Test if the given tab page is in enabled state
@@ -232,14 +258,14 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @return {Boolean} a tab page state
      * @method isTabEnabled
      */
-    this.isTabEnabled = function (index){
+    isTabEnabled(index) {
         return this.kids[index].isEnabled;
-    };
+    }
 
-    this.paintOnTop = function(g){
+    paintOnTop(g) {
         var ts = g.$states[g.$curState];
         // stop painting if the tab area is outside of clip area
-        if (zebkit.util.isIntersect(this.repaintX, this.repaintY,
+        if (intersect.isIntersect(this.repaintX, this.repaintY,
                                     this.repaintWidth, this.repaintHeight,
                                     ts.x, ts.y, ts.width, ts.height))
         {
@@ -262,7 +288,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                 }
             }
         }
-    };
+    }
 
     /**
      * Draw currently activate tab page marker.
@@ -270,7 +296,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @param  {Object} r a tab page title rectangular area
      * @method drawMarker
      */
-    this.drawMarker = function(g,r){
+    drawMarker(g,r){
         var marker = this.views.marker;
         if (marker != null){
             //TODO: why only "tab" is checked ?
@@ -281,7 +307,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                             r.width  - left - (bv == null ? 0 : bv.getRight()),
                             r.height - top  - (bv == null ? 0 : bv.getBottom()), this);
         }
-    };
+    }
 
     /**
      * Paint the given tab page title
@@ -289,7 +315,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @param  {Integer} pageIndex a tab page index
      * @method paintTab
      */
-    this.paintTab = function (g, pageIndex){
+    paintTab(g, pageIndex){
         var b       = this.getTabBounds(pageIndex),
             page    = this.kids[pageIndex],
             tab     = this.views.tab,
@@ -314,7 +340,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
         v.paint(g, b.x + Math.floor((b.width - ps.width) / 2),
                     b.y + Math.floor((b.height - ps.height) / 2),
                     ps.width, ps.height, page);
-    };
+    }
 
     /**
      * Get the given tab page title rectangular bounds
@@ -326,11 +352,11 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @protected
      * @method getTabBounds
      */
-    this.getTabBounds = function(i){
+    getTabBounds = function(i) {
         return this.pages[2 * i + 1];
-    };
+    }
 
-    this.calcPreferredSize = function(target){
+    calcPreferredSize(target){
         var max = zebkit.layout.getMaxPreferredSize(target);
         if (this.orient === "bottom" || this.orient === "top"){
             max.width = Math.max(max.width, 2 * this.sideSpace + this.tabAreaWidth);
@@ -341,9 +367,9 @@ export default class Tabs extends Panel, $ViewsSetterMix {
             max.height = Math.max(max.height, 2 * this.sideSpace + this.tabAreaHeight);
         }
         return max;
-    };
+    }
 
-    this.doLayout = function(target){
+    doLayout(target){
         var right  = this.orient === "right"  ? this.right  : this.getRight(),
             top    = this.orient === "top"    ? this.top    : this.getTop(),
             bottom = this.orient === "bottom" ? this.bottom : this.getBottom(),
@@ -439,13 +465,13 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                 l.setSize(0, 0);
             }
         }
-    };
+    }
 
     /**
      * Define recalc method to compute the component metrical characteristics
      * @method recalc
      */
-    this.recalc = function(){
+    recalc() {
         var count = Math.floor(this.pages.length / 2);
         if (count > 0) {
             this.tabAreaHeight = this.tabAreaWidth = 0;
@@ -514,7 +540,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                 }
             }
         }
-    };
+    }
 
     /**
      * Get tab index located at the given location
@@ -525,7 +551,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * tab can be found
      * @method getTabAt
      */
-    this.getTabAt = function(x,y){
+    getTabAt(x,y){
         this.validate();
         if (x >= this.tabAreaX && y >= this.tabAreaY &&
             x < this.tabAreaX + this.tabAreaWidth &&
@@ -556,41 +582,41 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @param  {zebkit.ui.KeyEvent} e a key event
      * @method keyPressed
      */
-    this.keyPressed = function(e){
+    keyPressed(e){
         if (this.selectedIndex != -1 && this.pages.length > 0){
             switch(e.code) {
-                case pkg.KeyEvent.UP:
-                case pkg.KeyEvent.LEFT:
+                case KeyEvent.UP:
+                case KeyEvent.LEFT:
                     var nxt = this.next(this.selectedIndex - 1,  -1);
                     if(nxt >= 0) this.select(nxt);
                     break;
-                case pkg.KeyEvent.DOWN:
-                case pkg.KeyEvent.RIGHT:
+                case KeyEvent.DOWN:
+                case KeyEvent.RIGHT:
                     var nxt = this.next(this.selectedIndex + 1, 1);
                     if(nxt >= 0) this.select(nxt);
                     break;
             }
         }
-    };
+    }
 
     /**
      * Define pointer clicked  event handler
      * @param  {zebkit.ui.PointerEvent} e a key event
      * @method pointerClicked
      */
-    this.pointerClicked = function(e){
+    pointerClicked(e){
         if (e.isAction()){
             var index = this.getTabAt(e.x, e.y);
             if (index >= 0 && this.isTabEnabled(index)) this.select(index);
         }
-    };
+    }
 
     /**
      * Switch to the given tab page
      * @param  {Integer} index a tab page index to be navigated
      * @method select
      */
-    this.select = function(index){
+    select(index){
         if (this.selectedIndex != index){
             var prev = this.selectedIndex;
             this.selectedIndex = index;
@@ -606,7 +632,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
             this._.fired(this, this.selectedIndex);
             this.vrp();
         }
-    };
+    }
 
     /**
      * Get the given tab. Using the tab you can control tab caption,
@@ -615,31 +641,31 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @return  {zebkit.ui.Tabs.TabView}
      * @method getTab
      */
-    this.getTab = function(pageIndex){
+    getTab(pageIndex){
         return this.pages[pageIndex * 2];
-    };
+    }
 
     /**
      * Set tab side spaces.
      * @param {Integer} sideSpace  [description]
      * @method setSideSpace
      */
-    this.setSideSpace = function(sideSpace){
+    setSideSpace(sideSpace){
         if (sideSpace != this.sideSpace) {
             this.sideSpace = sideSpace;
             this.vrp();
         }
         return this;
-    };
+    }
 
-    this.setPageGaps = function (vg,hg){
+    setPageGaps(vg,hg){
         if (this.vgap != vg || hg != this.hgap){
             this.vgap = vg;
             this.hgap = hg;
             this.vrp();
         }
         return this;
-    };
+    }
 
     /**
      * Set the tab page element alignments
@@ -647,13 +673,13 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * "left", "right", "top", "bottom"
      * @method  setAlignment
      */
-    this.setAlignment = function(o){
+    setAlignment(o){
         if (this.orient !== o) {
             this.orient = zebkit.util.$validateValue(o, "top", "bottom", "left", "right");
             this.vrp();
         }
         return this;
-    };
+    }
 
     /**
      * Set enabled state for the given tab page
@@ -661,7 +687,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
      * @param  {Boolean} b a tab page enabled state
      * @method enableTab
      */
-    this.enableTab = function(i,b){
+    enableTab(i,b){
         var c = this.kids[i];
         if (c.isEnabled != b){
             c.setEnabled(b);
@@ -671,7 +697,7 @@ export default class Tabs extends Panel, $ViewsSetterMix {
             this.repaint();
         }
         return this;
-    };
+    }
 
     /**
      *  Set number of views to render different Tab component elements
@@ -693,8 +719,8 @@ export default class Tabs extends Panel, $ViewsSetterMix {
 
     // static
 
-    function focused(){
-        this.$super();
+    focused(){
+        super.focused();
         if (this.selectedIndex >= 0){
             var r = this.getTabBounds(this.selectedIndex);
             this.repaint(r.x, r.y, r.width, r.height);
@@ -704,9 +730,9 @@ export default class Tabs extends Panel, $ViewsSetterMix {
                 this.select(this.next(0, 1));
             }
         }
-    },
+    }
 
-    function kidAdded(index,constr,c) {
+    kidAdded(index,constr,c) {
         // correct wrong selection if inserted tab index is less or equals
         if (this.selectedIndex >= 0 && index <= this.selectedIndex) {
             this.selectedIndex++;
@@ -716,26 +742,25 @@ export default class Tabs extends Panel, $ViewsSetterMix {
             this.select(this.next(0, 1));
         }
 
-        return this.$super(index,constr,c);
-    },
+        return super.kidAdded(index,constr,c);
+    }
 
-    function insert(index,constr,c) {
+    insert(index,constr?,c?) {
         var render = null;
-        if (zebkit.instanceOf(constr, this.clazz.TabView)) {
+        if (types.instanceOf(constr, this.clazz.TabView)) {
             render = constr;
         }
         else {
-            render = new this.clazz.TabView((constr == null ? "Page " + index
-                                                             : constr ));
+            render = new this.clazz.TabView((constr == null ? "Page " + index : constr ));
             render.ownerChanged(this); // TODO: a little bit ugly but setting an owner is required to
                                        // keep tabs component informed when an icon has been updated
         }
 
         this.pages.splice(index * 2, 0, render, { x:0, y:0, width:0, height:0 });
-        return this.$super(index, constr, c);
-    },
+        return super.insert(index, constr, c);
+    }
 
-    function removeAt(i){
+    removeAt(i){
         if (this.selectedIndex >= 0 && i <= this.selectedIndex) {
             if (i === this.selectedIndex) this.select(-1);
             else {
@@ -744,22 +769,22 @@ export default class Tabs extends Panel, $ViewsSetterMix {
             }
         }
         this.pages.splice(i * 2, 2);
-        this.$super(i);
-    },
+        super.removeAt(i);
+    }
 
-    function removeAll(){
+    removeAll(){
         this.select(-1);
         this.pages.splice(0, this.pages.length);
         this.pages.length = 0;
-        this.$super();
-    },
+        super.removeAll();
+    }
 
-    function setSize(w,h){
+    setSize(w,h){
         if (this.width != w || this.height != h){
             if (this.orient === "right" || this.orient === "bottom") {
                 this.tabAreaX =  -1;
             }
-            this.$super(w, h);
+            super.setSize(w, h);
         }
         return this;
     }

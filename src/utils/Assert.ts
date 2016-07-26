@@ -1,4 +1,4 @@
-class AssertionError extends Error {
+export default class AssertionError extends Error {
     err: any;
 
     constructor(msg) {
@@ -107,7 +107,3 @@ class AssertionError extends Error {
         }
     }    
 }
-
-
-
-

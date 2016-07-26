@@ -15,3 +15,16 @@ export function isBoolean(o) {
     return typeof o !== "undefined" && o !== null &&
           (typeof o === "boolean" || o.constructor === Boolean);
 }
+
+export const instanceOf = function(obj, clazz) {
+    if (clazz != null) {
+        if (obj == null || typeof obj.clazz === 'undefined') {
+            return false;
+        }
+
+        var c = obj.clazz;
+        return c != null && (c === clazz || typeof c.$parents[clazz.$hash$] !== "undefined");
+    }
+
+    throw new Error("instanceOf(): null class");
+};

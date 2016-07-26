@@ -18,38 +18,41 @@
 import SwitchManager from './SwitchManager';
 
 export default class Group extends SwitchManager {
-    constructor(un) {
+    allowNoneSelected: boolean;
+    selected: any;
+
+    constructor(un?) {
         super();
         this.allowNoneSelected = false;
-
-        this.getValue = function(o) {
-            return o === this.selected;
-        };
-
-        this.setValue = function(o, b){
-            if (this.allowNoneSelected && b === false && this.selected !== null) {
-                var old = this.selected;
-                this.selected = null;
-                this.updated(old, false);
-            } else if (b && this.selected !== o) {
-                this.clearSelected();
-                this.selected = o;
-                this.updated(this.selected, true);
-            }
-            return this;
-        }
-
-        this.clearSelected = function() {
-            if (this.selected !== null) {
-                var old = this.selected;
-                this.selected = null;
-                this.updated(old, false);
-            }
-        }
 
         this.selected = null;
         if (arguments.length > 0) {
             this.allowNoneSelected = un;
+        }        
+    }
+
+    getValue(o) {
+        return o === this.selected;
+    };
+
+    setValue(o, b){
+        if (this.allowNoneSelected && b === false && this.selected !== null) {
+            var old = this.selected;
+            this.selected = null;
+            this.updated(old, false);
+        } else if (b && this.selected !== o) {
+            this.clearSelected();
+            this.selected = o;
+            this.updated(this.selected, true);
+        }
+        return this;
+    }
+
+    clearSelected() {
+        if (this.selected !== null) {
+            var old = this.selected;
+            this.selected = null;
+            this.updated(old, false);
         }
     }
 }

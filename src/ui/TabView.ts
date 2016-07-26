@@ -8,29 +8,43 @@
  */
 
 import CompRender from './CompRender';
+import Panel from '../core/Panel';
+import { ImagePan, ViewPan } from '../'
+import ViewSet from '../ViewSet';
+
+class TabPan extends Panel {
+    constructor() {
+        super();
+        this.add(new ImagePan(null));
+        this.add(new ViewPan());
+    }
+
+    // static
+
+    getImagePan() {
+        return this.kids[0];
+    }
+
+    getViewPan() {
+        return this.kids[1];
+    }
+}
+
+const Clazz = function() {
+    this.font = font;
+
+    this.TabPan = TabPan; 
+}
 
 export default class TabView extends CompRender {
-    $clazz() {
-        this.font = pkg.font;
+    get clazz() {
+        return new Clazz();
+    }
 
-        this.TabPan = Class(pkg.Panel, [
-            function() {
-                this.$super();
-                this.add(new pkg.ImagePan(null));
-                this.add(new pkg.ViewPan());
-            },
+    owner: any;
 
-            function getImagePan() {
-                return this.kids[0];
-            },
-
-            function getViewPan() {
-                return this.kids[1];
-            }
-        ]);
-    },
-
-    function(icon, caption) {
+    constructor(icon, caption) {
+        super(icon, caption);
         if (arguments.length === 0) {
             caption = "";
         }
@@ -42,7 +56,9 @@ export default class TabView extends CompRender {
         }
 
         var tp = new this.clazz.TabPan();
-        this.$super(tp);
+
+        // this.$super(tp);
+
         this.owner = null;
 
         var $this = this;
@@ -66,7 +82,7 @@ export default class TabView extends CompRender {
         r1.setFont (this.clazz.selectedFont);
 
         this.getCaptionPan().setView(
-            new pkg.ViewSet(
+            new ViewSet(
                 {
                     "selected": r1,
                     "*"       : r2
@@ -99,15 +115,17 @@ export default class TabView extends CompRender {
         );
 
         this.setIcon(icon);
-    },
+    }
 
-    function ownerChanged(v) {
+    // static
+
+    ownerChanged(v) {
         this.owner = v;
-    },
+    }
 
-    function vrp() {
+    vrp() {
         if (this.owner != null) this.owner.vrp();
-    },
+    }
 
     /**
      * Set the given tab caption for the specified tab or both - selected and not selected - states.
@@ -115,7 +133,7 @@ export default class TabView extends CompRender {
      * @param {String} s the tab caption
      * @method setCaption
      */
-    function setCaption(b, s) {
+    setCaption(b, s) {
         if (arguments.length === 1) {
             this.setCaption(true, b);
             this.setCaption(false, b);
@@ -124,7 +142,7 @@ export default class TabView extends CompRender {
             this.vrp();
         }
         return this;
-    },
+    }
 
     /**
      * Get the tab caption for the specified tab state
@@ -132,9 +150,9 @@ export default class TabView extends CompRender {
      * @return {String} the tab caption
      * @method getCaption
      */
-    function getCaption(b) {
+    getCaption(b) {
         return this.getCaptionPan().view.getCaption(this.$toId(b));
-    },
+    }
 
     /**
      * Set the given tab caption text color for the specified tab or both
@@ -143,7 +161,7 @@ export default class TabView extends CompRender {
      * @param {String} c the tab caption
      * @method setColor
      */
-    function setColor(b, c) {
+    setColor(b, c) {
         if (arguments.length === 1) {
             this.setColor(true, b);
             this.setColor(false, b);
@@ -155,7 +173,7 @@ export default class TabView extends CompRender {
             }
         }
         return this;
-    },
+    }
 
     /**
      * Set the given tab caption text font for the specified or both
@@ -164,7 +182,7 @@ export default class TabView extends CompRender {
      * @param {zebkit.ui.Font} f the tab text font
      * @method setFont
      */
-    function setFont(b, f) {
+    setFont(b, f) {
         if (arguments.length === 1) {
             this.setFont(true, b);
             this.setFont(false, b);
@@ -173,22 +191,22 @@ export default class TabView extends CompRender {
             this.vrp();
         }
         return this;
-    },
+    }
 
-    function getCaptionPan() {
+    getCaptionPan() {
         return this.target.getViewPan();
-    },
+    }
 
     /**
      * Set the tab icon.
      * @param {String|Image} c an icon path or image object
      * @method setIcon
      */
-    function setIcon(c) {
+    setIcon(c) {
         this.target.getImagePan().setImage(c);
         this.target.getImagePan().setVisible(c != null);
         return this;
-    },
+    }
 
     /**
      * The method is invoked every time the tab selection state has been updated
@@ -197,11 +215,11 @@ export default class TabView extends CompRender {
      * @param {Boolean} b a new state of the tab
      * @method selected
      */
-    function selected(tabs, i, b) {
+    selected(tabs, i, b) {
         this.getCaptionPan().view.activate(this.$toId(b));
-    },
+    }
 
-    function $toId(b) {
+    $toId(b) {
         return b ? "selected" : "*";
     }
 }

@@ -20,7 +20,7 @@ import HtmlCanvas from './HtmlCanvas';
 export default class CanvasLayer extends HtmlCanvas {
     id: string;
 
-    constructor(e) {
+    constructor(e?) {
         super(e);
 
         this.id = this.clazz.ID;

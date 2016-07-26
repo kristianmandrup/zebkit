@@ -74,10 +74,16 @@
  * @param {Integer}  lines a number of lines that has been affected
  * by the text model update
  */
+import {ListenersClass} from '../utils/listen';
+
  export default class TextModel {    
     // hack to detect text model class
-    isTextModel = true;
-    Listeners = zebkit.util.ListenersClass("textUpdated");
+    get clazz() {
+        return {
+            isTextModel: true,
+            Listeners: ListenersClass("textUpdated")
+        }
+    }
  }
 
 

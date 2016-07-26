@@ -53,55 +53,69 @@ import data from '.';
  * @param {zebkit.data.TreeModel} src a tree model that triggers the event
  * @param {zebkit.data.Item}  item an item that has been inserted into the tree model
  */
+import {ListenersClass} from '../utils/listen';
+import Item from './Item';
+import types from '../utils';
+
+const create = function(r, p) {
+    var item = new Item(r.hasOwnProperty("value")? r.value : r);
+    item.parent = p;
+    if (r.hasOwnProperty("kids")) {
+        for(var i = 0; i < r.kids.length; i++) {
+            item.kids[i] = TreeModel.create(r.kids[i], item);
+        }
+    }
+    return item;
+};
+
+const findOne = function(root, value) {
+    var res = null;
+    data.TreeModel.find(root, value, function(item) {
+        res = item;
+        return true;
+    });
+    return res;
+};
+
+const find = function(root, value, cb) {
+    if (cb == null) {
+        var res = [];
+        TreeModel.find(root, value, function(item) {
+            res.push(item);
+            return false;
+        });
+        return res;
+    }
+
+    if (root.value === value) {
+        if (cb.call(this, root) === true) return true;
+    }
+
+    if (root.kids != null) {
+        for (var i = 0; i < root.kids.length; i++) {
+            if (TreeModel.find(root.kids[i], value, cb)) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
 
 export default class TreeModel {
-    $clazz = () => {
-        this.Listeners = zebkit.util.ListenersClass("itemModified", "itemRemoved", "itemInserted");
-
-        this.create = function(r, p) {
-            var item = new data.Item(r.hasOwnProperty("value")? r.value : r);
-            item.parent = p;
-            if (r.hasOwnProperty("kids")) {
-                for(var i = 0; i < r.kids.length; i++) {
-                    item.kids[i] = pkg.TreeModel.create(r.kids[i], item);
-                }
-            }
-            return item;
-        };
-
-        this.findOne = function(root, value) {
-            var res = null;
-            data.TreeModel.find(root, value, function(item) {
-                res = item;
-                return true;
-            });
-            return res;
-        };
-
-        this.find = function(root, value, cb) {
-            if (cb == null) {
-                var res = [];
-                pkg.TreeModel.find(root, value, function(item) {
-                    res.push(item);
-                    return false;
-                });
-                return res;
-            }
-
-            if (root.value === value) {
-                if (cb.call(this, root) === true) return true;
-            }
-
-            if (root.kids != null) {
-                for (var i = 0; i < root.kids.length; i++) {
-                    if (pkg.TreeModel.find(root.kids[i], value, cb)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        };
+    get clazz() {
+        return {
+            Listeners: ListenersClass("itemModified", "itemRemoved", "itemInserted"),
+            create: create,
+            find: find,
+            findOne: findOne
+        }    
     }
+
+    static find = find;
+    static create = create;
+    static findOne = findOne;
+
+    root: any;
 
     constructor() {
         if (arguments.length === 0) r = new pkg.Item();
@@ -112,7 +126,7 @@ export default class TreeModel {
          * @type {zebkit.data.Item}
          * @readOnly
          */
-        this.root = zebkit.instanceOf(r, pkg.Item) ? r : TreeModel.create(r);
+        this.root = types.instanceOf(r, pkg.Item) ? r : TreeModel.create(r);
         this.root.parent = null;
         this._ = new this.clazz.Listeners();      
     }
