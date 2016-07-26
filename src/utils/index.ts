@@ -8,6 +8,12 @@ export const intersect = _intersect;
 
 import * as _listen from './intersect';
 export const listen = _listen;
+ 
+import * as _tools from './tools';
+export const tools = _tools;
+
+import * as _env from './environment';
+export const environment = _env;
 
 import * as _rgb from './rgb';
 export const rgb = _rgb;

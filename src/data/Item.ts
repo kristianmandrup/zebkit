@@ -7,7 +7,7 @@
  */
 export default class Item {
     kids: any[];
-    value: Object;
+    value: any;
 
     constructor(v) {
         /**

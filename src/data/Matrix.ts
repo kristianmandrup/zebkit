@@ -55,24 +55,28 @@
 */
 
 import {ListenersClass} from '../utils/listen';
-
+import Data from './Data';
 // import descent
 // import $FN
 
-export default class Matrix {
+const Listeners = ListenersClass("matrixResized", "cellModified",
+                                                        "matrixSorted", "matrixRowInserted",
+                                                        "matrixColInserted");
+
+export default class Matrix extends Data {
 
     get clazz() {
         return {
-            Listeners: ListenersClass("matrixResized", "cellModified",
-                                                        "matrixSorted", "matrixRowInserted",
-                                                        "matrixColInserted");
+            Listeners: Listeners 
         }
     }
 
     rows: any;
     cols: any;
     objs: any[];
+    _: any;
     constructor() {
+        super();
         /**
          * Number of rows in the matrix model
          * @attribute rows
@@ -331,7 +335,7 @@ export default class Matrix {
      */
     sortCol(col, f) {
         if (f == null) {
-            f = descent;
+            f = this.descent;
         }
 
         this.objs.sort(function(a, b) {

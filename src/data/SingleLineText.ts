@@ -11,6 +11,8 @@ export default class SingleLineTxt extends TextModel {
     maxLen: number;
     extra: number;
     buf: string;
+    _: any;
+
     constructor(s, max?) {
         super();
         this.maxLen = max == null ? -1 : max;

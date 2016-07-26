@@ -1,3 +1,5 @@
+import { types } from './';
+
 if (typeof console === "undefined" ) {
     console = {
         log  : function() {
@@ -6,9 +8,11 @@ if (typeof console === "undefined" ) {
     };
 }
 
+export const $caller    = null; // currently called method reference
+
 export const assume = function(c, er, lab) {
-        if (c !== er) pkg.warn("Wrong assumption " + (lab ? "'" + lab + "'":"") + " evaluated = '" + c  + "' expected = '" + er + "'");
-    };
+    if (c !== er) pkg.warn("Wrong assumption " + (lab ? "'" + lab + "'":"") + " evaluated = '" + c  + "' expected = '" + er + "'");
+};
 
 export const obj2str = function(v, shift) {
     if (typeof shift === "undefined") shift = "";
@@ -35,11 +39,12 @@ export const obj2str = function(v, shift) {
     }
     s.push("\n", shift, "}");
     return s.join('');
-};
+}
 
+export const $FN = function(f) { return f.name; };
 
 export const $annotate = function (clazz, callback) {
-    var methodName = pkg.$FN(callback);
+    var methodName = $FN(callback);
 
     if (typeof clazz.prototype[methodName] !== 'function') {
         throw new Error("Method '" + methodName + "' not found");
@@ -61,4 +66,4 @@ export const $annotate = function (clazz, callback) {
     };
 
     clazz.prototype[methodName].$watched = m;
-};
+}

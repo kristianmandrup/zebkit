@@ -1,5 +1,3 @@
-import data from '.';
-
 /**
  * Tree model class. The class is simple and handy way to keep hierarchical structure.
  * @constructor
@@ -54,10 +52,10 @@ import data from '.';
  * @param {zebkit.data.Item}  item an item that has been inserted into the tree model
  */
 import {ListenersClass} from '../utils/listen';
-import Item from './Item';
-import types from '../utils';
+import { Item } from './'; 
+import { types } from '../utils';
 
-const create = function(r, p) {
+const create = function(r, p?) {
     var item = new Item(r.hasOwnProperty("value")? r.value : r);
     item.parent = p;
     if (r.hasOwnProperty("kids")) {
@@ -70,7 +68,7 @@ const create = function(r, p) {
 
 const findOne = function(root, value) {
     var res = null;
-    data.TreeModel.find(root, value, function(item) {
+    TreeModel.find(root, value, function(item) {
         res = item;
         return true;
     });
@@ -116,9 +114,13 @@ export default class TreeModel {
     static findOne = findOne;
 
     root: any;
+    _: any;
 
-    constructor() {
-        if (arguments.length === 0) r = new pkg.Item();
+    constructor(r?) {
+        var r;
+        if (arguments.length === 0) {
+            r = new Item();
+        }
 
         /**
          * Reference to the tree model root item
@@ -126,7 +128,7 @@ export default class TreeModel {
          * @type {zebkit.data.Item}
          * @readOnly
          */
-        this.root = types.instanceOf(r, pkg.Item) ? r : TreeModel.create(r);
+        this.root = types.instanceOf(r, Item) ? r : TreeModel.create(r);
         this.root.parent = null;
         this._ = new this.clazz.Listeners();      
     }
@@ -176,8 +178,8 @@ export default class TreeModel {
      */
     insert(to,item,i){
         if (i < 0 || to.kids.length < i) throw new RangeError(i);
-        if (zebkit.isString(item)) {
-            item = new pkg.Item(item);
+        if (types.isString(item)) {
+            item = new Item(item);
         }
         to.kids.splice(i, 0, item);
         item.parent = to;

@@ -1,3 +1,5 @@
+import {environment, types} from '../../utils';
+
 export default class Output {
     constructor() {
     }
@@ -8,7 +10,7 @@ export default class Output {
 
     _p(l, o) {
         o = this.format(o);
-        if (web.isInBrowser) {
+        if (environment.isInBrowser) {
             if (typeof console === "undefined" || !console.log) {
                 alert(o);
             }
@@ -20,14 +22,14 @@ export default class Output {
                 }
             }
         }
-        else $global.print(o);
+        else environment.$global.print(o);
     };
 
     format(o) {
         if (o && o.stack) return [o.toString(), ":",  o.stack.toString()].join("\n");
         if (o === null) return "<null>";
         if (typeof o === "undefined") return "<undefined>";
-        if (type.isString(o) || type.isNumber(o) || type.isBoolean(o)) return o;
+        if (types.isString(o) || types.isNumber(o) || types.isBoolean(o)) return o;
         var d = [o.toString() + " " + (o.clazz ? o.clazz.$name:"") , "{"];
         for(var k in o) if (o.hasOwnProperty(k)) d.push("    " + k + " = " + o[k]);
         return d.join('\n') + "\n}";

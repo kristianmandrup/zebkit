@@ -1,11 +1,16 @@
-import io from '../';
+import { HTTP } from '../Http';
 import Output from './Output';
 
 export default class RemoteOutput extends Output {
-    constructor(url) {
-        super(url);
+    http: HTTP;
+    apikey: string;
+    buffer: string[];
+    $justSaved: boolean;
 
-        this.http   = new io.HTTP(url);
+    constructor(url) {
+        super();
+
+        this.http   = new HTTP(url);
         this.apikey = "19751975";
         this.buffer = [];
         this.$justSaved = false;

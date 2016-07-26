@@ -1,7 +1,9 @@
 import Output from './Output';
-import types from '../../types';
+import { types } from '../../utils';
 
 export default class HtmlOutput extends Output {
+    el: any;
+
     constructor(element) {
         super();
 
@@ -25,9 +27,9 @@ export default class HtmlOutput extends Output {
         }
     }
 
-    print(s) { this.out('black', s); },
-    error(s) { this.out('red', s); },
-    warn(s)  { this.out('orange', s); },
+    print(s) { this.out('black', s); }
+    error(s) { this.out('red', s); }
+    warn(s)  { this.out('orange', s); }
 
     out(color, msg) {
         var t = ["<div class='zebkit.out.print' style='color:", color, "'>", this.format(msg), "</div>" ];

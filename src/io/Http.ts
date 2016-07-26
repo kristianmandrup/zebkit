@@ -1,8 +1,12 @@
+import {types, environment} from '../utils';
+import { default as QS} from '../io/parser/QueryString';
+import URL
+
 export const getRequest = function() {
     if (typeof XMLHttpRequest !== "undefined") {
         var r = new XMLHttpRequest();
 
-        if (web.isFF) {
+        if (environment.isFF) {
             r.__send = r.send;
             r.send = function(data) {
                 // !!! FF can throw NS_ERROR_FAILURE exception instead of
@@ -59,12 +63,12 @@ export const getRequest = function() {
  * @method GET
  */
 export const GET = function(url) {
-    if (utils.isString(url)) {
+    if (types.isString(url)) {
         var http = new HTTP(url);
         return http.GET.apply(http, Array.prototype.slice.call(arguments, 1));
     }
     else {
-        var http = new pkg.HTTP(url.url);
+        var http = new HTTP(url.url);
         if (url.header) {
             http.header = url.header;
         }
@@ -178,12 +182,12 @@ export class HTTP {
 
      * @method GET
      */
-    GET(q, f) {
+    GET(q, f?) {
         if (typeof q == 'function') {
             f = q;
             q = null;
         }
-        return this.SEND("GET", pkg.QS.append(this.url, q), null, f);
+        return this.SEND("GET", QS.append(this.url, q), null, f);
     }
 
     /**
@@ -220,7 +224,7 @@ export class HTTP {
 
      * @method POST
      */
-    POST(d, f) {
+    POST(d, f?) {
         if (typeof d == 'function') {
             f = d;
             d = null;
@@ -231,12 +235,12 @@ export class HTTP {
         //
         // TODO: think also about changing content type
         // "application/x-www-form-urlencoded; charset=UTF-8"
-        if (d != null && zebkit.isString(d) === false && d.constructor === Object) {
-            d = pkg.QS.toQS(d, false);
+        if (d != null && types.isString(d) === false && d.constructor === Object) {
+            d = QS.toQS(d, false);
         }
 
         return this.SEND("POST", this.url, d, f);
-    },
+    }
 
     /**
      * Universal HTTP request method that can be used to generate
@@ -289,7 +293,7 @@ export class HTTP {
             if (r.status != 200) {
 
                 // requesting local files can return 0 as a success result
-                if (r.status !== 0 || new zebkit.URL(this.url).protocol != "file:") {
+                if (r.status !== 0 || new URL(this.url).protocol != "file:") {
                     var e = new Error("HTTP error " + r.status + " response = '" + r.statusText + "' url = " + url);
                     e.request = r;
                     throw e;

@@ -1,4 +1,4 @@
-import type from '../type';
+import { types } from '../../utils';
 
 /**
  * Query string parser class. The class provides number of
@@ -18,7 +18,7 @@ export default class QS {
      * @method append
      */
     append(url, obj) {
-        return url + ((obj === null) ? '' : ((url.indexOf("?") > 0) ? '&' : '?') + pkg.QS.toQS(obj, true));
+        return url + ((obj === null) ? '' : ((url.indexOf("?") > 0) ? '&' : '?') + QS.toQS(obj, true));
     }
 
     /**
@@ -48,7 +48,7 @@ export default class QS {
      */
     toQS(obj, encode) {
         if (typeof encode === "undefined") encode = true;
-        if (type.isString(obj) || type.isBoolean(obj) || type.isNumber(obj)) {
+        if (types.isString(obj) || types.isBoolean(obj) || types.isNumber(obj)) {
             return "" + obj;
         }
 

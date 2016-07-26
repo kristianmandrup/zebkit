@@ -21,7 +21,8 @@ export default class Text extends TextModel {
     textLength: number;
     lines: [];
 
-    clazz() {
+    // TODO: Fix
+    get clazz() {
         return Text;
     }
 

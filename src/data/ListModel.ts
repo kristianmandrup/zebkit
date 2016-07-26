@@ -50,9 +50,11 @@
   * @param {Integer} i an index at that the element has been re-set
   */
 
-import {ListenersClass} from '../utils/listen';
+import { ListenersClass } from '../utils/listen';
 
 export default class ListModel {
+    d: any;
+    _: any;
 
     get clazz() {
         return {
