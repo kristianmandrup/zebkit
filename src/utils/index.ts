@@ -14,6 +14,7 @@ export const rgb = _rgb;
 
 export { $validateValue } from './validate';
 export { isLetter } from './letter';
+export { default as mix } from './mix';
 
 export { default as Assert } from './Assert';
 export { default as Bag } from './Bag';

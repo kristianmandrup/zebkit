@@ -1,5 +1,3 @@
-import View from './View';
-
 /**
 * Sunken border view
 * @class zebkit.ui.Sunken
@@ -9,12 +7,10 @@ import View from './View';
 * @param {String} [darkest] a darkest border line color
 * @extends zebkit.ui.View
 */
-class Sunken extends View {
-    brightest: string;
-    middle: string;
-    darkest: string;
+import View from './View';
 
-    constructor(brightest:string, middle:string, darkest:string) {
+class Sunken extends View {
+    constructor(public brightest : string, public middle : string, public darkest : string) {
         super();
 
         /**

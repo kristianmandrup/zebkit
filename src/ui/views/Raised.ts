@@ -6,8 +6,12 @@
 * @constructor
 * @extends zebkit.ui.View
 */
+import View from './View';
+
 class Raised extends View {
-    function(brightest, middle) {
+    constructor(public brightest: string = 'white', public middle: string = 'gray') {
+        super();
+        
         /**
          * Brightest border line color
          * @attribute brightest
@@ -26,20 +30,15 @@ class Raised extends View {
 
         if (arguments.length > 0) this.brightest = brightest;
         if (arguments.length > 1) this.middle    = middle;
-    },
+    }
 
-    function $prototype() {
-        this.brightest = "white";
-        this.middle    = "gray";
-
-        this.paint = function(g,x1,y1,w,h,d){
-            var x2 = x1 + w - 1, y2 = y1 + h - 1;
-            g.setColor(this.brightest);
-            g.drawLine(x1, y1, x2, y1);
-            g.drawLine(x1, y1, x1, y2);
-            g.setColor(this.middle);
-            g.drawLine(x2, y1, x2, y2 + 1);
-            g.drawLine(x1, y2, x2, y2);
-        };
+    paint(g,x1,y1,w,h,d){
+        var x2 = x1 + w - 1, y2 = y1 + h - 1;
+        g.setColor(this.brightest);
+        g.drawLine(x1, y1, x2, y1);
+        g.drawLine(x1, y1, x1, y2);
+        g.setColor(this.middle);
+        g.drawLine(x2, y1, x2, y2 + 1);
+        g.drawLine(x1, y2, x2, y2);
     }
 }

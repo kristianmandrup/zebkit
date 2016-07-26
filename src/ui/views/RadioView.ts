@@ -1,6 +1,3 @@
-import Canvas from 'canvas';
-import View from './View';
-
 /**
  * The radio button ticker view.
  * @class  zebkit.ui.RadioView
@@ -9,6 +6,9 @@ import View from './View';
  * @param {String} [col1] color one to render the outer cycle
  * @param {String} [col2] color tow to render the inner cycle
  */
+import Canvas from 'canvas';
+import View from './View';
+
 export default class RadioView extends View {
     color1: string;
     color2: string;

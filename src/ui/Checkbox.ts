@@ -59,38 +59,38 @@
  * @param {String|zebkit.ui.Panel} [label] a label
  * @param {zebkit.ui.SwitchManager} [m] a switch manager
  */
-import {StatePan, Label} from '.';
+import { StatePan, Label } from './';
+import SwitchManager from './SwitchManager';
+import { types } from '../utils';
+import KeyEvent from './web/keys/KeyEvent';
 
+// TODO: use mixin
 export default class Checkbox extends CompositeEvStatePan, Switchable {
-    static $clazz = {
-        /**
-         * The box UI component class that is used by default with
-         * the check box component.
-         * @constructor
-         * @class zebkit.ui.Checkbox.Box
-         * @extends zebkit.ui.ViewPan
-         */
-        Box: StatePan,
-
-        /**
-         * @for zebkit.ui.Checkbox
-         */
-        Label: Label
+    get clazz() {
+        return {
+            /**
+             * The box UI component class that is used by default with
+             * the check box component.
+             * @constructor
+             * @class zebkit.ui.Checkbox.Box
+             * @extends zebkit.ui.ViewPan
+             */
+            Box: StatePan,
+            Label: Label
+        }
     }
 
     constructor(c, m) {
         super();
 
-  
+
         if (arguments.length < 2) {
-            m = new pkg.SwitchManager();
+            m = new SwitchManager();
         }
 
-        if (zebkit.isString(c)) {
+        if (types.isString(c)) {
             c = new this.clazz.Label(c);
         }
-
-        this.$super();
 
         /**
          * Reference to box component
@@ -134,15 +134,16 @@ export default class Checkbox extends CompositeEvStatePan, Switchable {
             return (this.state === OVER) ? "off.over" : "off.out";
         }
         return this.getValue() ? "don" : "doff";
-    };
+    }
 
+    // static
 
-    function keyPressed(e){
-        if (zebkit.instanceOf(this.manager, pkg.Group) && this.getValue()){
+    keyPressed(e){
+        if (types.instanceOf(this.manager, pkg.Group) && this.getValue()){
             var d = 0;
-            if (e.code === pkg.KeyEvent.LEFT || e.code === pkg.KeyEvent.UP) d = -1;
+            if (e.code === KeyEvent.LEFT || e.code === KeyEvent.UP) d = -1;
             else {
-                if (e.code === pkg.KeyEvent.RIGHT || e.code === pkg.KeyEvent.DOWN) d = 1;
+                if (e.code === KeyEvent.RIGHT || e.code === KeyEvent.DOWN) d = 1;
             }
 
             if (d !== 0) {
@@ -151,7 +152,7 @@ export default class Checkbox extends CompositeEvStatePan, Switchable {
                     var l = p.kids[i];
                     if (l.isVisible === true &&
                         l.isEnabled === true &&
-                        zebkit.instanceOf(l, pkg.Checkbox) &&
+                        types.instanceOf(l, Checkbox) &&
                         l.manager === this.manager      )
                     {
                         l.requestFocus();
@@ -162,20 +163,20 @@ export default class Checkbox extends CompositeEvStatePan, Switchable {
                 return ;
             }
         }
-        this.$super(e);
-    },
+        super.keyPressed(e);
+    }
 
-    function stateUpdated(o, n) {
+    stateUpdated(o, n) {
         if (o === PRESSED_OVER && n === OVER) {
             this.toggle();
         }
-        this.$super(o, n);
-    },
+        super.stateUpdated(o, n);
+    }
 
-    function kidRemoved(index,c) {
+    kidRemoved(index,c) {
         if (this.box === c) {
             this.box = null;
         }
-        this.$super(index,c);
+        super.kidRemoved(index,c);
     }
 }

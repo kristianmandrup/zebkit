@@ -10,14 +10,11 @@ import BaseTextRender from './BaseTextRender';
  * @extends {zebkit.ui.Render}
  * @class zebkit.ui.StringRender
  */
-class StringRender extends BaseTextRender {
-    txt: string;
+export default class StringRender extends BaseTextRender {
     stringWidth: number;
-    font: any;
-    color: string;
     clazz: any; // FIX
 
-    constructor(txt: string, font: string, color:string) {
+    constructor(public txt: string, public font: string, public color : string) {
         super(txt);
 
         this.stringWidth = -1;
@@ -51,18 +48,18 @@ class StringRender extends BaseTextRender {
         return this.target.length + 1;
     }
 
-    getLines = function() {
+    getLines() {
         return 1;
     }
 
-    calcLineWidth = function() {
+    calcLineWidth() {
         if (this.stringWidth < 0) {
             this.stringWidth = this.font.stringWidth(this.target);
         }
         return this.stringWidth;
     }
 
-    invalidate = function() {
+    invalidate () {
         this.stringWidth = -1;
     }
 
@@ -100,6 +97,8 @@ class StringRender extends BaseTextRender {
 
         g.fillText(this.target, x, y);
     }
+
+    // static
 
     /**
      * Return a string that is rendered by this class

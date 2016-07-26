@@ -1,6 +1,6 @@
 import View from './View';
 
-class LineView extends View {
+export default class LineView extends View {
     side: string;
     color: string;
     lineWidth: number;

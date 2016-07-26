@@ -6,7 +6,7 @@ import View from './View';
 * @constructor
 * @extends zebkit.ui.View
 */
-class Dotted extends View {
+export default class Dotted extends View {
     color: string;
 
     constructor(c){            

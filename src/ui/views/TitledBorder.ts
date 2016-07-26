@@ -1,5 +1,5 @@
 import Render from './Render';
-import utils from '../utils';
+import { $validateValue } from '../../utils/validate';
 
 /**
  * Render class that allows developers to render a border with a title area.
@@ -41,7 +41,7 @@ export default class TitledBorder extends Render {
     constructor(b, a){
         super(b);
         if (arguments.length > 1) {
-            this.lineAlignment = utils.$validateValue(a, "bottom", "top", "center");
+            this.lineAlignment = $validateValue(a, "bottom", "top", "center");
         }
         this.setTarget(b);
 

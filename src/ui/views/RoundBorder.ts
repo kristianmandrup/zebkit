@@ -1,4 +1,4 @@
-import utils from '../utils';
+import { types } from '../../utils';
 import View from './View';
 
 /**
@@ -11,11 +11,9 @@ import View from './View';
  * @extends zebkit.ui.View
  */
 export default class RoundBorder extends View {
-    width: number;
-    color: string;
     lineWidth: number;
 
-    constructor(col:number, width:number) {
+    constructor(public color : number, public width : number) {
         super();
         /**
          * Border width
@@ -37,10 +35,10 @@ export default class RoundBorder extends View {
 
 
         if (arguments.length > 0) {
-            if (utils.isNumber(col)) this.width = col;
+            if (types.isNumber(color)) this.width = color;
             else {
-                this.color = col;
-                if (utils.isNumber(width)) this.width = width;
+                this.color = color;
+                if (types.isNumber(width)) this.width = width;
             }
         }
         this.gap = this.width;

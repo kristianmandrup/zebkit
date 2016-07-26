@@ -6,6 +6,8 @@
  * @class zebkit.ui.BoldLabel
  * @extends zebkit.ui.Label
  */
+import Label from './Label';
+
 export default class BoldLabel extends Label {
   
 }

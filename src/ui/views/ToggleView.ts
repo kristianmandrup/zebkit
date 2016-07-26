@@ -11,14 +11,11 @@ import Border from '../ui/Border';
  * @param  {String} bg a background
  */
 class ToggleView extends View {
-    color: string;
-    bg: string;
-    plus: boolean;
     br: any; // Border
     width: number;
     height: number;
 
-    constructor(plus:boolean, color:string, bg:any, size:number) {
+    constructor(public plus : boolean, public color : string, public bg : any, size:number) {
       super();        
         this.color = "white";
         this.bg    = "lightGray";

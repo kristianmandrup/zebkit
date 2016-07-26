@@ -12,17 +12,19 @@
 import Panel from './core/Panel';
 import ImagePan from './core/ImagePan';
 import Label from './Label';
+import { types } from '../utils';
+import FlowLayout from '../layout/FlowLayout';
 
 export default class ImageLabel extends Panel {
-    static $clazz = {
+    clazz = {
         ImagePan: ImagePan,
         Label: Label
     }
 
     constructor(txt, img) {
         super();      
-        var img = zebkit.instanceOf(img, pkg.ImagePan) ? img : new this.clazz.ImagePan(img),
-            lab = zebkit.instanceOf(txt, pkg.Panel)    ? txt : new this.clazz.Label(txt);
+        var img = types.instanceOf(img, pkg.ImagePan) ? img : new this.clazz.ImagePan(img),
+            lab = types.instanceOf(txt, pkg.Panel)    ? txt : new this.clazz.Label(txt);
 
         img.constraints = "image";
         lab.constraints = "label";
@@ -34,7 +36,7 @@ export default class ImageLabel extends Panel {
             this.kids = [];
         }
 
-        this.layout = new zebkit.layout.FlowLayout("left", "center", "horizontal", 6);
+        this.layout = new FlowLayout("left", "center", "horizontal", 6);
 
         // add before panel constructor thanks to copy pasted code above
         this.add(img);

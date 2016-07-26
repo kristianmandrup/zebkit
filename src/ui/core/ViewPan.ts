@@ -10,7 +10,7 @@
 
 import Panel from './Panel';
 // import View from './View';
-import $view from '../views';
+import { $view } from '../views';
 
 export default class ViewPan extends Panel {
     view: any;

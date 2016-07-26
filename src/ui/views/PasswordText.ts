@@ -1,5 +1,5 @@
 import TextRender from './TextRender';
-import data from '../data';
+import SingleLineText from '../../data/SingleLineText';
 
 /**
  * Password text render class. This class renders a secret text with hiding it with the given character.
@@ -8,7 +8,7 @@ import data from '../data';
  * @constructor
  * @extends zebkit.ui.TextRender
  */
-class PasswordText extends TextRender {
+export default class PasswordText extends TextRender {
     echo: string;
     showLast: boolean;
 
@@ -16,7 +16,7 @@ class PasswordText extends TextRender {
         super(text);
 
         if (arguments.length === 0) {
-            text = new data.SingleLineTxt("");
+            text = new SingleLineText("");
         }
 
         /**

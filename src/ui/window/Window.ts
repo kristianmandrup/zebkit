@@ -162,12 +162,12 @@ export default class Window extends StatePan {
      * is active.
      * @method isActive
      */
-    this.isActive = function() {
+    isActive() {
         var c = this.getCanvas();
         return c != null && c.getLayer("win").activeWin === this.getWinContainer();
-    };
+    }
 
-    this.pointerDragStarted = function(e){
+    pointerDragStarted(e){
         this.px = e.absX;
         this.py = e.absY;
         this.action = this.insideCorner(e.x, e.y) ? (this.isSizeable ? SIZE_ACTION : -1)
@@ -175,9 +175,9 @@ export default class Window extends StatePan {
         if (this.action > 0) {
             this.dy = this.dx = 0;
         }
-    };
+    }
 
-    this.pointerDragged = function(e){
+    pointerDragged(e){
         if (this.action > 0) {
             if (this.action !== MOVE_ACTION){
                 var container = this.getWinContainer(),
@@ -198,9 +198,9 @@ export default class Window extends StatePan {
                 container.setLocation(this.dx + container.x, this.dy + container.y);
             }
         }
-    };
+    }
 
-    this.pointerDragEnded = function(e){
+    pointerDragEnded(e){
         if (this.action > 0){
             if (this.action === MOVE_ACTION){
                 var container = this.getWinContainer();
@@ -208,11 +208,11 @@ export default class Window extends StatePan {
             }
             this.action = -1;
         }
-    };
+    }
 
-    this.getWinContainer = function() {
+    getWinContainer() {
         return this;
-    };
+    }
 
     /**
      * Test if the pointer cursor is inside the window corner component
@@ -223,35 +223,35 @@ export default class Window extends StatePan {
      * corner component
      * @method insideCorner
      */
-    this.insideCorner = function(px,py){
+    insideCorner(px,py){
         return this.getComponentAt(px, py) === this.sizer;
-    };
+    }
 
-    this.getCursorType = function(target,x,y){
+    getCursorType(target,x,y){
         return (this.isSizeable && this.insideCorner(x, y)) ? pkg.Cursor.SE_RESIZE
                                                             : null;
-    };
+    }
 
-    this.catchInput = function(c){
+    catchInput(c){
         var tp = this.caption;
         return c === tp || (zebkit.layout.isAncestorOf(tp, c)         &&
                 zebkit.instanceOf(c, pkg.Button) === false) ||
                 this.sizer === c;
-    };
+    }
 
-    this.winOpened = function(e) {
+    winOpened(e) {
         var state = this.isActive() ? "active" : "inactive";
         if (this.caption != null && this.caption.setState != null) {
             this.caption.setState(state);
         }
         this.setState(state);
-    };
+    }
 
-    this.winActivated = function(e) {
+    winActivated(e) {
         this.winOpened(e);
-    };
+    }
 
-    this.pointerDoubleClicked = function (e){
+    pointerDoubleClicked(e){
         var x = e.x, y = e.y, cc = this.caption;
         if (this.isSizeable === true && x > cc.x &&
             x < cc.y + cc.width && y > cc.y && y < cc.y + cc.height)
@@ -259,7 +259,7 @@ export default class Window extends StatePan {
             if (this.prevW < 0) this.maximize();
             else this.restore();
         }
-    };
+    }
 
     /**
      * Test if the window has been maximized to occupy the whole
@@ -267,36 +267,36 @@ export default class Window extends StatePan {
      * @return {Boolean} true if the window has been maximized
      * @method isMaximized
      */
-    this.isMaximized = function() {
+    isMaximized() {
         return this.prevW != -1;
-    };
+    }
 
-    this.createCaptionPan = function() {
+    createCaptionPan() {
         return new this.clazz.CaptionPan();
-    };
+    }
 
-    this.createContentPan = function() {
+    createContentPan() {
         return new this.clazz.ContentPan();
-    };
+    }
 
-    this.createTitle = function() {
+    createTitle() {
         return new this.clazz.TitleLab();
-    };
+    }
 
-    this.setIcon = function(i, icon) {
+    setIcon(i, icon) {
         if (zebkit.isString(icon) || zebkit.instanceOf(icon, pkg.Picture)) {
             icon = new pkg.ImagePan(icon);
         }
         this.icons.setAt(i, icon);
         return this;
-    };
+    }
 
     /**
      * Make the window sizable or not sizeable
      * @param {Boolean} b a sizeable state of the window
      * @method setSizeable
      */
-    this.setSizeable = function(b){
+    setSizeable(b){
         if (this.isSizeable != b){
             this.isSizeable = b;
             if (this.sizer != null) {
@@ -304,13 +304,13 @@ export default class Window extends StatePan {
             }
         }
         return this;
-    };
+    }
 
     /**
      * Maximize the window
      * @method maximize
      */
-    this.maximize = function(){
+    maximize(){
         if(this.prevW < 0){
             var d    = this.getCanvas(),
                 cont = this.getWinContainer(),
@@ -326,27 +326,27 @@ export default class Window extends StatePan {
                             d.width  - left - d.getRight(),
                             d.height - top - d.getBottom());
         }
-    };
+    }
 
     /**
      * Restore the window size
      * @method restore
      */
-    this.restore = function(){
+    restore(){
         if (this.prevW >= 0){
             this.getWinContainer().setBounds(this.prevX, this.prevY,
                                               this.prevW, this.prevH);
             this.prevW = -1;
         }
-    };
+    }
 
     /**
      * Close the window
      * @method close
      */
-    this.close = function() {
+    close() {
         this.getWinContainer().removeMe();
-    };
+    }
 
     /**
      * Set the window buttons set.
@@ -356,7 +356,7 @@ export default class Window extends StatePan {
      * in the window component.
      * @method setButtons
      */
-    this.setButtons = function(buttons) {
+    setButtons(buttons) {
         // remove previously added buttons
         for(var i=0; i< this.buttons.length; i++) {
             var kid = this.buttons.kids[i];

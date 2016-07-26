@@ -1,8 +1,8 @@
 import BaseTextRender from './BaseTextRender';
-import utils from '../utils';
-import data from '../data';
-import ui from '../ui';
-import TextModel from './TextModel';
+import { utils } from '../../';
+import { TextModel, Text } from '../../data';
+import Font from '../web/Font';
+import { Position } from '../../utils/Position';
 
 /**
  * Text render that expects and draws a text model or a string as its target
@@ -11,9 +11,11 @@ import TextModel from './TextModel';
  * @extends zebkit.ui.Render
  * @param  {String|zebkit.data.TextModel} text a text as string or text model object
  */
-export default class TextRender extends BaseTextRender, util.Position.Metric {
+
+// TODO: use mixin
+export default class TextRender extends BaseTextRender, Position.Metric {
     color: string;
-    font: string | ui.Font;
+    font: string | Font;
     textWidth: number;
     textHeight: number;
     startInvLine: number;
@@ -22,7 +24,7 @@ export default class TextRender extends BaseTextRender, util.Position.Metric {
     target: TextModel;
     clazz: {
       color: string;
-      font: string | ui.Font;
+      font: string | Font;
     };
 
     // speed up constructor by avoiding super execution since
@@ -57,7 +59,7 @@ export default class TextRender extends BaseTextRender, util.Position.Metric {
         //   since text render is widely used structure we do slight hack -
         //   don't call parent constructor
         //!!!
-        this.setTarget(utils.isString(text) ? new data.Text(text) : text);
+        this.setTarget(types.isString(text) ? new Text(text) : text);
     }
 
     /**

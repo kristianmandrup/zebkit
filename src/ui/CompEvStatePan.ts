@@ -5,11 +5,14 @@
  * @class  zebkit.ui.CompositeEvStatePan
  */
 import EvStatePan from './EvStatePan';
+import Panel from './core/Panel'
+import { focusManager, $view } from '../utils'; 
 
 export default class CompositeEvStatePan extends EvStatePan {
     canHaveFocus: boolean;
     catchInput: boolean;
     focusComponent: boolean;
+    focusMarkerView: Panel;
 
     constructor() {
         super();
@@ -54,7 +57,7 @@ export default class CompositeEvStatePan extends EvStatePan {
      */
     setFocusMarkerView(c) {
         if (c != this.focusMarkerView){
-            this.focusMarkerView = pkg.$view(c);
+            this.focusMarkerView = $view(c);
             this.repaint();
         }
         return this;
@@ -67,7 +70,7 @@ export default class CompositeEvStatePan extends EvStatePan {
      */
     setCanHaveFocus(b) {
         if (this.canHaveFocus != b){
-            var fm = pkg.focusManager;
+            var fm = focusManager;
             if (b === false && fm.focusOwner === this) {
                 fm.requestFocus(null);
             }

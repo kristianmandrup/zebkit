@@ -1,5 +1,7 @@
 import View from './View';
-import palette from '../utils/palette';
+
+// load from json file!
+import { palette } from '../config';
 
 class TabBorder extends View {
     type: number;

@@ -8,7 +8,7 @@ import View from './View';
 * @param {String} [moddle] a middle border line color
 * @extends zebkit.ui.View
 */
-class Etched extends View {
+export default class Etched extends View {
     brightest: string;
     middle: string;    
 

@@ -34,7 +34,12 @@
  * @constructor
  * @extends {zebkit.ui.ViewPan}
  */
+import ViewPan from './core/ViewPan';
+
 export default class StatePan extends ViewPan {
+    state: any;
+    border: any;
+
     constructor() {
         super();
         /**

@@ -23,11 +23,23 @@
  *  @class zebkit.ui.BorderPan
  *  @extends {zebkit.ui.Panel}
  */
+
+import { Label, ImageLabel, Checkbox } from './';
+
+function Clazz() {
+    this.Label = Label;
+    this.ImageLabel = ImageLabel;
+    this.Checkbox = Checkbox;
+}
+
+import Panel from './core/Panel';
+import TitledBorder from './views/TitledBorder';
+import types from '../';
+import { $view } from './views';
+
 export default class BorderPan extends Panel {
-    $clazz() {
-        this.Label = Class(pkg.Label, []);
-        this.ImageLabel = Class(pkg.ImageLabel, []);
-        this.Checkbox = Class(pkg.Checkbox, []);
+    get clazz() {
+        return new Clazz();
     }
 
     constructor(title, center, o, a) {
@@ -90,7 +102,6 @@ export default class BorderPan extends Panel {
          */
         this.label = this.content = null;
 
-        this.$super();
         if (title  != null) this.add("caption", title);
         if (center != null) this.add("center", center);
         
@@ -194,8 +205,8 @@ export default class BorderPan extends Panel {
     // static
 
     setBorder(br) {
-        br = pkg.$view(br);
-        if (zebkit.instanceOf(br, pkg.TitledBorder) === false) {
+        br = $view(br);
+        if (types.instanceOf(br, TitledBorder) === false) {
             br = new TitledBorder(br, "center");
         }
         return super.setBorder(br);

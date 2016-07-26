@@ -34,36 +34,47 @@
  * @param {zebkit.ui.Button} src a button that has been pressed
  */
 
-import {CompositeEvStatePan, ButtonRepeatMix} from '.';
+import {CompEvStatePan, ButtonRepeatMix, Label, ImageLabel} from './';
+import ViewPan from './core/ViewPan';
 
-export default class Button extends CompositeEvStatePan, ButtonRepeatMix {
-    $clazz() {
-        this.Label = Class(pkg.Label, []);
+class ViewPanX extends ViewPan {
+    view: any;
 
-        this.ViewPan = Class(pkg.ViewPan, [
-            function $prototype() {
-                this.setState = function(id) {
-                    if (this.view != null && this.view.activate != null) {
-                        this.activate(id);
-                    }
-                };
-            },
+    constructor(v) {
+        super();
+        this.setView(v);
+    }
 
-            function(v) {
-                this.$super();
-                this.setView(v);
-            }
-        ]);
+    setState(id) {
+        if (this.view != null && this.view.activate != null) {
+            this.activate(id);
+        }
+    }
+}
 
-        this.ImageLabel = Class(pkg.ImageLabel, []);
-    },
+function Clazz() {
+    this.Label = Label;
+
+    this.ViewPan = ViewPanX;
+
+    this.ImageLabel = ImageLabel;
+}
+
+import { listen } from '../utils';
+
+export default class Button extends ButtonRepeatMix(CompEvStatePan)  {
+    canHaveFocus: boolean;
+    
+    get clazz() {
+        return new Clazz();
+    }
 
     constructor(t) {
         super();
-        this._ = new zebkit.util.Listeners();
+        this._ = new listen.Listeners();
 
         if (t != null) {
-            t = pkg.$component(t, this);
+            t = $component(t, this);
         }
 
         if (t != null) {

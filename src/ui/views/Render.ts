@@ -12,12 +12,8 @@ import View from './View';
  * @class zebkit.ui.Render
  */
 export default class Render extends View {
-    target: any;
-
-    constructor(target) {
+    constructor(public target?) {
         super();
-        this.setTarget(target);
-        
         /**
          * Target object to be visualized
          * @attribute target
@@ -26,8 +22,8 @@ export default class Render extends View {
          * @type {Object}
          */
         this.target = null;
-
         
+        this.setTarget(target);                
     }
 
     /**

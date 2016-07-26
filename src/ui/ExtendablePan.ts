@@ -32,122 +32,134 @@
   * @param {Boolean} isCollapsed a state of the extender UI component
   */
 
-  this.Label = Class(pkg.Label,[]);
+import StatePan from './StatePan';
 
-  this.ImageLabel = Class(pkg.ImageLabel,[]);
+class TogglePan extends StatePan {
+    constructor() {
+        super();
+        this.cursorType = pkg.Cursor.HAND;
+    }
 
-  this.TitlePan = Class(pkg.StatePan,[]);
+    pointerPressed(e){
+        if (e.isAction()) {
+            // TODO: not very nice ref
+            this.parent.parent.toggle();
+        }
+    }
+}
 
-  this.TogglePan = Class(pkg.StatePan, [
-      function $prototype() {
-          this.pointerPressed = function(e){
-              if (e.isAction()) {
-                  // TODO: not very nice ref
-                  this.parent.parent.toggle();
-              }
-          };
-          this.cursorType = pkg.Cursor.HAND;
-      }
-  ]);
+import Group from './Group';
 
-  this.GroupPan = Class(pkg.Panel, [
-      function $clazz() {
-          this.Group = Class(pkg.Group, [
-              function(target) {
-                  this.target = target;
-                  this.$super(true);
-              },
+class GroupX extends Group {
+    constructor(target) {
+        super(true);
+        this.target = target;        
+    }
 
-              function setValue(o, v) {
-                  var selected = this.selected;
-                  this.$super(o, v);
+    // static
 
-                  if (v === false && selected != null && this.selected === null) {
-                      var i = this.target.indexOf(selected);
-                      i = (i + 1) % this.target.kids.length;
-                      if (this.target.kids[i] !== selected) {
-                          this.setValue(this.target.kids[i], true);
-                      }
-                  }
-                  return this;
-              }
-          ])
-      },
+    setValue(o, v) {
+        var selected = this.selected;
+        super.setValue(o, v);
 
-      function $prototype() {
-          this.doLayout = function(t) {
-              var y     = t.getTop(),
-                  x     = t.getLeft(),
-                  w     = t.width - x - t.getRight(),
-                  eh    = t.height - y - t.getBottom();
+        if (v === false && selected != null && this.selected === null) {
+            var i = this.target.indexOf(selected);
+            i = (i + 1) % this.target.kids.length;
+            if (this.target.kids[i] !== selected) {
+                this.setValue(this.target.kids[i], true);
+            }
+        }
+        return this;
+    }
+}
 
-              // setup sizes for not selected item and calculate the vertical
-              // space that can be used for an expanded item
-              for(var i = 0; i < t.kids.length; i++) {
-                  var kid = t.kids[i];
-                  if (kid.isVisible) {
-                      if (kid.getValue() === false) {
-                          var psh = kid.getPreferredSize().height;
-                          eh -= psh;
-                          kid.setSize(w, psh);
-                      }
-                  }
-              }
+import Panel from './core/Panel';
 
-              for(var i = 0; i < t.kids.length; i++) {
-                  var kid = t.kids[i];
-                  if (kid.isVisible) {
-                      kid.setLocation(x, y);
-                      if (kid.getValue()) {
-                          kid.setSize(w, eh);
-                      }
-                      y += kid.height;
-                  }
-              }
-          };
+class GroupPan extends Panel {
+    get clazz() {
+        return {
+            Group: GroupX
+        };
+    }
 
-          this.calcPreferredSize = function(t) {
-              var w = 0, h = 0;
-              for(var i = 0; i < t.kids.length; i++) {
-                  var kid = t.kids[i];
-                  if (kid.isVisible) {
-                      var ps = kid.getPreferredSize();
-                      h += ps.height
-                      if (ps.width > w) w = ps.width;
-                  }
-              }
-              return { width: w, height:h };
-          };
+    constructor() {
+        super();
+        this.group = new this.clazz.Group(this);
+        this.$super();
+        for(var i = 0; i < arguments.length; i++) {
+            arguments[i].setSwitchManager(this.group);
+            this.add(arguments[i]);
+        }        
+    }
 
-          this.compAdded = function(e) {
-              e.kid.setSwitchManager(this.group);
-              if (this.group.selected === null) {
-                  this.group.setValue(e.kid, true);
-              }
-          };
+    doLayout(t) {
+        var y     = t.getTop(),
+            x     = t.getLeft(),
+            w     = t.width - x - t.getRight(),
+            eh    = t.height - y - t.getBottom();
 
-          this.compRemoved = function(e) {
-              if (this.group.selected === e.kid) {
-                  this.group.setValue(e.kid, false);
-              }
-              e.kid.setSwitchManager(null);
-          };
-      },
+        // setup sizes for not selected item and calculate the vertical
+        // space that can be used for an expanded item
+        for(var i = 0; i < t.kids.length; i++) {
+            var kid = t.kids[i];
+            if (kid.isVisible) {
+                if (kid.getValue() === false) {
+                    var psh = kid.getPreferredSize().height;
+                    eh -= psh;
+                    kid.setSize(w, psh);
+                }
+            }
+        }
 
-      function() {
-          this.group = new this.clazz.Group(this);
-          this.$super();
-          for(var i = 0; i < arguments.length; i++) {
-              arguments[i].setSwitchManager(this.group);
-              this.add(arguments[i]);
-          }
-      }
-  ]);
+        for(var i = 0; i < t.kids.length; i++) {
+            var kid = t.kids[i];
+            if (kid.isVisible) {
+                kid.setLocation(x, y);
+                if (kid.getValue()) {
+                    kid.setSize(w, eh);
+                }
+                y += kid.height;
+            }
+        }
+    }
+
+    calcPreferredSize(t) {
+        var w = 0, h = 0;
+        for(var i = 0; i < t.kids.length; i++) {
+            var kid = t.kids[i];
+            if (kid.isVisible) {
+                var ps = kid.getPreferredSize();
+                h += ps.height
+                if (ps.width > w) w = ps.width;
+            }
+        }
+        return { width: w, height:h };
+    }
+
+    compAdded(e) {
+        e.kid.setSwitchManager(this.group);
+        if (this.group.selected === null) {
+            this.group.setValue(e.kid, true);
+        }
+    }
+
+    compRemoved(e) {
+        if (this.group.selected === e.kid) {
+            this.group.setValue(e.kid, false);
+        }
+        e.kid.setSwitchManager(null);
+    }
+}
+
+function Clazz() {
+    this.Label = Label;
+    this.ImageLabel = ImageLabel
+    this.TitlePan = StatePan;    
+}
 
 export default class ExtendablePan extends Panel, Switchable {
-    $clazz() {
-      Label: Label //,
-      // ...
+    get clazz() {
+        return new Clazz();
     }
 
     constructor(lab, content, sm) {

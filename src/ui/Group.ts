@@ -31,9 +31,11 @@ export default class Group extends SwitchManager {
         }        
     }
 
+    // static
+
     getValue(o) {
         return o === this.selected;
-    };
+    }
 
     setValue(o, b){
         if (this.allowNoneSelected && b === false && this.selected !== null) {

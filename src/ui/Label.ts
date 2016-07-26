@@ -18,20 +18,21 @@
  * @constructor
  * @extends zebkit.ui.ViewPan
  */
-import ViewPan from './ViewPan';
+import ViewPan from './core/ViewPan';
+import { StringRender, TextRender } from './views';
 
 export default class Label extends ViewPan {
     constructor(r) {
         super();
         if (arguments.length === 0) {
-            this.setView(new pkg.StringRender(""));
+            this.setView(new StringRender(""));
         } else {
             // test if input string is string
             if (typeof r === "string" || r.constructor === String) {
                 this.setView(r.length === 0 || r.indexOf('\n') >= 0 ? new pkg.TextRender(new zebkit.data.Text(r))
                                                                     : new pkg.StringRender(r));
             } else if (typeof r.clazz !== "undefined" && r.clazz.isTextModel === true) {
-                this.setView(new pkg.TextRender(r));
+                this.setView(new TextRender(r));
             } else {
                 this.setView(r);
             }
