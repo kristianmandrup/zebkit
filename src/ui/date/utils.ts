@@ -1,4 +1,4 @@
-export function validateDate(day, month, year) {
+export function validateDate(day, month, year?) {
     var d = (arguments.length < 3) ? (arguments.length === 1 ? day : new Date(month, day))
                                     : new Date(year, month, day);
     if (d.isValid() == false) {

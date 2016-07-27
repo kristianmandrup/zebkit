@@ -119,6 +119,8 @@ function Clazz() {
 }
 
 import Grid from '../grid/Grid';
+import { CompRender } from '../views';
+import * as utils from './utils';
 
 export default class DaysGrid extends Grid {
     get clazz() {
@@ -129,6 +131,11 @@ export default class DaysGrid extends Grid {
     tagger: any;
     view: any; // View
     itemPan: any;
+    model: any;
+    caption: any; //Caption
+    year: number;
+    month: number;
+    position: any;
 
     constructor() {
         super(6, 7);
@@ -189,7 +196,7 @@ export default class DaysGrid extends Grid {
             month = month.getMonth();
         }
 
-        pkg.validateDate(month, year);
+        utils.validateDate(month, year);
 
         if (this.month != month || this.year != year) {
             var prevYear  = this.year,
@@ -371,7 +378,7 @@ export default class DaysGrid extends Grid {
     }
 
     static rPsMetric() {
-        this.$super();
+        super.rPsMetric();
 
         var max = 0, cols = this.getGridCols();
         for(var i = 0; i < cols; i++) {
@@ -386,11 +393,11 @@ export default class DaysGrid extends Grid {
     static $getPosMarker() {
         var item = this.model.geti(this.position.offset);
         return this.isItemSelectable(item) === false ? this.views.notSelectableMarker
-                                                      : this.$super();
-    },
+                                                      : super.$getPosMarker();
+    }
 
     static pointerClicked(e) {
-        this.$super(e);
+        super.pointerClicked(e);
         var p = this.cellByLocation(e.x, e.y);
         if (p != null) {
             this.selectCell(p.row * this.getGridCols() + p.col, true);
@@ -399,7 +406,7 @@ export default class DaysGrid extends Grid {
 
     static keyPressed(e) {
         if (e.code != ui.KeyEvent.ENTER) {
-            return this.$super(e);
+            return super.keyPressed(e);
         }
 
         if (this.position.offset >= 0) {

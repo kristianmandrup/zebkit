@@ -53,7 +53,7 @@ export default class Spin extends Panel {
                 this.max = max;
 
                 var $this = this;
-                this.$super(new zebkit.data.SingleLineTxt([
+                this.$super(new SingleLineText([
                     function () {
                         this.$super("" + min);
                     },

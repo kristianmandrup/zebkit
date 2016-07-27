@@ -7,7 +7,7 @@ import TextModel from './TextModel';
  * @class zebkit.data.SingleLineTxt
  * @extends zebkit.data.TextModel
  */
-export default class SingleLineTxt extends TextModel {
+export default class SingleLineText extends TextModel {
     maxLen: number;
     extra: number;
     buf: string;

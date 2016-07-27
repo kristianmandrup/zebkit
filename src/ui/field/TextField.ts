@@ -1,5 +1,3 @@
-import Label from './Label';
-
 /**
  * Text field UI component. The component is designed to enter single line, multi lines or password text.
  * The component implement text field functionality from the scratch. It supports the following features
@@ -18,12 +16,52 @@ import Label from './Label';
  * @class zebkit.ui.TextField
  * @extends zebkit.ui.Label
  */
+import Label from '../Label';
+import StringRender from '../views/StringRender';
+import Cursor from '../core/Cursor'
+import ScrollManager from '../ScrollManager';
+import { types } from '../../utils';
+import { SingleLineText, TextModel } from '../../data';
+import TextRender from '../views/TextRender'
+
 export default class TextField extends Label {
-    clazz() {
+    get clazz() {
         return {
             HintRender: StringRender
         };        
     }
+
+    vkMode: string;
+    blinkingPeriod: any;
+    startLine: number;
+    startCol: number;
+    endLine: number; 
+    endCol: number;
+    curX: number;
+    startOff: number;
+    endOff: number;
+
+    selectionColor: string;
+    curView: string;
+    position: string;
+
+    blinkMe: boolean;
+    blinkMeCounter: number;
+
+    cursorType: any;
+    textAlign: string;
+
+    canHaveFocus: boolean;
+    isEditable: boolean;
+
+    history: any[];
+    historyPos: number;
+    redoCounter: number;
+    undoCounter: number;
+    curY: number;  
+    curW: number; 
+    curH: number;
+    scrollManager: ScrollManager;
 
     constructor(render, maxCol){
         super(render);
@@ -52,7 +90,7 @@ export default class TextField extends Label {
         this.blinkMe        = true;
         this.blinkMeCounter = 0;
 
-        this.cursorType = pkg.Cursor.TEXT;
+        this.cursorType = Cursor.TEXT;
 
         /**
          * Text alignment
@@ -81,17 +119,17 @@ export default class TextField extends Label {
         this.history = Array(100);
         this.historyPos = -1;
         this.redoCounter = this.undoCounter = this.curY = this.curW = this.curH = 0;
-        this.scrollManager = new pkg.ScrollManager(this);
+        this.scrollManager = new ScrollManager(this);
 
         if (arguments.length === 1) {
-            if (zebkit.isNumber(render)) {
+            if (types.isNumber(render)) {
                 maxCol = render;
-                super(new pkg.TextRender(new zebkit.data.SingleLineTxt("", maxCol)));
+                super(new TextRender(new SingleLineText("", maxCol)));
             }
             else {
                 maxCol = -1;
-                super(zebkit.isString(render) ? new pkg.TextRender(new zebkit.data.SingleLineTxt(render))
-                                                   : (zebkit.instanceOf(render, zebkit.data.TextModel) ?  new pkg.TextRender(render)
+                super(types.isString(render) ? new TextRender(new SingleLineText(render))
+                                                   : (types.instanceOf(render, TextModel) ?  new TextRender(render)
                                                                                                      : render));
             }
         }
@@ -100,7 +138,7 @@ export default class TextField extends Label {
             if (arguments.length === 0) {
                 maxCol = -1;
             }
-            super(new pkg.TextRender(new zebkit.data.SingleLineTxt(render, maxCol)));
+            super(new TextRender(new SingleLineText(render, maxCol)));
         }
 
         if (maxCol > 0) this.setPSByRowsCols(-1, maxCol);
@@ -933,7 +971,7 @@ export default class TextField extends Label {
                 if (this.view.target.bind != null) this.view.target.unbind(this);
             }
 
-            this.$super(v);
+            super.setView(v);
             if (this.position == null) {
                 this.setPosition(new zebkit.util.Position(this.view));
             } else {
@@ -959,14 +997,14 @@ export default class TextField extends Label {
                 this.position.setOffset(0);
             }
             this.scrollManager.scrollTo(0, 0);
-            this.$super(s);
+            super.setValue(s);
         }
         return this;
     }
 
     static setEnabled(b){
         this.clearSelection();
-        this.$super(b);
+        super.setEnabled(b);
         return this;
     }
 }

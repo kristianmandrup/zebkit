@@ -30,6 +30,8 @@
  */
 import Panel from '../core/Panel';
 import BorderLayout from '../../layout/BorderLayout';
+import ShaperBorder from './ShaperBorder';
+import Cursors from './Cursors';
 
 export default class ShaperPan extends Panel {
     get clazz() {
@@ -37,6 +39,22 @@ export default class ShaperPan extends Panel {
             colors: [ "lightGray", "blue" ]
         };
     }
+
+    minHeight: number;
+    minWidth: number;
+    px: number;
+    py: number;
+
+    isResizeEnabled: boolean;
+    isMoveEnabled: boolean;
+
+    canHaveFocus: boolean;
+    catchInput: boolean;
+
+    colors: string[];
+    state: any;
+
+    shaperBr: any; // ShaperBorder
 
     constructor    (t) {
         super(new BorderLayout());
@@ -75,7 +93,7 @@ export default class ShaperPan extends Panel {
 
         this.catchInput = true;
 
-        this.shaperBr = new pkg.ShaperBorder();
+        this.shaperBr = new ShaperBorder();
         this.px = this.py = 0;
         this.setBorder(this.shaperBr);
         if (arguments.length > 0) {
@@ -84,8 +102,8 @@ export default class ShaperPan extends Panel {
     }
 
     getCursorType(t, x ,y) {
-        return this.kids.length > 0 ? CURSORS[this.shaperBr.detectAt(t, x, y)] : null;
-    };
+        return this.kids.length > 0 ? Cursors[this.shaperBr.detectAt(t, x, y)] : null;
+    }
 
     /**
      * Define key pressed events handler
@@ -219,11 +237,11 @@ export default class ShaperPan extends Panel {
         this.setBounds(d.x - left, d.y - top,
                        d.width + left + this.getRight(),
                        d.height + top + this.getBottom());
-        this.$super(i, "center", d);
+        super.insert(i, "center", d);
     }
 
     static focused(){
-        this.$super();
+        super.focused();
         this.shaperBr.color = this.colors[this.hasFocus()? 1 : 0];
         this.repaint();
     }

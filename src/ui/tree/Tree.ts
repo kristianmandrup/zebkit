@@ -1,5 +1,3 @@
-import BaseTree from './BaseTree';
-
 /**
  * Tree UI component that visualizes a tree data model. The model itself can be passed as JavaScript
  * structure or as a instance of zebkit.data.TreeModel. Internally tree component keeps the model always
@@ -29,7 +27,21 @@ import BaseTree from './BaseTree';
  * @param {Boolean} [b] the tree component items toggle state. true to have all items
  * in opened state.
  */
+import SingleLineText from '../../data/SingleLineText';
+import BaseTree from './BaseTree';
+import KeyEvent from '../web/keys/KeyEvent';
+import TextField from '../field/TextField'
+import DefViews from './DefaultViews'
+
 export default class Tree extends BaseTree {
+    itemGapY: number;
+    itemGapX: number;
+
+    provider: any; 
+    editedItem: any; 
+    pressedItem: any;
+    editors: any;
+
     constructor(d, b){
         super(d, b);
 
@@ -59,7 +71,7 @@ export default class Tree extends BaseTree {
          */
 
         this.editors = null;
-        this.setViewProvider(new pkg.DefViews());                
+        this.setViewProvider(new DefViews());                
     }
 
     setFont(f) {
@@ -69,12 +81,12 @@ export default class Tree extends BaseTree {
     };
 
     childKeyPressed(e){
-        if (e.code === ui.KeyEvent.ESCAPE) {
+        if (e.code === KeyEvent.ESCAPE) {
             this.stopEditing(false);
         } else {
-            if (e.code === ui.KeyEvent.ENTER &&
-                    ((zebkit.instanceOf(e.source, ui.TextField) === false) ||
-                    (zebkit.instanceOf(e.source.view.target, zebkit.data.SingleLineTxt))))
+            if (e.code === KeyEvent.ENTER &&
+                    ((types.instanceOf(e.source, TextField) === false) ||
+                    (types.instanceOf(e.source.view.target, SingleLineText))))
             {
                 this.stopEditing(true);
             }
@@ -241,20 +253,20 @@ export default class Tree extends BaseTree {
 
     // static
 
-    function toggle(item) {
+    static toggle(item) {
         this.stopEditing(false);
-        this.$super(item);
-    },
+        super.toggle(item);
+    }
 
-    function itemInserted(target,item){
+    static itemInserted(target,item){
         this.stopEditing(false);
-        this.$super(target,item);
-    },
+        super.itemInserted(target,item);
+    }
 
-    function itemRemoved(target,item){
+    static itemRemoved(target,item){
         this.stopEditing(false);
-        this.$super(target,item);
-    },
+        super.itemRemoved(target,item);
+    }
 
     /**
      * Set the given editor provider. The editor provider is a class that is used to decide which UI
@@ -263,13 +275,13 @@ export default class Tree extends BaseTree {
      * @param {zebkit.ui.tree.DefEditors} p an editor provider
      * @method setEditorProvider
      */
-    function setEditorProvider(p){
+    static setEditorProvider(p){
         if (p != this.editors){
             this.stopEditing(false);
             this.editors = p;
         }
         return this;
-    },
+    }
 
     /**
      * Set tree component items view provider. Provider says how tree model items
@@ -277,7 +289,7 @@ export default class Tree extends BaseTree {
      * @param {zebkit.ui.tree.DefViews} p a view provider
      * @method setViewProvider
      */
-    function setViewProvider(p){
+    static setViewProvider(p){
         if (this.provider != p) {
             this.stopEditing(false);
             this.provider = p;
@@ -286,33 +298,33 @@ export default class Tree extends BaseTree {
             this.vrp();
         }
         return this;
-    },
+    }
 
     /**
      * Set the given tree model to be visualized with the UI component.
      * @param {zebkit.data.TreeModel|Object} d a tree model
      * @method setModel
      */
-    function setModel(d){
+    static setModel(d){
         this.stopEditing(false);
-        this.$super(d);
+        super.setModel(d);
         return this;
-    },
+    }
 
-    function paintSelectedItem(g, root, node, x, y) {
+    static paintSelectedItem(g, root, node, x, y) {
         if (root != this.editedItem) {
-            this.$super(g, root, node, x, y);
+            super.paintSelectedItem(g, root, node, x, y);
         }
-    },
+    }
 
-    function itemPressed(root, e) {
-        this.$super(root, e);
+    static itemPressed(root, e) {
+        super.itemPressed(root, e);
         if (this.se(root, e) === false) this.pressedItem = root;
-    },
+    }
 
-    function pointerPressed(e){
+    static pointerPressed(e){
         this.pressedItem = null;
         this.stopEditing(true);
-        this.$super(e);
+        super.pointerPressed(e);
     }
 }
