@@ -1,7 +1,7 @@
 import Panel from '../ui/Panel';
 
-class Spin extends Panel {
-    function $clazz() {
+export default class Spin extends Panel {
+    get clazz() {
         this.SpinButton = Class(pkg.ArrowButton, [
             function $prototype() {
                 this.increment = 1;
@@ -74,8 +74,8 @@ class Spin extends Panel {
         ]);
     },
 
-    function(min, max) {
-        this.$super(this);
+    constructor(min, max) {
+        super();
 
         this.step     = 1;
         this.min      = min == null ? 0  : min;
@@ -88,7 +88,9 @@ class Spin extends Panel {
                                 new this.clazz.DecButton());
 
         this._ = new zebkit.util.Listeners();
-    },
+    }
+
+    // static
 
     function layoutComponents(text, inc, dec) {
         var buttons = new pkg.Panel(new zebkit.layout.PercentLayout("vertical"));

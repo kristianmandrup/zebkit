@@ -20,7 +20,7 @@ import Panel from '../ui/Panel'
  * @class zebkit.ui.grid.GridStretchPan
  * @extends {zebkit.ui.Panel}
  */
-class GridStretchPan extends Panel {
+export default class GridStretchPan extends Panel {
     function $prototype() {
         this.calcPreferredSize = function(target) {
             this.recalcPS();

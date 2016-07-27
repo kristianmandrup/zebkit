@@ -1,7 +1,7 @@
 // TODO: this is the future thoughts regarding
 // grid cell selection customization
-class RowSelMode {
-    function $prototype() {
+export default class RowSelMode {
+    constructor() {
         this.selectedIndex = 0;
         this.$blocked = false;
 

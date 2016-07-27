@@ -406,7 +406,7 @@ export default class Panel extends layout.Layoutable {
     isVisible: boolean;
     parent: any;
 
-    constructor() {
+    constructor(e?) {
       super();
 
         /**

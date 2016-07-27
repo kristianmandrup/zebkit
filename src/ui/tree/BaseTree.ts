@@ -89,11 +89,12 @@ import Panel from '../ui/Panel';
   * applied to the given tree item
   */
 export default class BaseTree extends Panel {
-    function  $clazz() {
+    get clazz() {
         this.Listeners = zebkit.util.ListenersClass("toggled", "selected", "editingStarted", "editingStopped");
-    },
+    }
 
-    function $prototype() {
+    constructor() {
+        super();
         /**
          * Horizontal gap between a node elements: toggle, icons and tree item view
          * @attribute gapx

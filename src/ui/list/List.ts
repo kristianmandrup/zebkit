@@ -62,7 +62,7 @@ import BaseList from './BaseList';
  * @param {String|zebkit.ui.Font} [f] a font to render list item text
  * @param {String} [c] a color to render list item text
  */
-class ViewProvider {
+export default class ViewProvider {
     constructor(f, c) {
         // super();
         /**

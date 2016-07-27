@@ -29,189 +29,13 @@ import BaseTree from './BaseTree';
  * @param {Boolean} [b] the tree component items toggle state. true to have all items
  * in opened state.
  */
-class Tree extends BaseTree {
-    function $prototype() {
+export default class Tree extends BaseTree {
+    constructor(d, b){
+        super(d, b);
+
         this.itemGapY = 2;
         this.itemGapX = 4;
 
-        this.setFont = function(f) {
-            this.provider.setFont(f);
-            this.vrp();
-            return this;
-        };
-
-        this.childKeyPressed = function(e){
-            if (e.code === ui.KeyEvent.ESCAPE) {
-                this.stopEditing(false);
-            } else {
-                if (e.code === ui.KeyEvent.ENTER &&
-                       ((zebkit.instanceOf(e.source, ui.TextField) === false) ||
-                        (zebkit.instanceOf(e.source.view.target, zebkit.data.SingleLineTxt))))
-                {
-                    this.stopEditing(true);
-                }
-            }
-        };
-
-        this.catchScrolled = function (psx, psy){
-            if (this.kids.length > 0) this.stopEditing(false);
-
-            if (this.firstVisible == null) {
-                this.firstVisible = this.model.root;
-            }
-            this.firstVisible = (this.y < psy) ? this.nextVisible(this.firstVisible)
-                                               : this.prevVisible(this.firstVisible);
-            this.repaint();
-        };
-
-        this.laidout = function() {
-            this.vVisibility();
-        };
-
-        this.getItemPreferredSize = function(root) {
-            var ps = this.provider.getView(this, root).getPreferredSize();
-            ps.width  += this.itemGapX * 2;
-            ps.height += this.itemGapY * 2;
-            return ps;
-        };
-
-        this.paintItem = function(g, root, node, x, y) {
-            if (root != this.editedItem){
-                var v = this.provider.getView(this, root);
-                v.paint(g, x + this.itemGapX, y + this.itemGapY,
-                        node.viewWidth, node.viewHeight, this);
-            }
-        };
-
-        /**
-         * Initiate the given item editing if the specified event matches condition
-         * @param  {zebkit.data.Item} item an item to be edited
-         * @param  {zebkit.util.Event} e an even that may trigger the item editing
-         * @return {Boolean}  return true if an item editing process has been started,
-         * false otherwise
-         * @method  se
-         * @private
-         */
-        this.se = function (item, e){
-            if (item != null){
-                this.stopEditing(true);
-                if (this.editors != null && this.editors.shouldStartEdit(item, e)) {
-                    this.startEditing(item);
-                    return true;
-                }
-            }
-            return false;
-        };
-
-        this.pointerClicked = function(e){
-            if (this.se(this.pressedItem, e)) {
-                this.pressedItem = null;
-            }
-        };
-
-        this.pointerDoubleClicked = function(e) {
-            if (this.se(this.pressedItem, e)) {
-                this.pressedItem = null;
-            } else {
-                if (this.selected != null &&
-                    this.getItemAt(this.firstVisible, e.x, e.y) === this.selected)
-                {
-                    this.toggle(this.selected);
-                }
-            }
-        };
-
-        this.pointerReleased = function(e){
-            if (this.se(this.pressedItem, e)) this.pressedItem = null;
-        };
-
-        this.keyTyped = function(e){
-            if (this.selected != null){
-                switch(e.ch) {
-                    case '+': if (this.isOpen(this.selected) === false) {
-                        this.toggle(this.selected);
-                    } break;
-                    case '-': if (this.isOpen(this.selected)) {
-                        this.toggle(this.selected);
-                    } break;
-                }
-            }
-        };
-
-        this.keyPressed = function(e){
-            var newSelection = null;
-            switch(e.code) {
-                case ui.KeyEvent.DOWN    :
-                case ui.KeyEvent.RIGHT   : newSelection = this.findNext(this.selected);break;
-                case ui.KeyEvent.UP      :
-                case ui.KeyEvent.LEFT    : newSelection = this.findPrev(this.selected);break;
-                case ui.KeyEvent.HOME    : if (e.ctrlKey) this.select(this.model.root);break;
-                case ui.KeyEvent.END     : if (e.ctrlKey) this.select(this.findLast(this.model.root));break;
-                case ui.KeyEvent.PAGEDOWN: if (this.selected != null) this.select(this.nextPage(this.selected, 1));break;
-                case ui.KeyEvent.PAGEUP  : if (this.selected != null) this.select(this.nextPage(this.selected,  -1));break;
-                //!!!!case ui.KeyEvent.ENTER: if(this.selected != null) this.toggle(this.selected);break;
-            }
-            if (newSelection != null) this.select(newSelection);
-            this.se(this.selected, e);
-        };
-
-        /**
-         * Start editing the given if an editor for the item has been defined.
-         * @param  {zebkit.data.Item} item an item whose content has to be edited
-         * @method startEditing
-         * @protected
-         */
-        this.startEditing = function (item){
-            this.stopEditing(true);
-            if (this.editors != null){
-                var editor = this.editors.getEditor(this, item);
-                if (editor != null) {
-                    this.editedItem = item;
-                    var b  = this.getItemBounds(this.editedItem),
-                        ps = editor.getPreferredSize();
-
-                    editor.setBounds(b.x + this.scrollManager.getSX() + this.itemGapX,
-                                     b.y - Math.floor((ps.height - b.height + 2 * this.itemGapY) / 2) +
-                                     this.scrollManager.getSY() + this.itemGapY,
-                                     ps.width, ps.height);
-
-                    this.add(editor);
-                    ui.focusManager.requestFocus(editor);
-                    this._.editingStarted(this, item, editor);
-                }
-            }
-        };
-
-        /**
-         * Stop editing currently edited tree item and apply or discard the result of the
-         * editing to tree data model.
-         * @param  {Boolean} true if the editing result has to be applied to tree data model
-         * @method stopEditing
-         * @protected
-         */
-        this.stopEditing = function(applyData){
-            if (this.editors != null && this.editedItem != null) {
-                var item     = this.editedItem,
-                    oldValue = item.value,
-                    editor   = this.kids[0];
-
-                try {
-                    if (applyData)  {
-                        this.model.setValue(this.editedItem,
-                                            this.editors.fetchEditedValue(this.editedItem, this.kids[0]));
-                    }
-                }
-                finally {
-                    this.editedItem = null;
-                    this.removeAt(0);
-                    this.requestFocus();
-                    this._.editingStopped(this, item, oldValue, editor, applyData);
-                }
-            }
-        };
-    },
-
-    function (d, b){
         if (arguments.length < 2) {
             b  = true;
         }
@@ -235,9 +59,187 @@ class Tree extends BaseTree {
          */
 
         this.editors = null;
-        this.setViewProvider(new pkg.DefViews());
-        this.$super(d, b);
-    },
+        this.setViewProvider(new pkg.DefViews());                
+    }
+
+    setFont(f) {
+        this.provider.setFont(f);
+        this.vrp();
+        return this;
+    };
+
+    childKeyPressed(e){
+        if (e.code === ui.KeyEvent.ESCAPE) {
+            this.stopEditing(false);
+        } else {
+            if (e.code === ui.KeyEvent.ENTER &&
+                    ((zebkit.instanceOf(e.source, ui.TextField) === false) ||
+                    (zebkit.instanceOf(e.source.view.target, zebkit.data.SingleLineTxt))))
+            {
+                this.stopEditing(true);
+            }
+        }
+    }
+
+    catchScrolled(psx, psy){
+        if (this.kids.length > 0) this.stopEditing(false);
+
+        if (this.firstVisible == null) {
+            this.firstVisible = this.model.root;
+        }
+        this.firstVisible = (this.y < psy) ? this.nextVisible(this.firstVisible)
+                                            : this.prevVisible(this.firstVisible);
+        this.repaint();
+    }
+
+    laidout() {
+        this.vVisibility();
+    }
+
+    getItemPreferredSize(root) {
+        var ps = this.provider.getView(this, root).getPreferredSize();
+        ps.width  += this.itemGapX * 2;
+        ps.height += this.itemGapY * 2;
+        return ps;
+    };
+
+    paintItem(g, root, node, x, y) {
+        if (root != this.editedItem){
+            var v = this.provider.getView(this, root);
+            v.paint(g, x + this.itemGapX, y + this.itemGapY,
+                    node.viewWidth, node.viewHeight, this);
+        }
+    }
+
+    /**
+     * Initiate the given item editing if the specified event matches condition
+     * @param  {zebkit.data.Item} item an item to be edited
+     * @param  {zebkit.util.Event} e an even that may trigger the item editing
+     * @return {Boolean}  return true if an item editing process has been started,
+     * false otherwise
+     * @method  se
+     * @private
+     */
+    se(item, e){
+        if (item != null){
+            this.stopEditing(true);
+            if (this.editors != null && this.editors.shouldStartEdit(item, e)) {
+                this.startEditing(item);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    pointerClicked(e){
+        if (this.se(this.pressedItem, e)) {
+            this.pressedItem = null;
+        }
+    };
+
+    pointerDoubleClicked(e) {
+        if (this.se(this.pressedItem, e)) {
+            this.pressedItem = null;
+        } else {
+            if (this.selected != null &&
+                this.getItemAt(this.firstVisible, e.x, e.y) === this.selected)
+            {
+                this.toggle(this.selected);
+            }
+        }
+    }
+
+    pointerReleased(e){
+        if (this.se(this.pressedItem, e)) this.pressedItem = null;
+    }
+
+    keyTyped(e){
+        if (this.selected != null){
+            switch(e.ch) {
+                case '+': if (this.isOpen(this.selected) === false) {
+                    this.toggle(this.selected);
+                } break;
+                case '-': if (this.isOpen(this.selected)) {
+                    this.toggle(this.selected);
+                } break;
+            }
+        }
+    }
+
+    keyPressed(e){
+        var newSelection = null;
+        switch(e.code) {
+            case ui.KeyEvent.DOWN    :
+            case ui.KeyEvent.RIGHT   : newSelection = this.findNext(this.selected);break;
+            case ui.KeyEvent.UP      :
+            case ui.KeyEvent.LEFT    : newSelection = this.findPrev(this.selected);break;
+            case ui.KeyEvent.HOME    : if (e.ctrlKey) this.select(this.model.root);break;
+            case ui.KeyEvent.END     : if (e.ctrlKey) this.select(this.findLast(this.model.root));break;
+            case ui.KeyEvent.PAGEDOWN: if (this.selected != null) this.select(this.nextPage(this.selected, 1));break;
+            case ui.KeyEvent.PAGEUP  : if (this.selected != null) this.select(this.nextPage(this.selected,  -1));break;
+            //!!!!case ui.KeyEvent.ENTER: if(this.selected != null) this.toggle(this.selected);break;
+        }
+        if (newSelection != null) this.select(newSelection);
+        this.se(this.selected, e);
+    }
+
+    /**
+     * Start editing the given if an editor for the item has been defined.
+     * @param  {zebkit.data.Item} item an item whose content has to be edited
+     * @method startEditing
+     * @protected
+     */
+    startEditing(item){
+        this.stopEditing(true);
+        if (this.editors != null){
+            var editor = this.editors.getEditor(this, item);
+            if (editor != null) {
+                this.editedItem = item;
+                var b  = this.getItemBounds(this.editedItem),
+                    ps = editor.getPreferredSize();
+
+                editor.setBounds(b.x + this.scrollManager.getSX() + this.itemGapX,
+                                    b.y - Math.floor((ps.height - b.height + 2 * this.itemGapY) / 2) +
+                                    this.scrollManager.getSY() + this.itemGapY,
+                                    ps.width, ps.height);
+
+                this.add(editor);
+                ui.focusManager.requestFocus(editor);
+                this._.editingStarted(this, item, editor);
+            }
+        }
+    }
+
+    /**
+     * Stop editing currently edited tree item and apply or discard the result of the
+     * editing to tree data model.
+     * @param  {Boolean} true if the editing result has to be applied to tree data model
+     * @method stopEditing
+     * @protected
+     */
+    stopEditing(applyData){
+        if (this.editors != null && this.editedItem != null) {
+            var item     = this.editedItem,
+                oldValue = item.value,
+                editor   = this.kids[0];
+
+            try {
+                if (applyData)  {
+                    this.model.setValue(this.editedItem,
+                                        this.editors.fetchEditedValue(this.editedItem, this.kids[0]));
+                }
+            }
+            finally {
+                this.editedItem = null;
+                this.removeAt(0);
+                this.requestFocus();
+                this._.editingStopped(this, item, oldValue, editor, applyData);
+            }
+        }
+    }
+
+
+    // static
 
     function toggle(item) {
         this.stopEditing(false);

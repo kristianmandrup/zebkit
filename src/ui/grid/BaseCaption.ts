@@ -20,12 +20,13 @@
  * @param  {Integer} pwh a a previous row or column size
  */
 
-class BaseCaption extends ui.Panel {
-    function $clazz() {
+export default class BaseCaption extends ui.Panel {
+    clazz() {
         this.Listeners = new zebkit.util.ListenersClass("captionResized");
-    },
+    }
 
-    function $prototype() {
+    constructor() {
+        super();
         /**
          * Minimal possible grid cell size
          * @type {Number}

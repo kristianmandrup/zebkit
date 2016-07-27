@@ -42,8 +42,8 @@
  * @constructor
  * @class zebkit.ui.grid.DefEditors
  */
-class DefEditors {
-    function $clazz() {
+export default class DefEditors {
+    get clazz() {
         this.TextField = Class(ui.TextField, []);
         this.Checkbox  = Class(ui.Checkbox,  []);
         this.Combo     = Class(ui.Combo,     [
@@ -81,105 +81,103 @@ class DefEditors {
         ]);
     },
 
-    function $prototype() {
-        this[''] = function() {
-            this.textEditor     = new this.clazz.TextField("", 150);
-            this.boolEditor     = new this.clazz.Checkbox(null);
-            this.selectorEditor = new this.clazz.Combo();
+    constructor() {
+        this.textEditor     = new this.clazz.TextField("", 150);
+        this.boolEditor     = new this.clazz.Checkbox(null);
+        this.selectorEditor = new this.clazz.Combo();
 
-            this.editors    = {};
-        };
+        this.editors    = {};
+    };
 
-        /**
-         * Fetch an edited value from the given UI editor component.
-         * @param  {zebkit.ui.grid.Grid} grid a target grid component
-         * @param  {Integer} row a grid cell row that has been edited
-         * @param  {Integer} col a grid cell column that has been edited
-         * @param  {Object} data an original cell content
-         * @param  {zebkit.ui.Panel} editor an editor that has been used to
-         * edit the given cell
-         * @return {Object} a value that can be applied as a new content of
-         * the edited cell content
-         * @method  fetchEditedValue
-         */
-        this.fetchEditedValue = function(grid,row,col,data,editor) {
-            if (editor === this.selectorEditor) {
-                data.selectedIndex = editor.list.selectedIndex;
-                return data;
-            }
-            return editor.getValue();
-        };
+    /**
+     * Fetch an edited value from the given UI editor component.
+     * @param  {zebkit.ui.grid.Grid} grid a target grid component
+     * @param  {Integer} row a grid cell row that has been edited
+     * @param  {Integer} col a grid cell column that has been edited
+     * @param  {Object} data an original cell content
+     * @param  {zebkit.ui.Panel} editor an editor that has been used to
+     * edit the given cell
+     * @return {Object} a value that can be applied as a new content of
+     * the edited cell content
+     * @method  fetchEditedValue
+     */
+    this.fetchEditedValue = function(grid,row,col,data,editor) {
+        if (editor === this.selectorEditor) {
+            data.selectedIndex = editor.list.selectedIndex;
+            return data;
+        }
+        return editor.getValue();
+    };
 
-        /**
-         * Get an editor UI component to be used for the given cell of the specified grid
-         * @param  {zebkit.ui.grid.Grid} grid a grid whose cell is going to be edited
-         * @param  {Integer} row  a grid cell row
-         * @param  {Integer} col  a grid cell column
-         * @param  {Object}  v    a grid cell model data
-         * @return {zebkit.ui.Panel} an editor UI component to be used to edit the given cell
-         * @method  getEditor
-         */
-        this.getEditor = function(grid, row, col, v) {
-            var editor = this.editors[col];
-            if (editor != null) {
-                editor.setValue(v);
-                return editor;
-            }
-
-            editor = zebkit.isBoolean(v) ? this.boolEditor
-                                        : (zebkit.instanceOf(v, this.clazz.Items) ? this.selectorEditor : this.textEditor);
-
-            if (editor === this.selectorEditor) {
-                editor.list.setModel(v.items);
-                editor.list.select(v.selectedIndex);
-            } else {
-                editor.setValue(v);
-            }
-
-            editor.setPadding(0);
-            var ah = Math.floor((grid.getRowHeight(row) - editor.getPreferredSize().height)/2);
-            editor.setPadding(ah, grid.cellInsetsLeft, ah, grid.cellInsetsRight);
+    /**
+     * Get an editor UI component to be used for the given cell of the specified grid
+     * @param  {zebkit.ui.grid.Grid} grid a grid whose cell is going to be edited
+     * @param  {Integer} row  a grid cell row
+     * @param  {Integer} col  a grid cell column
+     * @param  {Object}  v    a grid cell model data
+     * @return {zebkit.ui.Panel} an editor UI component to be used to edit the given cell
+     * @method  getEditor
+     */
+    this.getEditor = function(grid, row, col, v) {
+        var editor = this.editors[col];
+        if (editor != null) {
+            editor.setValue(v);
             return editor;
-        };
+        }
 
-        /**
-         * Test if the specified input event has to trigger the given grid cell editing
-         * @param  {zebkit.ui.grid.Grid} grid a grid
-         * @param  {Integer} row  a grid cell row
-         * @param  {Integer} col  a grid cell column
-         * @param  {zebkit.util.Event} e  an event to be evaluated
-         * @return {Boolean} true if the given input event triggers the given cell editing
-         * @method shouldStart
-         */
-        this.shouldStart = function(grid,row,col,e){
-            return e.id === "pointerClicked";
-        };
+        editor = zebkit.isBoolean(v) ? this.boolEditor
+                                    : (zebkit.instanceOf(v, this.clazz.Items) ? this.selectorEditor : this.textEditor);
 
-        /**
-         * Test if the specified input event has to canceling the given grid cell editing
-         * @param  {zebkit.ui.grid.Grid} grid a grid
-         * @param  {Integer} row  a grid cell row
-         * @param  {Integer} col  a grid cell column
-         * @param  {zebkit.util.Event} e  an event to be evaluated
-         * @return {Boolean} true if the given input event triggers the given cell editing
-         * cancellation
-         * @method shouldCancel
-         */
-        this.shouldCancel = function(grid,row,col,e){
-            return e.id === "keyPressed" && ui.KeyEvent.ESCAPE === e.code;
-        };
+        if (editor === this.selectorEditor) {
+            editor.list.setModel(v.items);
+            editor.list.select(v.selectedIndex);
+        } else {
+            editor.setValue(v);
+        }
 
-        /**
-         * Test if the specified input event has to trigger finishing the given grid cell editing
-         * @param  {zebkit.ui.grid.Grid} grid [description]
-         * @param  {Integer} row  a grid cell row
-         * @param  {Integer} col  a grid cell column
-         * @param  {zebkit.util.Event} e  an event to be evaluated
-         * @return {Boolean} true if the given input event triggers finishing the given cell editing
-         * @method shouldFinish
-         */
-        this.shouldFinish = function(grid,row,col,e){
-            return e.id === "keyPressed" && ui.KeyEvent.ENTER === e.code;
-        };
-    }
+        editor.setPadding(0);
+        var ah = Math.floor((grid.getRowHeight(row) - editor.getPreferredSize().height)/2);
+        editor.setPadding(ah, grid.cellInsetsLeft, ah, grid.cellInsetsRight);
+        return editor;
+    };
+
+    /**
+     * Test if the specified input event has to trigger the given grid cell editing
+     * @param  {zebkit.ui.grid.Grid} grid a grid
+     * @param  {Integer} row  a grid cell row
+     * @param  {Integer} col  a grid cell column
+     * @param  {zebkit.util.Event} e  an event to be evaluated
+     * @return {Boolean} true if the given input event triggers the given cell editing
+     * @method shouldStart
+     */
+    this.shouldStart = function(grid,row,col,e){
+        return e.id === "pointerClicked";
+    };
+
+    /**
+     * Test if the specified input event has to canceling the given grid cell editing
+     * @param  {zebkit.ui.grid.Grid} grid a grid
+     * @param  {Integer} row  a grid cell row
+     * @param  {Integer} col  a grid cell column
+     * @param  {zebkit.util.Event} e  an event to be evaluated
+     * @return {Boolean} true if the given input event triggers the given cell editing
+     * cancellation
+     * @method shouldCancel
+     */
+    this.shouldCancel = function(grid,row,col,e){
+        return e.id === "keyPressed" && ui.KeyEvent.ESCAPE === e.code;
+    };
+
+    /**
+     * Test if the specified input event has to trigger finishing the given grid cell editing
+     * @param  {zebkit.ui.grid.Grid} grid [description]
+     * @param  {Integer} row  a grid cell row
+     * @param  {Integer} col  a grid cell column
+     * @param  {zebkit.util.Event} e  an event to be evaluated
+     * @return {Boolean} true if the given input event triggers finishing the given cell editing
+     * @method shouldFinish
+     */
+    this.shouldFinish = function(grid,row,col,e){
+        return e.id === "keyPressed" && ui.KeyEvent.ENTER === e.code;
+    };
 }

@@ -1,25 +1,15 @@
 import BaseCaption from './BaseCaption';
 
-class LeftCompGridCaption extends CompGridCaption {
-    function $prototype() {
+export class LeftCompGridCaption extends CompGridCaption {
+    constructor() {
+        super();
         this.constraints = "left";
     }
 }
 
-/**
- * Grid caption class that implements component based caption.
- * Component based caption uses other UI component as the
- * caption titles.
- * @param  {Array} a caption titles. Title can be a string or
- * a zebkit.ui.Panel class instance
- * @constructor
- * @class zebkit.ui.grid.CompGridCaption
- * @extends zebkit.ui.grid.BaseCaption
- */
-class CompGridCaption extends BaseCaption {
-    function $clazz(clazz) {
-        this.Layout = Class(zebkit.layout.Layout, [
-            function $prototype() {
+function Clazz() {
+        this.Layout = class extends Layout {
+            constructor() {
                 this.doLayout = function (target) {
                     var m    = target.metrics,
                         b    = target.orient === "horizontal",
@@ -179,96 +169,116 @@ class CompGridCaption extends BaseCaption {
                 this.add(this.statusPan);
             }
         ]);
-    },
+}
+
+/**
+ * Grid caption class that implements component based caption.
+ * Component based caption uses other UI component as the
+ * caption titles.
+ * @param  {Array} a caption titles. Title can be a string or
+ * a zebkit.ui.Panel class instance
+ * @constructor
+ * @class zebkit.ui.grid.CompGridCaption
+ * @extends zebkit.ui.grid.BaseCaption
+ */
+export class CompGridCaption extends BaseCaption {
+    get clazz(clazz) {
+        return new Clazz();
+    }
 
     /**
      * @for zebkit.ui.grid.CompGridCaption
      */
-    function $prototype() {
-        this.catchInput = function(t) {
-            // TODO: not very perfect check
-            return t._ == null || t._.fired == null;
-        };
+    constructor(titles = null) {
+        super(titles);        
+        this.setLayout(new this.clazz.Layout());
+    }
 
-        this.scrolled = function() {
-            this.vrp();
-        };
+    catchInput(t) {
+        // TODO: not very perfect check
+        return t._ == null || t._.fired == null;
+    };
 
-        /**
-         * Put the given title component for the given caption cell.
-         * @param  {Integer} rowcol a grid caption cell index
-         * @param  {String|zebkit.ui.Panel|zebkit.ui.View} title a title of the given grid caption cell.
-         * Can be a string or zebkit.ui.View or zebkit.ui.Panel class instance
-         * @method putTitle
-         */
-        this.putTitle = function(rowcol, t) {
-            // add empty titles
-            for(var i = this.kids.length - 1;  i >= 0 && i < rowcol; i++) {
-                this.add(new this.clazz.TitlePan(""));
-            }
-
-            if (zebkit.isString(t)) {
-                t = new this.clazz.TitlePan(t);
-            } else {
-                if (zebkit.instanceOf(t, ui.View)) {
-                    var p = new ui.ViewPan();
-                    p.setView(t);
-                    t = p;
-                }
-            }
-
-            if (rowcol < this.kids.length) {
-                this.setAt(rowcol, t);
-            } else {
-                this.add(t);
-            }
-        };
-
-        /**
-         * Set the given column sortable state
-         * @param {Integer} col a column
-         * @param {Boolean} b true if the column has to be sortable
-         * @method setSortable
-         */
-        this.setSortable = function(col, b) {
-            var c = this.kids[col];
-            if (c.isSortable != b) {
-                c.isSortable = b;
-                c.statusPan.setVisible(b);
-            }
-            return this;
-        };
-
-        this.matrixSorted = function(target, info) {
-            for(var i=0; i < this.kids.length; i++) {
-                if (this.kids[i].matrixSorted) {
-                    this.kids[i].matrixSorted(target, info);
-                }
-            }
-        };
-
-        this.matrixResized = function(target,prevRows,prevCols){
-            for(var i = 0; i < this.kids.length; i++) {
-                if (this.kids[i].matrixResized) {
-                    this.kids[i].matrixResized(target,prevRows,prevCols);
-                }
-            }
-        };
-
-        this.getCaptionPS = function(rowcol) {
-            var  c = this.kids[rowcol];
-            return (c != null) ? (this.orient === "horizontal" ? c.getPreferredSize().width
-                                                               : c.getPreferredSize().height)
-                               : 0;
-        };
-    },
-
-    function captionResized(rowcol, ns) {
-        this.$super(rowcol, ns);
+    scrolled() {
         this.vrp();
-    },
+    };
 
-    function setParent(p) {
+    /**
+     * Put the given title component for the given caption cell.
+     * @param  {Integer} rowcol a grid caption cell index
+     * @param  {String|zebkit.ui.Panel|zebkit.ui.View} title a title of the given grid caption cell.
+     * Can be a string or zebkit.ui.View or zebkit.ui.Panel class instance
+     * @method putTitle
+     */
+    putTitle(rowcol, t) {
+        // add empty titles
+        for(var i = this.kids.length - 1;  i >= 0 && i < rowcol; i++) {
+            this.add(new this.clazz.TitlePan(""));
+        }
+
+        if (zebkit.isString(t)) {
+            t = new this.clazz.TitlePan(t);
+        } else {
+            if (zebkit.instanceOf(t, ui.View)) {
+                var p = new ui.ViewPan();
+                p.setView(t);
+                t = p;
+            }
+        }
+
+        if (rowcol < this.kids.length) {
+            this.setAt(rowcol, t);
+        } else {
+            this.add(t);
+        }
+    };
+
+    /**
+     * Set the given column sortable state
+     * @param {Integer} col a column
+     * @param {Boolean} b true if the column has to be sortable
+     * @method setSortable
+     */
+    setSortable(col, b) {
+        var c = this.kids[col];
+        if (c.isSortable != b) {
+            c.isSortable = b;
+            c.statusPan.setVisible(b);
+        }
+        return this;
+    };
+
+    matrixSorted(target, info) {
+        for(var i=0; i < this.kids.length; i++) {
+            if (this.kids[i].matrixSorted) {
+                this.kids[i].matrixSorted(target, info);
+            }
+        }
+    };
+
+    matrixResized(target,prevRows,prevCols){
+        for(var i = 0; i < this.kids.length; i++) {
+            if (this.kids[i].matrixResized) {
+                this.kids[i].matrixResized(target,prevRows,prevCols);
+            }
+        }
+    };
+
+    getCaptionPS(rowcol) {
+        var  c = this.kids[rowcol];
+        return (c != null) ? (this.orient === "horizontal" ? c.getPreferredSize().width
+                                                            : c.getPreferredSize().height)
+                            : 0;
+    };
+
+    // static
+
+    static captionResized(rowcol, ns) {
+        super.captionResized(rowcol, ns);
+        this.vrp();
+    }
+
+    static setParent(p) {
         if (this.parent != null && this.parent.scrollManager != null) {
             this.parent.scrollManager.unbind(this);
         }
@@ -277,20 +287,13 @@ class CompGridCaption extends BaseCaption {
             p.scrollManager.bind(this);
         }
 
-        this.$super(p);
-    },
+        super.setParent(p);
+    }
 
-    function insert(i,constr, c) {
+    static insert(i,constr, c) {
         if (zebkit.isString(c)) {
             c = new this.clazz.TitlePan(c);
         }
-        this.$super(i,constr, c);
-    },
-
-    function(titles) {
-        if (arguments === 0) titles = null;
-
-        this.$super(titles);
-        this.setLayout(new this.clazz.Layout());
+        super.insert(i,constr, c);
     }
 }

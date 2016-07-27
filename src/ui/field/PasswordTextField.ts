@@ -1,4 +1,5 @@
 import TextField from './TextField';
+import SingleLineTxt from '../../data/SingleLineText';
 
 /**
  * Password text field.
@@ -9,8 +10,10 @@ import TextField from './TextField';
  * not be disguised with a star character
  * @extends zebkit.ui.TextField
  */
-class PasswordTextField extends TextField {
-    function(txt, size, showLast) {
+export default class PasswordTextField extends TextField {
+    constructor(txt, size, showLast) {
+        super(txt);
+
         if (arguments.length === 1) {
             showLast = false;
             size     = -1;
@@ -30,15 +33,14 @@ class PasswordTextField extends TextField {
             showLast = false;
         }
 
-        var pt = new pkg.PasswordText(new zebkit.data.SingleLineTxt(txt, size));
-        pt.showLast = showLast;
-        this.$super(pt);
+        var pt = new pkg.PasswordText(new SingleLineTxt(txt, size));
+        pt.showLast = showLast;        
         if (size > 0) {
             this.setPSByRowsCols(-1, size);
         }
-    },
+    }
 
-    function setShowLast(b) {
+    static setShowLast(b) {
         if (this.showLast !== b) {
             this.view.showLast = b;
             this.repaint();

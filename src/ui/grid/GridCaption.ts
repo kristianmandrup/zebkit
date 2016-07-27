@@ -20,8 +20,8 @@ class LeftGridCaption extends GridCaption {
  * @class zebkit.ui.grid.GridCaption
  * @extends zebkit.ui.grid.BaseCaption
  */
-class GridCaption extends BaseCaption {
-    function $prototype() {
+export default class GridCaption extends BaseCaption {
+    constructor() {
         this.defYAlignment = this.defXAlignment = "center";
 
         /**

@@ -7,9 +7,10 @@ import TextField from './TextField';
  * @param {String} [txt] a text
  * @extends zebkit.ui.TextField
  */
-class TextArea extends TextField {
-    function(txt) {
-        if (arguments.length === 0) txt = "";
-        this.$super(new zebkit.data.Text(txt));
+import Text from '../../data/Text';
+
+export default class TextArea extends TextField {
+    constructor(txt: string = '') {
+        super(new Text(txt));        
     }
 }
