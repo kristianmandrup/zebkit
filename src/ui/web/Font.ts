@@ -24,29 +24,13 @@ import zebkit from '../..';
 
 export default class Font {
 
-    static $fmCanvas = document.createElement("canvas").getContext("2d");
-    static $fmText  = document.getElementById("zebkit.fm.text");
-    static $fmImage: HTMLImageElement = <HTMLImageElement> document.getElementById("zebkit.fm.image");
+    height: number;
+    s: any;
+    ascent: any;
 
-    //the next function passed to zebkit.ready() will be blocked
-    //till the picture is completely loaded
-    static init() {
-        this.$fmImage.onload = function() {
-          zebkit.ready();
-        }
-        // set 1x1 transparent picture
-        this.$fmImage.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII%3D';            
-        }      
-    };
-
-    // default values
-    family:string = "Arial, Helvetica";
-    style  =  null;
-    height =  14;
-
-    constructor(family, style, size) {
-        this.family = pkg.Font.family,
-        this.style  = pkg.Font.style;
+    constructor(public family : string = 'Arial, Helvetica', public style? : string, public size? : string) {
+        this.family = Font.family,
+        this.style  = Font.style;
 
         if (arguments.length === 1) {
             this.size = decodeSize(family, pkg.Font.height);
@@ -89,7 +73,7 @@ export default class Font {
         }
 
         if (this.size == null) {
-            this.size = pkg.Font.height + "px";
+            this.size = Font.height + "px";
         }
 
         if (this.s == null) {
@@ -98,7 +82,7 @@ export default class Font {
                       this.family;
         }
 
-        var $fmText = pkg.Font.$fmText;
+        var $fmText = Font.$fmText;
         if ($fmText.style.font !== this.s) {
             $fmText.style.font = this.s;
         }
@@ -126,7 +110,7 @@ export default class Font {
          * @readOnly
          * @type {Integer}
          */
-        this.ascent = pkg.Font.$fmImage.offsetTop - $fmText.offsetTop + 1;  
+        this.ascent = Font.$fmImage.offsetTop - $fmText.offsetTop + 1;  
     }
 
     /**
@@ -172,7 +156,7 @@ export default class Font {
      */
     toString() {
         return this.s;
-    };
+    }
 
     resize(size) {
         var nsize = decodeSize(size, this.height);
@@ -180,11 +164,26 @@ export default class Font {
             throw new Error("Invalid size : " + size);
         }
         return new Font(this.family, this.style, nsize);
-    };
+    }
 
     restyle(style) {
         return new Font(this.family, style, this.height + "px");
-    };
+    }
+
+    static $fmCanvas = document.createElement("canvas").getContext("2d");
+    static $fmText  = document.getElementById("zebkit.fm.text");
+    static $fmImage: HTMLImageElement = <HTMLImageElement> document.getElementById("zebkit.fm.image");
+
+    //the next function passed to zebkit.ready() will be blocked
+    //till the picture is completely loaded
+    static init() {
+        this.$fmImage.onload = function() {
+          zebkit.ready();
+        }
+        // set 1x1 transparent picture
+        this.$fmImage.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII%3D';            
+        }      
+    }
     
 }
 

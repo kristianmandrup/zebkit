@@ -9,7 +9,7 @@ export default class Item {
     kids: any[];
     value: any;
 
-    constructor(v) {
+    constructor(v?) {
         /**
          * Array of children items of the item element
          * @attribute kids

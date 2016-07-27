@@ -42,9 +42,13 @@ import BaseTree from './BaseTree';
  * in opened state.
  */
 
-import ui from '../ui';
-import utils from '../utils';
-import data from '../data';
+import * as ui from '../';
+import Panel from '../core/Panel';
+import { Combo } from '../list';
+import { types } from '../../utils';
+import { Item, TreeModel } from '../../data';
+import { KeyEvent } from '../web/keys'
+import Font from '../web/Font';
 
 class Label extends ui.Label {
     canHaveFocus: boolean;
@@ -58,9 +62,9 @@ class Checkbox extends ui.Checkbox {
 
 }
 
-class Combo extends ui.Combo {
+class ComboX extends Combo {
     keyPressed(e) {
-        if (e.code != ui.KeyEvent.UP && e.code != ui.KeyEvent.DOWN) {
+        if (e.code != KeyEvent.UP && e.code != KeyEvent.DOWN) {
             super.keyPressed(e);
         }
     }
@@ -71,10 +75,10 @@ export default class CompTree extends BaseTree {
     $clazz = {
         Label: Label,
         CheckBox: Checkbox, 
-        Combo: Combo,
+        Combo: ComboX,
 
         createModel: function(item, root, tree) {
-            var mi = new data.Item();
+            var mi = new Item();
 
             if (typeof item.value !== "undefined") {
                 mi.value = item.value != null ? item.value : "";
@@ -84,7 +88,7 @@ export default class CompTree extends BaseTree {
 
             mi.value = ui.$component(mi.value, tree);
             mi.parent = root;
-            if (item.kids != null && item.kids.length > 0 && utils.instanceOf(item, ui.Panel) === false) {
+            if (item.kids != null && item.kids.length > 0 && types.instanceOf(item, Panel) === false) {
                 for (var i = 0; i < item.kids.length; i++) {
                     mi.kids[i] = this.createModel(item.kids[i], mi, tree);
                 }
@@ -125,14 +129,14 @@ export default class CompTree extends BaseTree {
     }
 
     setFont(f) {
-        this.font = zebkit.isString(f) ? new zebkit.ui.Font(f) : f;
+        this.font = types.isString(f) ? new Font(f) : f;
         return this;
     }
 
     childKeyPressed(e) {
         if (this.isSelectable === true){
-            var newSelection = (e.code === ui.KeyEvent.DOWN) ? this.findNext(this.selected)
-                                                                : (e.code === ui.KeyEvent.UP) ? this.findPrev(this.selected)
+            var newSelection = (e.code === KeyEvent.DOWN) ? this.findNext(this.selected)
+                                                                : (e.code === KeyEvent.UP) ? this.findPrev(this.selected)
                                                                                             : null;
             if (newSelection != null) {
                 this.select(newSelection);
@@ -144,8 +148,8 @@ export default class CompTree extends BaseTree {
         if (this.isSelectable === true && this.$blockCIE !== true) {
             this.$blockCIE = true;
             try {
-                var item = zebkit.data.TreeModel.findOne(this.model.root,
-                                                        zebkit.layout.getDirectChild(this,
+                var item = TreeModel.findOne(this.model.root,
+                                                        layout.getDirectChild(this,
                                                                                     e.source));
 
                 console.log("childPointerPressed()  " + item);
