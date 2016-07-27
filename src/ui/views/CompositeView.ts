@@ -18,6 +18,7 @@ export default class CompositeView extends View {
     width: number;
 
     views: View[];
+    voutline: any;
 
     constructor(e?) {
         super();

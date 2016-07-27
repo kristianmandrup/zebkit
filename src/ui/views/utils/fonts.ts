@@ -5,11 +5,10 @@ import Font from '../fonts';
  * @required easyoop, util
  */
 
-export fonts {
+export const fonts = {
     font: new Font("Arial", 14),
     smallFont: new Font("Arial", 10),
     boldFont: new Font("Arial", "bold", 12)
-
 }
 
 

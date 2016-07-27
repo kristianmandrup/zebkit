@@ -1,5 +1,3 @@
-import BaseList from './BaseList';
-
 /**
  * The class is list component implementation that visualizes zebkit.data.ListModel.
  * It is supposed the model can have any type of items. Visualization of the items
@@ -62,9 +60,13 @@ import BaseList from './BaseList';
  * @param {String|zebkit.ui.Font} [f] a font to render list item text
  * @param {String} [c] a color to render list item text
  */
-export default class ViewProvider {
+import BaseList from './BaseList';
+import StringRender from '../views/StringRender'
+
+class ViewProvider {
+    text: any;
+
     constructor(f, c) {
-        // super();
         /**
          * Reference to text render that is used to paint a list items
          * @type {zebkit.ui.StringRender}
@@ -72,7 +74,7 @@ export default class ViewProvider {
          * @readOnly
          */
 
-        this.text = new pkg.StringRender("");
+        this.text = new StringRender('');
         zebkit.properties(this, this.clazz);
         if (f != null) this.text.setFont(f);
         if (c != null) this.text.setColor(c);
@@ -129,6 +131,7 @@ export default class List extends BaseList {
     widths: any; 
     vArea: any;
     model: any;
+    provider: any;
 
     constructor(m, b){
         super(m, b);

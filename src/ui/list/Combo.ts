@@ -1,5 +1,3 @@
-import Panel from '../ui/Panel';
-
 /**
  * Combo box UI component class. Combo uses a list component to show in drop down window.
  * You can use any available list component implementation:
@@ -59,16 +57,21 @@ import Panel from '../ui/Panel';
  * shown (true) or hidden (false)
 */
 
-import {ContentPan, ComboPadPan, EditableContentPan} from './combo';
+import { ContentPan, ComboPadPan, EditableContentPan, ButtonX } from './combo/index';
 
-import TextField from '../ui/TextField';
-import List from '../ui/list/List'; 
-import util from '../util';
-import keys from '../keys';
+import Panel from '../core/Panel';
+import TextField from '../field/TextField';
+import { List, CompList, BaseList } from './'; 
+import { types } from '../../utils';
+import * as keys from '../web/keys';
+import { ListenersClass } from '../../utils/listen'; 
+import * as layout from '../../layout';
+import FocusManager from '../core/FocusManager';
+import { $view } from '../views';
 
 export default class Combo extends Panel {
     $clazz = {
-        Listeners: util.ListenersClass("selected"),
+        Listeners: ListenersClass("selected"),
         
         /**
          * UI panel class that is used to implement combo box content area
@@ -94,11 +97,15 @@ export default class Combo extends Panel {
     list: any; // List
     height: number;
     width: number;
+    padShown: any;
+    focusManager: FocusManager;
 
     constructor(list, editable) {
         super();
+        this.focusManager = FocusManager.instance;
+
         this.ComboPadPan = ComboPadPan;
-        if (list != null && utils.isBoolean(list)) {
+        if (list != null && types.isBoolean(list)) {
             editable = list;
             list = null;
         }
@@ -117,8 +124,8 @@ export default class Combo extends Panel {
          * @readOnly
          * @type {zebkit.ui.BaseList}
          */
-        if (utils.instanceOf(list, BaseList) === false) {
-            list = list.length > 0 && utils.instanceOf(list[0], pkg.Panel) ? new this.clazz.CompList(list, true)
+        if (types.instanceOf(list, BaseList) === false) {
+            list = list.length > 0 && types.instanceOf(list[0], Panel) ? new this.clazz.CompList(list, true)
                                                                             : new this.clazz.List(list, true);
         }
 
@@ -291,7 +298,7 @@ export default class Combo extends Panel {
         var canvas = this.getCanvas();
         if (canvas != null) {
             var ps  = this.winpad.getPreferredSize(),
-                p   = zebkit.layout.toParentOrigin(0, 0, this.winpad.adjustTo == null ? this : this.winpad.adjustTo),
+                p   = layout.toParentOrigin(0, 0, this.winpad.adjustTo == null ? this : this.winpad.adjustTo),
                 py  = p.y;
 
             // if (this.winpad.hbar && ps.width > this.width) {
@@ -399,7 +406,7 @@ export default class Combo extends Panel {
      */
     setSelectionView(c){
         if (c != this.selectionView) {
-            this.selectionView = pkg.$view(c);
+            this.selectionView = $view(c);
             this.repaint();
         }
     }
@@ -448,7 +455,7 @@ export default class Combo extends Panel {
             if (this.content != null) {
                 this.content.comboValueUpdated(this, this.list.getSelected());
                 if (this.content.isEditable === true) {
-                    pkg.focusManager.requestFocus(this.content);
+                    this.focusManager.requestFocus(this.content);
                 }
                 this.repaint();
             }
@@ -462,7 +469,7 @@ export default class Combo extends Panel {
     }
 
     kidAdded(index,s,c){
-        if (utils.instanceOf(c, Combo.ContentPan)) {
+        if (types.instanceOf(c, Combo.ContentPan)) {
             if (this.content != null) {
                 throw new Error("Content panel is set");
             }

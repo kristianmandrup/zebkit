@@ -1,6 +1,6 @@
 import Canvas from 'canvas';
 import View from './View';
-import utils from '../utils';
+import { $validateValue } from '../../utils/validate';
 
 export default class BundleView extends View {
     color: string;
@@ -11,7 +11,7 @@ export default class BundleView extends View {
         this.color = "#AAAAAA";
         this.direction = "vertical";
         if (arguments.length > 0) {
-            this.direction = utils.$validateValue(dir, "vertical", "horizontal");
+            this.direction = $validateValue(dir, "vertical", "horizontal");
             if (arguments.length > 1) this.color = color;
         }        
     }

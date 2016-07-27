@@ -89,6 +89,7 @@ import Panel from '../ui/Panel';
   * applied to the given tree item
   */
 import { ListenersClass } from '../../utils/listen';
+import ScrollManager from '../ScrollManager';
 
 export default class BaseTree extends Panel {
     get clazz() {
@@ -123,6 +124,23 @@ export default class BaseTree extends Panel {
     // this.$super();
     // this.setModel(d);
     // this.scrollManager = new ui.ScrollManager(this);
+
+    selected: any; 
+    firstVisible: any;
+    maxw: number;
+    maxh: number;
+    visibleArea: any;
+    lnColor: any;
+
+    views: any;
+    viewSizes: any;
+
+    _isVal: boolean;
+    nodes: any;
+    _: any;
+    isOpenVal: boolean;
+    scrollManager: ScrollManager;
+    model: any;
 
 
     constructor(d, b?){
@@ -183,7 +201,7 @@ export default class BaseTree extends Panel {
 
         this.setSelectable(true);
         this.setModel(d);
-        this.scrollManager = new ui.ScrollManager(this);
+        this.scrollManager = new ScrollManager(this);
     }
 
     /**
@@ -192,10 +210,10 @@ export default class BaseTree extends Panel {
      * @return {Boolean} true if the given tree component item is opened
      * @method isOpen
      */
-    this.isOpen = function(i){
+    isOpen(i){
         this.validate();
         return this.isOpen_(i);
-    };
+    }
 
     /**
      * Get calculated for the given tree model item metrics
@@ -203,20 +221,20 @@ export default class BaseTree extends Panel {
      * @return {Object}   an tree model item metrics. Th
      * @method getItemMetrics
      */
-    this.getItemMetrics = function(i){
+    getItemMetrics(i){
         this.validate();
         return this.getIM(i);
-    };
+    }
 
-    this.togglePressed = function(root) {
+    togglePressed(root) {
         this.toggle(root);
-    };
+    }
 
-    this.itemPressed = function(root, e) {
+    itemPressed(root, e) {
         this.select(root);
-    };
+    }
 
-    this.pointerPressed = function(e){
+    pointerPressed(e){
         if (this.firstVisible != null && e.isAction()) {
             var x = e.x,
                 y = e.y,
@@ -234,9 +252,9 @@ export default class BaseTree extends Panel {
                 }
             }
         }
-    };
+    }
 
-    this.vVisibility = function (){
+    vVisibility(){
         if (this.model == null) this.firstVisible = null;
         else {
             var nva = ui.$cvp(this, {});
@@ -263,16 +281,16 @@ export default class BaseTree extends Panel {
             }
         }
         this._isVal = true;
-    };
+    }
 
-    this.recalc = function() {
+    recalc() {
         this.maxh = this.maxw = 0;
         if (this.model != null && this.model.root != null) {
             this.recalc_(this.getLeft(), this.getTop(), null, this.model.root, true);
             this.maxw -= this.getLeft();
             this.maxh -= this.gapy;
         }
-    };
+    }
 
     /**
      * Get tree model item  metrical bounds (location and size).
@@ -290,7 +308,7 @@ export default class BaseTree extends Panel {
         * @method getItemBounds
         * @protected
         */
-    this.getItemBounds = function(root){
+    getItemBounds(root){
         var metrics = this.getIM(root),
             toggle  = this.getToggleBounds(root),
             image   = this.getIconBounds(root);
@@ -300,7 +318,7 @@ export default class BaseTree extends Panel {
         toggle.width = metrics.viewWidth;
         toggle.height = metrics.viewHeight;
         return toggle;
-    };
+    }
 
     /**
      * Get toggle element bounds for the given tree model item.
@@ -318,13 +336,13 @@ export default class BaseTree extends Panel {
         * @method getToggleBounds
         * @protected
         */
-    this.getToggleBounds = function(root){
+    getToggleBounds(root){
         var node = this.getIM(root), d = this.getToggleSize(root);
         return { x     : node.x,
                     y     : node.y + Math.floor((node.height - d.height) / 2),
                     width : d.width,
                     height: d.height };
-    };
+    }
 
     /**
      * Get current toggle element view. The view depends on the state of tree item.
@@ -333,10 +351,10 @@ export default class BaseTree extends Panel {
      * @return {zebkit.ui.View}  a toggle element view
      * @method getToogleView
      */
-    this.getToggleView = function(i){
+    getToggleView(i){
         return i.kids.length > 0 ? (this.getIM(i).isOpen ? this.views.on
                                                             : this.views.off) : null;
-    };
+    }
 
     /**
      * An abstract method that a concrete tree component implementations have to
@@ -353,9 +371,9 @@ export default class BaseTree extends Panel {
         * @method getItemPreferredSize
         * @protected
         */
-    this.getItemPreferredSize = function(root) {
+    getItemPreferredSize(root) {
         throw new Error("Not implemented");
-    };
+    }
 
     /**
      * An abstract method that a concrete tree component implementations should
@@ -369,7 +387,7 @@ export default class BaseTree extends Panel {
      * @method paintItem
      * @protected
      */
-    this.recalc_ = function (x,y,parent,root,isVis){
+    recalc_(x,y,parent,root,isVis){
         var node = this.getIM(root);
         if (isVis === true) {
             if (node.viewWidth < 0) {
@@ -411,11 +429,11 @@ export default class BaseTree extends Panel {
             }
         }
         return y;
-    };
+    }
 
-    this.isOpen_ = function (i){
+    isOpen_(i){
         return i == null || (i.kids.length > 0 && this.getIM(i).isOpen && this.isOpen_(i.parent));
-    };
+    }
 
     /**
      * Get a tree node metrics by the given tree model item.
@@ -424,14 +442,14 @@ export default class BaseTree extends Panel {
      * @protected
      * @method getIM
      */
-    this.getIM = function (i){
+    getIM(i){
         var node = this.nodes[i];
         if (typeof node === 'undefined'){
             node = new pkg.$IM(this.isOpenVal);
             this.nodes[i] = node;
         }
         return node;
-    };
+    }
 
     /**
      * Get a tree item that is located at the given location.
@@ -441,7 +459,7 @@ export default class BaseTree extends Panel {
      * @return {zebkit.data.Item} a tree model item
      * @method getItemAt
      */
-    this.getItemAt = function(root, x, y){
+    getItemAt(root, x, y){
         this.validate();
 
         if (arguments.length < 3) {
@@ -469,9 +487,9 @@ export default class BaseTree extends Panel {
             }
         }
         return null;
-    };
+    }
 
-    this.getItemAtInBranch = function(root,x,y){
+    getItemAtInBranch(root,x,y){
         if (root != null){
             var node = this.getIM(root);
             if (x >= node.x && y >= node.y && x < node.x + node.width && y < node.y + node.height + this.gapy) {
@@ -486,20 +504,20 @@ export default class BaseTree extends Panel {
             }
         }
         return null;
-    };
+    }
 
-    this.getIconView = function (i){
+    getIconView(i){
         return i.kids.length > 0 ? (this.getIM(i).isOpen ? this.views.open
                                                             : this.views.close)
                                     : this.views.leaf;
-    };
+    }
 
-    this.getIconSize = function (i) {
+    getIconSize(i) {
         var v = i.kids.length > 0 ? (this.getIM(i).isOpen ? this.viewSizes.open
                                                             : this.viewSizes.close)
                                     : this.viewSizes.leaf;
         return v != null ? v : { width:0, height:0 };
-    };
+    }
 
     /**
      * Get icon element bounds for the given tree model item.
@@ -517,30 +535,30 @@ export default class BaseTree extends Panel {
         * @method getToggleBounds
         * @protected
         */
-    this.getIconBounds = function(root) {
+    getIconBounds(root) {
         var node = this.getIM(root),
             id   = this.getIconSize(root),
             td   = this.getToggleSize(root);
         return { x:node.x + td.width + (td.width > 0 ? this.gapx : 0),
                     y:node.y + Math.floor((node.height - id.height) / 2),
                     width:id.width, height:id.height };
-    };
+    }
 
-    this.getToggleSize = function(i) {
+    getToggleSize = function(i) {
         return this.isOpen_(i) ? this.viewSizes.on : this.viewSizes.off;
-    };
+    }
 
-    this.isOverVisibleArea = function (i) {
+    isOverVisibleArea = function (i) {
         var node = this.getIM(i);
         return node.y + node.height + this.scrollManager.getSY() < this.visibleArea.y;
-    };
+    }
 
-    this.findOpened = function(item) {
+    findOpened(item) {
         var parent = item.parent;
         return (parent == null || this.isOpen_(parent)) ? item : this.findOpened(parent);
-    };
+    }
 
-    this.findNext = function(item) {
+    findNext(item) {
         if (item != null){
             if (item.kids.length > 0 && this.isOpen_(item)){
                 return item.kids[0];
@@ -553,9 +571,9 @@ export default class BaseTree extends Panel {
             }
         }
         return null;
-    };
+    }
 
-    this.findPrev = function (item){
+    findPrev(item){
         if (item != null) {
             var parent = item.parent;
             if (parent != null) {
@@ -564,14 +582,14 @@ export default class BaseTree extends Panel {
             }
         }
         return null;
-    };
+    }
 
-    this.findLast = function (item){
+    findLast(item){
         return this.isOpen_(item) && item.kids.length > 0 ? this.findLast(item.kids[item.kids.length - 1])
                                                             : item;
     };
 
-    this.prevVisible = function (item){
+    prevVisible(item){
         if (item == null || this.isOverVisibleArea(item)) return this.nextVisible(item);
         var parent = null;
         while((parent = item.parent) != null){
@@ -582,9 +600,9 @@ export default class BaseTree extends Panel {
             item = parent;
         }
         return item;
-    };
+    }
 
-    this.isVerVisible = function (item){
+    isVerVisible(item){
         if (this.visibleArea == null) return false;
 
         var node = this.getIM(item),
@@ -595,9 +613,9 @@ export default class BaseTree extends Panel {
         return ((this.visibleArea.y <= yy1 && yy1 < by) ||
                 (this.visibleArea.y <= yy2 && yy2 < by) ||
                 (this.visibleArea.y > yy1 && yy2 >= by)    );
-    };
+    }
 
-    this.nextVisible = function(item){
+    nextVisible(item){
         if (item == null || this.isVerVisible(item)) return item;
         var res = this.nextVisibleInBranch(item), parent = null;
         if (res != null) return res;
@@ -610,9 +628,9 @@ export default class BaseTree extends Panel {
             item = parent;
         }
         return null;
-    };
+    }
 
-    this.nextVisibleInBranch = function (item){
+    nextVisibleInBranch(item){
         if (this.isVerVisible(item)) return item;
         if (this.isOpen_(item)){
             for(var i = 0;i < item.kids.length; i++){
@@ -621,25 +639,25 @@ export default class BaseTree extends Panel {
             }
         }
         return null;
-    };
+    }
 
-    this.paintSelectedItem = function(g, root, node, x, y) {
+    paintSelectedItem(g, root, node, x, y) {
         var v = this.hasFocus() ? this.views.aselect : this.views.iselect;
         if (v != null) {
             v.paint(g, x, y, node.viewWidth, node.viewHeight, this);
         }
-    };
+    }
 
-    this.paintTree = function (g,item){
+    paintTree(g,item){
         this.paintBranch(g, item);
         var parent = null;
         while((parent = item.parent) != null){
             this.paintChild(g, parent, parent.kids.indexOf(item) + 1);
             item = parent;
         }
-    };
+    }
 
-    this.paintBranch = function (g, root){
+    paintBranch(g, root){
         if (root == null) return false;
 
         var node = this.getIM(root),
@@ -692,9 +710,9 @@ export default class BaseTree extends Panel {
             }
         }
         return this.paintChild(g, root, 0);
-    };
+    }
 
-    this.y_ = function (item, isStart){
+    y_(item, isStart){
         var node = this.getIM(item),
             th = this.getToggleSize(item).height,
             ty = node.y + Math.floor((node.height - th) / 2),
@@ -704,7 +722,7 @@ export default class BaseTree extends Panel {
 
         return (y + dy < 0) ?  -dy - 1
                             : ((y + dy > this.height) ? this.height - dy : y);
-    };
+    }
 
     /**
      * Paint children items of the given root tree item.
@@ -715,7 +733,7 @@ export default class BaseTree extends Panel {
      * @protected
      * @method paintChild
      */
-    this.paintChild = function (g, root, index){
+    paintChild(g, root, index){
         var b = this.isOpen_(root);
         if (root === this.firstVisible && this.lnColor != null) {
             g.setColor(this.lnColor);
@@ -762,9 +780,9 @@ export default class BaseTree extends Panel {
             }
         }
         return true;
-    };
+    }
 
-    this.nextPage = function (item,dir){
+    nextPage(item,dir){
         var sum = 0, prev = item;
         while(item != null && sum < this.visibleArea.height){
             sum += (this.getIM(item).height + this.gapy);
@@ -772,9 +790,9 @@ export default class BaseTree extends Panel {
             item = dir < 0 ? this.findPrev(item) : this.findNext(item);
         }
         return prev;
-    };
+    }
 
-    this.paint = function(g){
+    paint(g){
         if (this.model != null){
             this.vVisibility();
             if (this.firstVisible != null){
@@ -790,14 +808,14 @@ export default class BaseTree extends Panel {
                 }
             }
         }
-    };
+    }
 
     /**
      * Select the given item.
      * @param  {zebkit.data.Item} an item to be selected. Use null value to clear any selection
      * @method  select
      */
-    this.select = function(item){
+    select(item){
         if (this.isSelectable === true){
             var old = this.selected;
 
@@ -825,7 +843,7 @@ export default class BaseTree extends Panel {
                                 m.width, m.height);
             }
         }
-    };
+    }
 
     /**
      * Make the given tree item visible. Tree component rendered content can takes more space than
@@ -834,11 +852,11 @@ export default class BaseTree extends Panel {
      * @param  {zebkit.data.Item} item an item to be visible
      * @method makeVisible
      */
-    this.makeVisible = function(item){
+    makeVisible(item){
         this.validate();
         var r = this.getItemBounds(item);
         this.scrollManager.makeVisible(r.x, r.y, r.width, r.height);
-    };
+    }
 
     /**
      * Toggle off or on recursively all items of the given item
@@ -847,7 +865,7 @@ export default class BaseTree extends Panel {
      * state and false otherwise
      * @method toggleAll
      */
-    this.toggleAll = function (root,b){
+    toggleAll(root,b){
         var model = this.model;
         if (root.kids.length > 0){
             if (this.getItemMetrics(root).isOpen != b) this.toggle(root);
@@ -855,14 +873,14 @@ export default class BaseTree extends Panel {
                 this.toggleAll(root.kids[i], b);
             }
         }
-    };
+    }
 
     /**
      * Toggle the given tree item
      * @param  {zebkit.data.Item} item an item to be toggled
      * @method toggle
      */
-    this.toggle = function(item){
+    toggle(item){
         if (item.kids.length > 0){
             this.validate();
             var node = this.getIM(item);
@@ -880,13 +898,13 @@ export default class BaseTree extends Panel {
 
             this.repaint();
         }
-    };
+    }
 
-    this.itemInserted = function (model,item){
+    itemInserted(model,item){
         this.vrp();
-    };
+    }
 
-    this.itemRemoved = function (model,item){
+    itemRemoved(model,item){
         if (item === this.firstVisible) {
             this.firstVisible = null;
         }
@@ -897,57 +915,57 @@ export default class BaseTree extends Panel {
 
         delete this.nodes[item];
         this.vrp();
-    };
+    }
 
-    this.itemModified = function (model,item){
+    itemModified(model,item){
         var node = this.getIM(item);
         // invalidate an item metrics
         if (node != null) {
             node.viewWidth = -1;
         }
         this.vrp();
-    };
+    }
 
-    this.calcPreferredSize = function (target){
+    calcPreferredSize(target){
         return this.model == null ? { width:0, height:0 }
                                     : { width:this.maxw, height:this.maxh };
-    };
+    }
 
     // static
 
 
-    function focused(){
-        this.$super();
+    static focused(){
+        super.focused();
         if (this.selected != null) {
             var m = this.getItemMetrics(this.selected);
             this.repaint(m.x + this.scrollManager.getSX(),
                          m.y + this.scrollManager.getSY(), m.width, m.height);
         }
-    },
+    }
     /**
      * Say if items of the tree component should be selectable
      * @param {Boolean} b true is tree component items can be selected
      * @method setSelectable
      */
-    function setSelectable(b){
+    static setSelectable(b){
         if (this.isSelectable != b){
             if (b === false && this.selected != null) this.select(null);
             this.isSelectable = b;
             this.repaint();
         }
         return this;
-    },
+    }
 
     /**
      * Set tree component connector lines color
      * @param {String} c a color
      * @method setLineColor
      */
-    function setLineColor(c){
+    static setLineColor(c){
         this.lnColor = c;
         this.repaint();
         return this;
-    },
+    }
 
     /**
      * Set the given horizontal gaps between tree node graphical elements:
@@ -956,14 +974,14 @@ export default class BaseTree extends Panel {
      * @param {Integer} gy vertical gap
      * @method setGaps
      */
-    function setGaps(gx, gy){
+    static setGaps(gx, gy){
         if (gx != this.gapx || gy != this.gapy){
             this.gapx = gx;
             this.gapy = gy;
             this.vrp();
         }
         return this;
-    },
+    }
 
     /**
      * Set the number of views to customize rendering of different visual elements of the tree
@@ -998,7 +1016,7 @@ export default class BaseTree extends Panel {
      * @param {Object} v dictionary of tree component decorative elements views
      * @method setViews
      */
-    function setViews(v) {
+    static setViews(v) {
         // setting to 0 prevents exception when on/off view is not defined
         this.viewSizes.on  = { width: 0, height : 0};
         this.viewSizes.off = { width: 0, height : 0};
@@ -1014,14 +1032,14 @@ export default class BaseTree extends Panel {
             }
         }
         return this;
-    },
+    }
 
     /**
      * Set the given tree model to be visualized with the UI component.
      * @param {zebkit.data.TreeModel|Object} d a tree model
      * @method setModel
      */
-    function setModel(d){
+    static setModel(d){
         if (this.model != d) {
             if (zebkit.instanceOf(d, zebkit.data.TreeModel) === false) {
                 d = new zebkit.data.TreeModel(d);
@@ -1037,12 +1055,12 @@ export default class BaseTree extends Panel {
             this.vrp();
         }
         return this;
-    },
+    }
 
-    function invalidate(){
+    static invalidate(){
         if (this.isValid === true){
             this._isVal = false;
         }
-        this.$super();
+        super.invalidate();
     }
 }
