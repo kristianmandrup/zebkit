@@ -1,4 +1,4 @@
-import HtmlTextField from './HtmlTextField';
+import HtmlTextInput from './HtmlTextInput';
 
 /**
  * HTML input text element wrapper class. The class wraps standard HTML text field
@@ -8,9 +8,9 @@ import HtmlTextField from './HtmlTextField';
  * @param {String} [text] a text the text field component has to be filled with
  * @extends zebkit.ui.HtmlTextInput
  */
-class HtmlTextField extends HtmlTextInput {
-    function(text) {
-        this.$super(text, "input");
+export default class HtmlTextField extends HtmlTextInput {
+    constructor(text) {
+        super(text, "input");
         this.element.setAttribute("type",  "text");
     }
 }

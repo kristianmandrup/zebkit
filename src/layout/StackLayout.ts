@@ -6,13 +6,14 @@
  *  @constructor
  */
 import Layout from './Layout';
+import { getMaxPreferredSize} from './';
 
 export default class StackLayout implements Layout {
     constructor() {
     }
 
     calcPreferredSize(target){
-        return pkg.getMaxPreferredSize(target);
+        return getMaxPreferredSize(target);
     }
 
     doLayout(t){

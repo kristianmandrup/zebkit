@@ -13,7 +13,7 @@
 import Render from './Render';
 
 export default class Picture extends Render {
-    constructor(img, public x : number, public y : number, public width : number, public height : number) {
+    constructor(img, public x? : number, public y? : number, public width? : number, public height? : number) {
         super();
         /**
          * A x coordinate of the image part that has to be rendered

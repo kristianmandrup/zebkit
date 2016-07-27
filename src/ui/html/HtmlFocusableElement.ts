@@ -1,12 +1,13 @@
-import HtmlElement from './HtmlElement'; 
+import HtmlElement from 'dom'; 
 
 /**
  * @module  ui.html
  */
-class HtmlFocusableElement extends HtmlElement {
-    function $prototype() {
-        this.$getElementRootFocus = function() {
-            return this.element;
-        };
+export default class HtmlFocusableElement extends HtmlElement {
+    constructor(e?) {
+        super(e);
+    }
+    $getElementRootFocus() {
+        return this.element;
     }
 }

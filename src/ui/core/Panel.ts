@@ -381,8 +381,8 @@
   */
 
 import * as layout from '../../layout';
-import * as html from '../../html';
-import * as views from '../../views';
+import * as html from '../html';
+import * as views from '../views';
 
 import HtmlElement from './HtmlElement';
 import Bag from './Bag';

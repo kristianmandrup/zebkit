@@ -70,11 +70,11 @@ export default class Layoutable implements Layout {
       * @readOnly
       * @type {zebkit.layout.Layoutable}
       */
-
     x: number;
     y: number;
     height: number;
     width: number;
+
     cachedHeight: number;
     cachedWidth: number;
     psWidth: number;
@@ -87,6 +87,7 @@ export default class Layoutable implements Layout {
     parent: any;
     layout: Layout;
     kids: any[];
+    id: string;
 
     constructor() {
 

@@ -1,4 +1,4 @@
-export default const Cursor = {
+export default {
     DEFAULT     : "default",
     MOVE        : "move",
     WAIT        : "wait",

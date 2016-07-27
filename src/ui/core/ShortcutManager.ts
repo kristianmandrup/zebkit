@@ -75,15 +75,16 @@
  */
 import { SHORTCUT_EVENT } from './events';
 import Manager from './Manager';
-import { environment } from '../../';
+import { environment } from '../../utils';
 import events from '../../';
-import focusManager from '../';
 import KeyEvent from '../web/keys/KeyEvent';
+import FocusManager from './FocusManager';
 
 export default class ShortcutManager extends Manager {
     keyCommands: any;
+    focusManager: any;
 
-    constructor(commands) {
+    constructor(commands, focusManager?) {
         super();
         this.keyCommands = {};
         if (commands != null) {
@@ -93,6 +94,7 @@ export default class ShortcutManager extends Manager {
                 this.setCommands(commands.osx);
             }
         }        
+        this.focusManager = focusManager || new FocusManager();;
     }
     /**
      * Key pressed event handler.
@@ -100,7 +102,7 @@ export default class ShortcutManager extends Manager {
      * @method keyPressed
      */
     keyPressed(e : KeyEvent) : void {
-        var fo = focusManager.focusOwner;
+        var fo = this.focusManager.focusOwner;
         if (fo != null && this.keyCommands[e.code]) {
             var c = this.keyCommands[e.code];
             if (c && c[e.mask] != null) {

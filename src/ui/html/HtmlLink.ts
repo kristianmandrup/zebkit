@@ -6,9 +6,9 @@ import HtmlElement from './HtmlElement';
  * @param  {zebkit}  href)
  * @return {[type]}       [description]
  */
-class HtmlLink extends HtmlElement {
-    function(text, href) {
-        this.$super("a");
+export default class HtmlLink extends HtmlElement {
+    constructor(text, href) {
+        super("a");
         this.setContent(text);
         this.setAttribute("href", href == null ? "#": href);
         this._ = new zebkit.util.Listeners();

@@ -31,7 +31,7 @@
  * @constructor
  * @param {String} [events]* events types the container has to support
  */
-var $NewListener = function() {
+var $NewListener = function(x?, y?, z?, a?, b?, c?) {
     var args = Array.prototype.slice.call(arguments);
     if (args.length === 0) {
        args = ["fired"];

@@ -1,3 +1,34 @@
+export const eventNames = [
+    'keyTyped',
+    'keyReleased',
+    'keyPressed',
+    'pointerDragged',
+    'pointerDragStarted',
+    'pointerDragEnded',
+    'pointerMoved',
+    'pointerClicked',
+    'pointerDoubleClicked',
+    'pointerPressed',
+    'pointerReleased',
+    'pointerEntered',
+    'pointerExited',
+
+    'focusLost',
+    'focusGained',
+
+    'compSized',
+    'compMoved',
+    'compEnabled',
+    'compShown',
+    'compAdded',
+    'compRemoved',
+
+    'winOpened',
+    'winActivated',
+
+    'menuItemSelected'
+];
+
 export class Event {
     source: any;
     constructor() {
@@ -48,6 +79,7 @@ export class PointerEvent extends Pe {
     y: number;
     $px: number;
     $py: number;
+    source: any;
 
     constructor() {
         super();
@@ -94,7 +126,7 @@ export class PointerEvent extends Pe {
      * component is hosted) y mouse cursor coordinate
      * @method  updateCoordinates
      */
-    update(source,ax,ay) {
+    update(source : any,ax,ay) {
         // this can speed up calculation significantly check if source zebkit component
         // has not been changed, his location and parent component also has not been
         // changed than we can skip calculation of absolute location by traversing

@@ -9,6 +9,7 @@ import { FOCUS_EVENT } from './events';
 import Manager from './Manager';
 import * as layout from '../../layout';
 import KeyEvent from '../web/keys/KeyEvent';
+import * as events from './events';
 
 export default class FocusManager extends Manager {
     focusOwner: any;
@@ -215,14 +216,14 @@ export default class FocusManager extends Manager {
                 FOCUS_EVENT.source  = oldFocusOwner;
                 FOCUS_EVENT.related = this.focusOwner;
                 oldFocusOwner.focused();
-                pkg.events.fireEvent("focusLost", FOCUS_EVENT);
+                events.fireEvent("focusLost", FOCUS_EVENT);
             }
 
             if (this.focusOwner != null) {
                 FOCUS_EVENT.source  = this.focusOwner;
                 FOCUS_EVENT.related = oldFocusOwner;
                 this.focusOwner.focused();
-                pkg.events.fireEvent("focusGained", FOCUS_EVENT);
+                events.fireEvent("focusGained", FOCUS_EVENT);
             }
 
             return this.focusOwner;

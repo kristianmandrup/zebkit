@@ -8,9 +8,9 @@
  *  @extends zebkit.ui.ViewPan
  */
 import ViewPan from './ViewPan';
-import Picture from './Picture';
+import Picture from '../views/Picture';
 import * as web from '../../web';
-import * as utils from '../utils';
+import { types, Runner } from '../../utils';
 
 export default class ImagePan extends ViewPan {
     $runner: any;
@@ -34,11 +34,11 @@ export default class ImagePan extends ViewPan {
     setImage(img) {
         if (img != null) {
             var $this     = this,
-                isPic     = utils.instanceOf(img, Picture),
+                isPic     = types.instanceOf(img, Picture),
                 imgToLoad = isPic ? img.target : img ;
 
             if (this.$runner == null) {
-                this.$runner = new util.Runner();
+                this.$runner = new Runner();
             }
 
             this.$runner.run(function() {
@@ -48,7 +48,7 @@ export default class ImagePan extends ViewPan {
             run(function(p, b, i) {
                 $this.$runner = null;
                 if (b) {
-                    $this.setView(isPic ? img : new pkg.Picture(i));
+                    $this.setView(isPic ? img : new Picture(i));
                     $this.vrp();
                 }
 

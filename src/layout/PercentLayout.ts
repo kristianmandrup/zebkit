@@ -22,9 +22,12 @@
  * @extends {zebkit.layout.Layout}
  */
 import Layout from './Layout';
+import { $validateValue } from '../utils/validate';
 
 export default class PercentLayout implements Layout {
-    constructor(dir, gap, stretch) {
+
+
+    constructor(public direction : string, public gap : number, public stretch : boolean) {
          /**
           * Direction the components have to be placed (vertically or horizontally)
           * @attribute direction
@@ -55,7 +58,7 @@ export default class PercentLayout implements Layout {
         this.stretch = true;
 
         if (arguments.length > 0) {
-            this.direction = zebkit.util.$validateValue(dir, "horizontal", "vertical");
+            this.direction = $validateValue(direction, "horizontal", "vertical");
             if (arguments.length > 1) this.gap = gap;
             if (arguments.length > 2) this.stretch = stretch;
         }

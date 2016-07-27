@@ -318,7 +318,7 @@ export const $extendContext = function(ctx, methods){
     }
 };
 
-export const $canvas = function(c, w, h, forceResize) {
+export const $canvas = function(c, w, h, forceResize?) {
     // fetch current CSS size of canvas
     var cs = window.getComputedStyle(c, null),
         cw = parseInt(cs.getPropertyValue("width"),  10),

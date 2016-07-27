@@ -12,9 +12,10 @@
  * @extends {zebkit.ui.Panel}
  */
 import Panel from './Panel';
-import * as types from '../../types';
-import $view from './';
+import {types} from '../../utils';
+import {$view} from '../views';
 import * as web from '../../web';
+import FocusManager from './FocusManager';
 
 const $store = [
     "paddingTop","paddingLeft","paddingBottom","paddingRight",
@@ -40,8 +41,9 @@ export default class HtmlElement extends Panel {
     border: string;
     width: number;
     height: number;
+    $initListeners: any;
 
-    constructor(e) {
+    constructor(e, focusManager?) {
         super();
         this.$container = this.$canvas = null;
         this.ePsW = this.ePsH = 0;
@@ -49,7 +51,7 @@ export default class HtmlElement extends Panel {
                                     // and manage its visibility
 
         this.$sizeAdjusted = false;
-
+        this.focusManager = focusManager || new FocusManager();
         if (e == null) {
             e = "div";
         }
@@ -170,7 +172,7 @@ export default class HtmlElement extends Panel {
 
                 // sync native focus with zebkit focus if necessary
                 if ($this.hasFocus()) {
-                    focusManager.requestFocus(null);
+                    this.focusManager.requestFocus(null);
                 }
             }, false);
         }

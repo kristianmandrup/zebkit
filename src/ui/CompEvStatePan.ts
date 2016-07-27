@@ -6,8 +6,8 @@
  */
 import EvStatePan from './EvStatePan';
 import Panel from './core/Panel'
-import { focusManager, $view } from '../utils'; 
-
+import { focusManager } from '../utils'; 
+import { $view } from '../views';
 export default class CompositeEvStatePan extends EvStatePan {
     canHaveFocus: boolean;
     catchInput: boolean;

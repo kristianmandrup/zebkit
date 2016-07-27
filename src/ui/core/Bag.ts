@@ -1,6 +1,7 @@
 import * as util from '../../util';
 import * as web from '../../web';
 import * as zebkit from '../';
+import URL from '../utils/URL';
 
 export default class Bag extends util.Bag {
     url: string;
@@ -13,8 +14,8 @@ export default class Bag extends util.Bag {
     }
 
     loadImage(path) {
-        if (this.url != null && zebkit.URL.isAbsolute(path) === false) {
-            var base = (new zebkit.URL(this.url)).getParentURL();
+        if (this.url != null && URL.isAbsolute(path) === false) {
+            var base = (new URL(this.url)).getParentURL();
             path = base.join(path);
         }
         return web.$loadImage(path);

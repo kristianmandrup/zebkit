@@ -8,40 +8,10 @@
  * @extends {zebkit.ui.Manager}
  */
 import Manager from './Manager';
+import { eventNames } from './events'
+import { ListenersClass} from '../../utils/listen';
 
-var eventNames = [
-    'keyTyped',
-    'keyReleased',
-    'keyPressed',
-    'pointerDragged',
-    'pointerDragStarted',
-    'pointerDragEnded',
-    'pointerMoved',
-    'pointerClicked',
-    'pointerDoubleClicked',
-    'pointerPressed',
-    'pointerReleased',
-    'pointerEntered',
-    'pointerExited',
-
-    'focusLost',
-    'focusGained',
-
-    'compSized',
-    'compMoved',
-    'compEnabled',
-    'compShown',
-    'compAdded',
-    'compRemoved',
-
-    'winOpened',
-    'winActivated',
-
-    'menuItemSelected'
-];
-
-export default class EventManager extends Manager {
-    $clazz = (argument) => {
+function Clazz() {
         this.$CHILD_EVENTS_MAP = {};
 
         // add child<eventName> events names
@@ -52,9 +22,15 @@ export default class EventManager extends Manager {
             this.$CHILD_EVENTS_MAP[eventName] = eventNames[l + i];
         }
 
-        this.Listerners = zebkit.util.ListenersClass.apply(this, eventNames);
+        this.Listeners = ListenersClass.apply(this, eventNames);
+}
+
+export default class EventManager extends Manager {
+    get clazz() {
+        return new Clazz();
     }
 
+    $CEM: any;
     _: any;
 
     constructor(clazz) {

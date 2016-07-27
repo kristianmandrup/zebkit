@@ -14,8 +14,8 @@
 import Layout from './Layout';
 
 export default class RasterLayout implements Layout {
-    constructor(ups = false) {
-        this.usePsSize = ups;
+    constructor(public usePsSize : boolean = false) {
+        this.usePsSize = usePsSize;
     }
 
     calcPreferredSize(c){

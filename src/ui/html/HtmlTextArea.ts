@@ -6,13 +6,13 @@
  * @class zebkit.ui.HtmlTextArea
  * @extends zebkit.ui.HtmlTextInput
  */
-class HtmlTextArea extends HtmlTextInput {
-    function setResizeable(b) {
+export default class HtmlTextArea extends HtmlTextInput {
+    static setResizeable(b) {
         this.setStyle("resize", b === false ? "none" : "both");
-    },
+    }
 
-    function(text) {
-        this.$super(text, "textarea");
+    constructor(text) {
+        super(text, "textarea");
         this.element.setAttribute("rows", 10);
     }
 }

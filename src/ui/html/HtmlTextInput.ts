@@ -9,36 +9,38 @@ import HtmlFocusableElement from './HtmlFocusableElement';
  * @class zebkit.ui.HtmlTextInput
  * @extends zebkit.ui.HtmlElement
  */
-class HtmlTextInput extends HtmlFocusableElement {
-    function $prototype() {
-        this.cursorType = pkg.Cursor.TEXT;
+export default class HtmlTextInput extends HtmlFocusableElement {
+    cursorType: any;
+    element: any; // DOM
 
-        /**
-         * Get a text of the text input element
-         * @return {String} a text of the  text input element
-         * @method getValue
-         */
-        this.getValue = function() {
-            return this.element.value.toString();
-        };
+    constructor(text, e) {
+        super(e);
 
-        /**
-         * Set the text
-         * @param {String} t a text
-         * @method setValue
-         */
-        this.setValue = function(t) {
-            if (this.element.value !== t) {
-                this.element.value = t;
-                this.vrp();
-            }
-        };
-    },
-
-    function(text, e) {
         if (text == null) text = "";
-        this.$super(e);
+        
         this.setAttribute("tabindex", 0);
         this.setValue(text);
+
+        this.cursorType = pkg.Cursor.TEXT;
+    }
+    /**
+     * Get a text of the text input element
+     * @return {String} a text of the  text input element
+     * @method getValue
+     */
+    getValue() {
+        return this.element.value.toString();
+    }
+
+    /**
+     * Set the text
+     * @param {String} t a text
+     * @method setValue
+     */
+    setValue(t) {
+        if (this.element.value !== t) {
+            this.element.value = t;
+            this.vrp();
+        }
     }
 }

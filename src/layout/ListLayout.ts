@@ -23,9 +23,16 @@
  * @extends {zebkit.layout.Layout}
  */
 import Layout from './Layout';
+import { $validateValue } from '../utils/validate'; 
 
 export default class ListLayout implements Layout {
-    constructor(ax, gap) {
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+    
+    
+    constructor(public ax : string | string, public gap : number | string) {
         /**
          * Horizontal list items alignment
          * @attribute ax
@@ -45,7 +52,7 @@ export default class ListLayout implements Layout {
         if (arguments.length === 1) {
             this.gap = ax;
         } else if (arguments.length > 1) {
-            this.ax  = zebkit.util.$validateValue(ax, "stretch", "left", "right", "center");
+            this.ax  = $validateValue(ax, "stretch", "left", "right", "center");
             this.gap = gap;
         }
     }
