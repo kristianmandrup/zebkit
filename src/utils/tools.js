@@ -67,3 +67,34 @@ export const $annotate = function (clazz, callback) {
 
     clazz.prototype[methodName].$watched = m;
 }
+
+// target - is object whose properties have to populated
+// p      - properties
+export const properties = function(target, p) {
+    for(var k in p) {
+        // skip private properties( properties that start from "$")
+        if (k !== "clazz" && k[0] !== '$' && p.hasOwnProperty(k) && typeof p[k] !== "undefined" && typeof p[k] !== 'function') {
+            if (k[0] === '-') {
+                delete target[k.substring(1)];
+            } else {
+                var v = p[k],
+                    m = zebkit.getPropertySetter(target, k);
+
+                // value factory detected
+                if (v !== null && v.$new != null) {
+                    v = v.$new();
+                }
+
+                if (m === null) {
+                    target[k] = v;  // setter doesn't exist, setup it as a field
+                } else {
+                    // property setter is detected, call setter to
+                    // set the property value
+                    if (Array.isArray(v)) m.apply(target, v);
+                    else                  m.call(target, v);
+                }
+            }
+        }
+    }
+    return target;
+};

@@ -98,7 +98,7 @@ export function getTopParent(c){
  * @method toParentOrigin
  * @api zebkit.layout.toParentOrigin()
  */
-export function toParentOrigin(x,y,c,p){
+export function toParentOrigin(x,y,c,p?){
     if (arguments.length === 1) {
         c = x;
         x = y = 0;

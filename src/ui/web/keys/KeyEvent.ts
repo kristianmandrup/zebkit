@@ -10,7 +10,7 @@
  * @constructor
  */
 
-import Event from '../../core/events/Event';
+import { Event } from '../../core/events';
 
 export default class KeyEvent extends Event {
     static M_CTRL = 1;
@@ -20,7 +20,7 @@ export default class KeyEvent extends Event {
 
     code: number;
     mask: number;
-    ch: number;
+    ch: string | number;
     type: string;
     altKey: boolean;
     shiftKey: boolean;
@@ -78,7 +78,7 @@ export default class KeyEvent extends Event {
 
     $fillWith(e) {
         this.code = (e.which || e.keyCode || 0);
-        if (this.code === pkg.KeyEvent.ENTER) {
+        if (this.code === KeyEvent.ENTER) {
             this.ch = "\n";
         }
         else {
@@ -99,10 +99,10 @@ export default class KeyEvent extends Event {
         this.metaKey  = e.metaKey;
 
         this.mask = 0;
-        if (e.altKey)   this.mask += pkg.KeyEvent.M_ALT;
-        if (e.shiftKey) this.mask += pkg.KeyEvent.M_SHIFT;
-        if (e.ctrlKey)  this.mask += pkg.KeyEvent.M_CTRL;
-        if (e.metaKey)  this.mask += pkg.KeyEvent.M_CMD;
+        if (e.altKey)   this.mask += KeyEvent.M_ALT;
+        if (e.shiftKey) this.mask += KeyEvent.M_SHIFT;
+        if (e.ctrlKey)  this.mask += KeyEvent.M_CTRL;
+        if (e.metaKey)  this.mask += KeyEvent.M_CMD;
 
         return this;
     }
