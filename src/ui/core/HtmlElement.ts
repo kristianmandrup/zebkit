@@ -42,6 +42,7 @@ export default class HtmlElement extends Panel {
     width: number;
     height: number;
     $initListeners: any;
+    focusManager: FocusManager;
 
     constructor(e, focusManager?) {
         super();
@@ -51,7 +52,7 @@ export default class HtmlElement extends Panel {
                                     // and manage its visibility
 
         this.$sizeAdjusted = false;
-        this.focusManager = focusManager || new FocusManager();
+        this.focusManager = focusManager || FocusManager.instance;
         if (e == null) {
             e = "div";
         }

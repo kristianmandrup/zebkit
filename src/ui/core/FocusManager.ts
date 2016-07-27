@@ -14,6 +14,12 @@ import * as events from './events';
 export default class FocusManager extends Manager {
     focusOwner: any;
 
+    static _instance: FocusManager;
+
+    static get instance() {
+        return this._instance || new FocusManager();
+    }
+
     constructor() {
         super();
         /**

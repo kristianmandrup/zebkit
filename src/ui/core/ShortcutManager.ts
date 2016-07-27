@@ -82,7 +82,7 @@ import FocusManager from './FocusManager';
 
 export default class ShortcutManager extends Manager {
     keyCommands: any;
-    focusManager: any;
+    focusManager: FocusManager;
 
     constructor(commands, focusManager?) {
         super();
@@ -94,7 +94,7 @@ export default class ShortcutManager extends Manager {
                 this.setCommands(commands.osx);
             }
         }        
-        this.focusManager = focusManager || new FocusManager();;
+        this.focusManager = focusManager || FocusManager.instance;
     }
     /**
      * Key pressed event handler.

@@ -1,4 +1,8 @@
 import HtmlCanvas from './HtmlCanvas';
+import { types } from '../../utils';
+import * as web from '../../web';
+import { $canvases } from '../web/utils';
+import FocusManager from './FocusManager';
 
 export default class zCanvas extends HtmlCanvas {
     $clazz = {
@@ -8,9 +12,13 @@ export default class zCanvas extends HtmlCanvas {
     $container: any; // DOM element
     $isRootCanvas: boolean;
     isSizeFull: boolean;
+    offx: number;
+    offy: number;
 
     constructor(element, w, h) {
         super(element);
+
+        this.focusManager = FocusManager.instance;
 
         // no arguments
         if (arguments.length === 0) {
@@ -31,7 +39,7 @@ export default class zCanvas extends HtmlCanvas {
 
         // if passed element is string than consider it as
         // an ID of an element that is already in DOM tree
-        if (zebkit.isString(element)) {
+        if (types.isString(element)) {
             var id = element;
             element = document.getElementById(id);
 
@@ -65,7 +73,7 @@ export default class zCanvas extends HtmlCanvas {
         // !!!
         // save canvas in list of created Zebkit canvases
         // do it before calling setSize(w,h) method
-        pkg.$canvases.push(this);
+        $canvases.push(this);
 
         this.setSize(w, h);
 
@@ -84,19 +92,19 @@ export default class zCanvas extends HtmlCanvas {
 
         // this method should clean focus if
         // one of of a child DOM element gets focus
-        zebkit.web.$focusin(this.$container, function(e) {
+        web.$focusin(this.$container, function(e) {
             if (e.target !== $this.$container &&
                 e.target.parentNode != null &&
                 e.target.parentNode.getAttribute("data-zebcont") == null)
             {
-                pkg.focusManager.requestFocus(null);
+                this.focusManager.requestFocus(null);
             } else {
                 // clear focus if a focus owner component is placed in another zCanvas
                 if (e.target === $this.$container &&
-                    pkg.focusManager.focusOwner != null &&
-                    pkg.focusManager.focusOwner.getCanvas() !== $this)
+                    this.focusManager.focusOwner != null &&
+                    this.focusManager.focusOwner.getCanvas() !== $this)
                 {
-                    pkg.focusManager.requestFocus(null);
+                    this.focusManager.requestFocus(null);
                 }
             }
         }, true);
