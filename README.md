@@ -79,6 +79,14 @@ pkg.Line = Class(pkg.Panel, [
 
         // ...
  
+        this.setColors = function() {
+            this.colors = (arguments.length === 1) ? (Array.isArray(arguments[0]) ? arguments[0].slice(0)
+                                                                                  : [ arguments[0] ] )
+                                                   : Array.prototype.slice.call(arguments);
+            this.repaint();
+            return this;
+        };
+
         this.calcPreferredSize = function(target) {
             var s = this.colors.length * this.lineWidth;
             return { width: s, height:s};
@@ -106,12 +114,56 @@ export default class Line extends Panel {
 
     // more methods
 
+    setColors(...colors) {
+        this.colors = colors;
+        this.repaint();
+        return this;
+    }
+
     calcPreferredSize(target) {
         let s = this.colors.length * this.lineWidth;
         return { width: s, height:s};
     }
 }    
 ```
+
+Notice the use of rest parameters in setColors. We can also use destructuring to great effect!
+
+```js
+function paint(g,x,y,w,h,d) {
+    ...
+}
+```
+
+Instead we pass as more logical tuples such as x/y width/height etc. 
+
+```js
+function paint(g,{x : number, y : number, w : number,h : number},d : number) {
+    ...
+}
+```
+
+We can further improve by using interfaces
+
+```js
+interface coords {
+    x: number;
+    y: number
+} 
+
+interface size {
+    width: number;
+    height: number
+} 
+
+function paint(g, coords, size, d) {
+    ...
+}
+
+panel.paint(g, newPos, newSize, d);
+```
+
+So much better!
 
 ## License
 

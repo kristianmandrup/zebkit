@@ -50,11 +50,8 @@ export default class Line extends Panel {
      * @method setLineColors
      */
 
-    // TODO: use rest args!
     setColors(...colors) {
-        this.colors = (arguments.length === 1) ? (Array.isArray(arguments[0]) ? arguments[0].slice(0)
-                                                                              : [ arguments[0] ] )
-                                                : Array.prototype.slice.call(arguments);
+        this.colors = colors;
         this.repaint();
         return this;
     }
