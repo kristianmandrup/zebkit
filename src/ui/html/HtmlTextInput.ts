@@ -1,5 +1,3 @@
-import HtmlFocusableElement from './HtmlFocusableElement';
-
 /**
  * HTML input element wrapper class. The class can be used as basis class
  * to wrap HTML elements that can be used to enter a textual information.
@@ -9,6 +7,9 @@ import HtmlFocusableElement from './HtmlFocusableElement';
  * @class zebkit.ui.HtmlTextInput
  * @extends zebkit.ui.HtmlElement
  */
+import HtmlFocusableElement from './HtmlFocusableElement';
+import Cursor from '../core/Cursor';
+
 export default class HtmlTextInput extends HtmlFocusableElement {
     cursorType: any;
     element: any; // DOM
@@ -21,7 +22,7 @@ export default class HtmlTextInput extends HtmlFocusableElement {
         this.setAttribute("tabindex", 0);
         this.setValue(text);
 
-        this.cursorType = pkg.Cursor.TEXT;
+        this.cursorType = Cursor.TEXT;
     }
     /**
      * Get a text of the text input element

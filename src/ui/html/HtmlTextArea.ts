@@ -6,6 +6,8 @@
  * @class zebkit.ui.HtmlTextArea
  * @extends zebkit.ui.HtmlTextInput
  */
+import HtmlTextInput from './HtmlTextInput';
+
 export default class HtmlTextArea extends HtmlTextInput {
     setResizeable(b) {
         this.setStyle("resize", b === false ? "none" : "both");

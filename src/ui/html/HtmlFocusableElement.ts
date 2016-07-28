@@ -1,4 +1,4 @@
-import HtmlElement from 'dom'; 
+import HtmlElement from '../core/HtmlElement'; 
 
 /**
  * @module  ui.html

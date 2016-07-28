@@ -1,4 +1,5 @@
-import HtmlElement from './HtmlElement';
+import HtmlElement from '../core/HtmlElement';
+import { Listeners } from '../../utils/listen';
 
 /**
  * [description]
@@ -11,10 +12,9 @@ export default class HtmlLink extends HtmlElement {
         super("a");
         this.setContent(text);
         this.setAttribute("href", href == null ? "#": href);
-        this._ = new zebkit.util.Listeners();
-        var $this = this;
-        this.element.onclick = function(e) {
-            $this._.fired($this);
+        this._ = new Listeners();
+        this.element.onclick = (e) => {
+            this._.fired(this);
         };
     }
 }

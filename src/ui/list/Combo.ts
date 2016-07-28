@@ -57,7 +57,16 @@
  * shown (true) or hidden (false)
 */
 
-import { ContentPan, ComboPadPan, EditableContentPan, ButtonX } from './combo/index';
+import Button from '../Button';
+
+export class ButtonX extends Button {
+    constructor() {
+        super();
+        this.setFireParams(true,  -1);
+    }
+}
+
+import { ContentPan, ComboPadPan, EditableContentPan, ReadonlyContentPan } from './combo/index';
 
 import Panel from '../core/Panel';
 import TextField from '../field/TextField';
@@ -70,21 +79,25 @@ import FocusManager from '../core/FocusManager';
 import { $view } from '../views';
 
 export default class Combo extends Panel {
-    $clazz = {
-        Listeners: ListenersClass("selected"),
-        
-        /**
-         * UI panel class that is used to implement combo box content area
-         * @class  zebkit.ui.Combo.ContentPan
-         * @extends {zebkit.ui.Panel}
-         */
-        ContentPan: ContentPan,
-        Button: ButtonX,
-        TextField: TextField,
-        CompList: CompList,
-        List: List,
-
-        // ... more     
+    get clazz() {
+        return {
+            Listeners: ListenersClass("selected"),
+            
+            /**
+             * UI panel class that is used to implement combo box content area
+             * @class  zebkit.ui.Combo.ContentPan
+             * @extends {zebkit.ui.Panel}
+             */
+            ContentPan: ContentPan,
+            ReadonlyContentPan: ReadonlyContentPan,
+            EditableContentPan: EditableContentPan,
+            ComboPadPan: ComboPadPan,
+            Button: ButtonX,
+            TextField: TextField,
+            CompList: CompList,
+            List: List,
+            // ... more
+        }     
     }
 
     ComboPadPan: any;

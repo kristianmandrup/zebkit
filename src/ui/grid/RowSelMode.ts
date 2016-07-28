@@ -1,8 +1,11 @@
 // TODO: this is the future thoughts regarding
 // grid cell selection customization
+import { types } from '../../utils';
+
 export default class RowSelMode {
     selectedIndex: number;
     $blocked: boolean;
+    target: any;
 
     constructor() {
         this.selectedIndex = 0;

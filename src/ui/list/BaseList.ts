@@ -23,8 +23,10 @@ import $ViewsSetterMix from '../';
  * @param {Integer|Object} prev a previous selected index, return null if the selected item has been re-selected
  */
 export default class BaseList extends Panel, util.Position.Metric, $ViewsSetterMix {
-    $clazz = {
-        Listeners: util.ListenersClass("selected")
+    get clazz() {
+        return {
+            Listeners: util.ListenersClass("selected")
+        }
     }
 
     canHaveFocus: boolean;
@@ -33,6 +35,7 @@ export default class BaseList extends Panel, util.Position.Metric, $ViewsSetterM
     scrollManager: any;
     _: any;
     position: any; // util.Position
+    model: any;
 
     constructor(m, b) {
         super();
@@ -178,7 +181,7 @@ export default class BaseList extends Panel, util.Position.Metric, $ViewsSetterM
      * @method $pointerMoved
      * @protected
      */
-    $pointerMoved(x, y){
+    protected $pointerMoved(x, y){
         if (this.isComboMode === true && this.model != null) {
             var index = this.getItemIdxAt(x, y);
             if (index != this.position.offset && (index < 0 || this.isItemSelectable(index) === true)) {
@@ -228,15 +231,15 @@ export default class BaseList extends Panel, util.Position.Metric, $ViewsSetterM
         return this.model == null ? 0 : this.model.count();
     }
 
-    getLineSize = function(l) {
+    getLineSize(l) {
         return 1;
     }
 
-    getMaxOffset = function() {
+    getMaxOffset() {
         return this.getLines() - 1;
     }
 
-    catchScrolled = function(psx,psy) {
+    catchScrolled(psx,psy) {
         this.repaint();
     }
 
@@ -248,7 +251,7 @@ export default class BaseList extends Panel, util.Position.Metric, $ViewsSetterM
      * -1 if no any list item can be found.
      * @method getItemIdxAt
      */
-    getItemIdxAt = function(x,y) {
+    getItemIdxAt(x,y) {
         return -1;
     }
 

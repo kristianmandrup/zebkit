@@ -18,18 +18,26 @@
  * pointer cursor moving
  */
 import BaseList from './BaseList';
-import Label from './ui/Label';
-import ImageLabel from './ui/ImageLabel';
+import Label from '../Label';
+import ImageLabel from '../ImageLabel';
+import CompRender from '../views/CompRender';
+import * as layout from '../../layout';
+import { types } from '../../utils';
 
 export default class CompList extends BaseList {
-    $clazz = {
-        Label: Label,
-        ImageLabel: ImageLabel, 
-        Listeners: this.$parent.Listeners.ListenersClass("elementInserted", "elementRemoved", "elementSet")
+    get clazz() {
+        return {
+            Label: Label,
+            ImageLabel: ImageLabel, 
+            Listeners: this.$parent.Listeners.ListenersClass("elementInserted", "elementRemoved", "elementSet")
+        }
     }
 
+    $parent: any;
     model: any;
-    max: number;
+    max: any;
+    kids: any[];
+    layout: any; // Layout
 
     constructor(m, b?) {
         super(m, b);
@@ -37,7 +45,7 @@ export default class CompList extends BaseList {
         this.max   = null;
         this.setViewProvider(new zebkit.Dummy([
             function $prototype() {
-                this.render = new pkg.CompRender();
+                this.render = new CompRender();
                 this.getView = function (target,obj,i) {
                     this.render.setTarget(obj);
                     return this.render;
@@ -61,7 +69,9 @@ export default class CompList extends BaseList {
         return this.kids.length;
     }
 
-    catchScrolled(px, py) {};
+    catchScrolled(px, py) {
+
+    }
 
     getItemLocation(i) {
         return { x:this.kids[i].x, y:this.kids[i].y };
@@ -73,7 +83,7 @@ export default class CompList extends BaseList {
     }
 
     recalc(){
-        this.max = zebkit.layout.getMaxPreferredSize(this);
+        this.max = layout.getMaxPreferredSize(this);
     }
 
     calcMaxItemSize(){
@@ -82,7 +92,7 @@ export default class CompList extends BaseList {
     }
 
     getItemIdxAt(x,y){
-        return zebkit.layout.getDirectAt(x, y, this);
+        return layout.getDirectAt(x, y, this);
     }
 
     isItemSelectable(i) {
@@ -116,7 +126,7 @@ export default class CompList extends BaseList {
 
     setPosition(c){
         if (c != this.position){
-            if (zebkit.instanceOf(this.layout, zebkit.util.Position.Metric)) {
+            if (types.instanceOf(this.layout, zebkit.util.Position.Metric)) {
                 c.setMetric(this.layout);
             }
             super.setPosition(c);
@@ -150,7 +160,7 @@ export default class CompList extends BaseList {
 
             super.setLayout(this.scrollManager);
             if (this.position != null) {
-                this.position.setMetric(zebkit.instanceOf(layout, zebkit.util.Position.Metric) ? layout : this);
+                this.position.setMetric(types.instanceOf(layout, zebkit.util.Position.Metric) ? layout : this);
             }
         }
 
@@ -173,7 +183,7 @@ export default class CompList extends BaseList {
         if (i < 0 || i > this.kids.length) {
             throw new RangeError(i);
         }
-        return super.insert(i, constr, zebkit.instanceOf(e, pkg.Panel) ? e : new this.clazz.Label("" + e));
+        return super.insert(i, constr, types.instanceOf(e, pkg.Panel) ? e : new this.clazz.Label("" + e));
     }
 
     kidAdded(index,constr,e){
