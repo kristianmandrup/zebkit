@@ -18,6 +18,7 @@ export default class KeyEvent extends Event {
     static M_ALT = 4;
     static M_CMD = 8;
 
+    static BSPACE = 8;
     static ENTER = 13; 
     static ESCAPE = 27; 
     static "SPACE" = 32;

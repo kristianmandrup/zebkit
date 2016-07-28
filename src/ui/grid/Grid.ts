@@ -51,17 +51,40 @@ import util from '../util';
  * @param  {Integer} count a number of rows whose selection state has been updated
  * @param {Boolean} status a status. true means rows have been selected
  */
+
+function Clazz() {
+    this.Listeners = zebkit.util.ListenersClass("rowSelected");
+    this.Matrix    = Class(zebkit.data.Matrix, []);
+
+    this.DEF_COLWIDTH  = 80;
+    this.DEF_ROWHEIGHT = 25;
+    this.CornerPan = Class(ui.Panel, []);    
+}
+
 export default class Grid extends Panel, util.Position.Metric, Metrics, $ViewsSetterMix {
         get clazz() {
-            this.Listeners = zebkit.util.ListenersClass("rowSelected");
-            this.Matrix    = Class(zebkit.data.Matrix, []);
-
-            this.DEF_COLWIDTH  = 80;
-            this.DEF_ROWHEIGHT = 25;
-            this.CornerPan = Class(ui.Panel, []);
+            return new Clazz();
         }
 
-        constructor(model) {
+        navigationMode: string;
+        lineSize: number;
+        cellInsetsTop: number; 
+        cellInsetsBottom: number;
+        cellInsetsLeft: number;
+        cellInsetsRight: number;
+        
+        defXAlignment: string;
+        defYAlignment: string;
+
+        drawVerLines: boolean;
+        drawHorLines: boolean;
+        drawSideLines: boolean;
+
+        lineColor: string;
+        isUsePsMetric: boolean;
+        paintPosMarkerOver: boolean;
+        
+        constructor(model, cols?) {
             super();
             /**
              * Grid navigation mode

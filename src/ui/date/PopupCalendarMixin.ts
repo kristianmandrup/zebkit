@@ -2,11 +2,18 @@ import KeyEvent from '../web/keys/KeyEvent';
 import Calendar from './Calendar';
 // layout
 
-export default interface PopupCalendarMix {
+export default class PopupCalendarMix {
+    calendar : any;
+    protected $freezeCalendar: boolean;
+    calendarDateSet: any;
+    anchor: any;
+
     childKeyPressed(e) {
         if (e.code === KeyEvent.ENTER) this.showCalendar(e.source);
         else {
-            if (e.code === KeyEvent.BSPACE);
+            if (e.code === KeyEvent.BSPACE) {
+                // ??
+            }
         }
     }
 
@@ -17,13 +24,13 @@ export default interface PopupCalendarMix {
             this.$freezeCalendar = false;
 
             this.calendar = new Calendar([
-                function winActivated (e){
+                function winActivated (e) {
                     if (e.isActive === false) {
                         $this.hideCalendar();
                     }
                 },
 
-                function childKeyPressed(e){
+                function childKeyPressed(e) {
                     if (e.code === KeyEvent.ESCAPE) {
                         $this.hideCalendar();
                     }
@@ -40,9 +47,9 @@ export default interface PopupCalendarMix {
             });
         }
         return this.calendar;
-    },
+    }
 
-    function showCalendar(anchor) {
+    showCalendar(anchor) {
         try {
             this.$freezeCalendar = true;
 
