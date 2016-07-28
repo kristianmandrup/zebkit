@@ -14,7 +14,7 @@ import Layout from './Layout';
 import { findInTree } from '../utils/findInTree';
 import { types } from '../utils';
 
-export default class Layoutable implements Layout {
+export default abstract class Layoutable implements Layout {
       /**
        * x coordinate
        * @attribute x

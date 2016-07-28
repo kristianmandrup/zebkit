@@ -3,7 +3,7 @@ import HtmlElement from 'dom';
 /**
  * @module  ui.html
  */
-export default class HtmlFocusableElement extends HtmlElement {
+abstract class HtmlFocusableElement extends HtmlElement {
     constructor(e?) {
         super(e);
     }
@@ -11,3 +11,5 @@ export default class HtmlFocusableElement extends HtmlElement {
         return this.element;
     }
 }
+
+export default HtmlFocusableElement;

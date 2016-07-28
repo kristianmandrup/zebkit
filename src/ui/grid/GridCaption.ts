@@ -1,13 +1,3 @@
-import GridCaption from './GridCaption';
-
-
-class LeftGridCaption extends GridCaption {
-    function $prototype() {
-        this.constraints = "left";
-    }
-}
-
-
 /**
  * Grid caption class that implements rendered caption.
  * Rendered means all caption titles, border are painted
@@ -20,117 +10,138 @@ class LeftGridCaption extends GridCaption {
  * @class zebkit.ui.grid.GridCaption
  * @extends zebkit.ui.grid.BaseCaption
  */
+import BaseCaption from './BaseCaption';
+
 export default class GridCaption extends BaseCaption {
-    constructor() {
+
+    psW: number;
+    psH: number;
+    titles: string[];
+    render: any;    
+    defYAlignment: string;
+    defXAlignment: string;
+
+    constructor(titles?, render?) {
+        super(titles);
+        if (arguments.length < 2) {
+            render = new ui.StringRender("");
+        }
+
+        this.psW = this.psH = 0;
+        this.titles = [];
+        this.render = render;
+        this.render.setFont(pkg.GridCaption.font);
+        this.render.setColor(pkg.GridCaption.fontColor);
+        
         this.defYAlignment = this.defXAlignment = "center";
+    }
 
-        /**
-         * Get a grid caption column or row title view
-         * @param  {Integer} i a row (if the caption is vertical) or
-         * column (if the caption is horizontal) index
-         * @return {zebkit.ui.View} a view to be used as the given
-         * row or column title view
-         * @method getTitleView
-         */
-        this.getTitleView = function(i){
-            var value = this.getTitle(i);
-            if (value == null || value.paint != null) return value;
-            this.render.setValue(value.toString());
-            return this.render;
-        };
+    /**
+     * Get a grid caption column or row title view
+     * @param  {Integer} i a row (if the caption is vertical) or
+     * column (if the caption is horizontal) index
+     * @return {zebkit.ui.View} a view to be used as the given
+     * row or column title view
+     * @method getTitleView
+     */
+    getTitleView(i){
+        var value = this.getTitle(i);
+        if (value == null || value.paint != null) return value;
+        this.render.setValue(value.toString());
+        return this.render;
+    }
 
-        this.calcPreferredSize = function (l) {
-            return { width:this.psW, height:this.psH };
-        };
+    calcPreferredSize(l) {
+        return { width:this.psW, height:this.psH };
+    }
 
-        this.setFont = function(f) {
-            this.render.setFont(f);
-        };
+    setFont(f) {
+        this.render.setFont(f);
+    }
 
-        this.setColor = function(c) {
-            this.render.setColor(c);
-        };
+    setColor(c) {
+        this.render.setColor(c);
+    }
 
-        this.recalc = function(){
-            this.psW = this.psH = 0;
-            if (this.metrics != null){
-                var m     = this.metrics,
-                    isHor = (this.orient === "horizontal"),
-                    size  = isHor ? m.getGridCols() : m.getGridRows();
+    recalc(){
+        this.psW = this.psH = 0;
+        if (this.metrics != null){
+            var m     = this.metrics,
+                isHor = (this.orient === "horizontal"),
+                size  = isHor ? m.getGridCols() : m.getGridRows();
 
-                for(var i = 0;i < size; i++) {
-                    var v = this.getTitleView(i);
-                    if (v != null) {
-                        var ps = v.getPreferredSize();
-                        if (isHor === true) {
-                            if (ps.height > this.psH) this.psH = ps.height;
-                            this.psW += ps.width;
-                        } else {
-                            if (ps.width > this.psW) this.psW = ps.width;
-                            this.psH += ps.height;
-                        }
+            for(var i = 0;i < size; i++) {
+                var v = this.getTitleView(i);
+                if (v != null) {
+                    var ps = v.getPreferredSize();
+                    if (isHor === true) {
+                        if (ps.height > this.psH) this.psH = ps.height;
+                        this.psW += ps.width;
+                    } else {
+                        if (ps.width > this.psW) this.psW = ps.width;
+                        this.psH += ps.height;
                     }
                 }
-
-                if (this.psH === 0) this.psH = pkg.Grid.DEF_ROWHEIGHT;
-                if (this.psW === 0) this.psW = pkg.Grid.DEF_COLWIDTH;
             }
-        };
 
-        this.getTitle = function(rowcol) {
-            return this.titles[rowcol] == null ? null
-                                               : this.titles[rowcol].title;
-        };
+            if (this.psH === 0) this.psH = pkg.Grid.DEF_ROWHEIGHT;
+            if (this.psW === 0) this.psW = pkg.Grid.DEF_COLWIDTH;
+        }
+    }
 
-        /**
-         * Put the given title for the given caption cell.
-         * @param  {Integer} rowcol a grid caption cell index
-         * @param  {String|zebkit.ui.View|zebkit.ui.Panel} title a title of the given grid caption cell.
-         * Can be a string or zebkit.ui.View or zebkit.ui.Panel class instance
-         * @method putTitle
-         */
-        this.putTitle = function(rowcol, title){
-            var prev = this.titles[rowcol] != null ? this.titles[rowcol] : {};
-            if (prev.title != title) {
-                if (title != null && zebkit.instanceOf(title, ui.Panel)) {
-                    title = new ui.CompRender(title);
-                }
+    getTitle(rowcol) {
+        return this.titles[rowcol] == null ? null
+                                            : this.titles[rowcol].title;
+    }
 
-                prev.title = title;
-                this.titles[rowcol] = prev;
-                this.vrp();
+    /**
+     * Put the given title for the given caption cell.
+     * @param  {Integer} rowcol a grid caption cell index
+     * @param  {String|zebkit.ui.View|zebkit.ui.Panel} title a title of the given grid caption cell.
+     * Can be a string or zebkit.ui.View or zebkit.ui.Panel class instance
+     * @method putTitle
+     */
+    putTitle(rowcol, title){
+        var prev = this.titles[rowcol] != null ? this.titles[rowcol] : {};
+        if (prev.title != title) {
+            if (title != null && zebkit.instanceOf(title, ui.Panel)) {
+                title = new ui.CompRender(title);
             }
-        };
 
-        this.setTitleAlignments = function(rowcol, xa, ya){
-            var t = this.titles[rowcol];
-            if (t == null || t.xa != xa || t.ya != ya) {
-                if (t == null) t = {};
-                t.xa = xa;
-                t.ya = ya;
-                this.titles[rowcol] = t;
-                this.repaint();
-            }
-        };
+            prev.title = title;
+            this.titles[rowcol] = prev;
+            this.vrp();
+        }
+    }
 
-        this.setTitleBackground = function(i, v) {
-            v = ui.$view(v);
-            var t = this.titles[i];
+    setTitleAlignments(rowcol, xa, ya){
+        var t = this.titles[rowcol];
+        if (t == null || t.xa != xa || t.ya != ya) {
             if (t == null) t = {};
-            t.bg = v;
-            this.titles[i] = t;
+            t.xa = xa;
+            t.ya = ya;
+            this.titles[rowcol] = t;
             this.repaint();
-        };
+        }
+    }
 
-        this.getCaptionPS = function(rowcol) {
-            var  v = this.getTitleView(rowcol);
-            return (v != null) ? (this.orient === "horizontal" ? v.getPreferredSize().width
-                                                               : v.getPreferredSize().height)
-                               : 0;
-        };
-    },
+    setTitleBackground(i, v) {
+        v = ui.$view(v);
+        var t = this.titles[i];
+        if (t == null) t = {};
+        t.bg = v;
+        this.titles[i] = t;
+        this.repaint();
+    }
 
-    function paintOnTop(g) {
+    getCaptionPS(rowcol) {
+        var  v = this.getTitleView(rowcol);
+        return (v != null) ? (this.orient === "horizontal" ? v.getPreferredSize().width
+                                                            : v.getPreferredSize().height)
+                            : 0;
+    }
+
+    paintOnTop(g) {
         if (this.metrics != null){
             var cv = this.metrics.getCellsVisibility();
 
@@ -146,11 +157,11 @@ export default class GridCaption extends BaseCaption {
                     right  = this.getRight();
 
                 var x = isHor ? cv.fc[1] - this.x + m.getXOrigin() - gap
-                              : left,
+                                : left,
                     y = isHor ? top
-                              : cv.fr[1] - this.y + m.getYOrigin() - gap,
+                                : cv.fr[1] - this.y + m.getYOrigin() - gap,
                     size = isHor ? m.getGridCols()
-                                 : m.getGridRows();
+                                    : m.getGridRows();
 
                 //           top
                 //           >|<
@@ -170,9 +181,9 @@ export default class GridCaption extends BaseCaption {
                 for(var i = (isHor ? cv.fc[0] : cv.fr[0]); i <= (isHor ? cv.lc[0] : cv.lr[0]); i++)
                 {
                     var ww = isHor ? m.getColWidth(i)
-                                   : this.width - left - right,
+                                    : this.width - left - right,
                         hh = isHor ? this.height - top - bottom
-                                   : m.getRowHeight(i),
+                                    : m.getRowHeight(i),
                         v = this.getTitleView(i);
 
                     if (v != null) {
@@ -182,10 +193,10 @@ export default class GridCaption extends BaseCaption {
                             bg = t == null ? null : t.bg,
                             ps = v.getPreferredSize(),
                             vx = xa === "center" ? Math.floor((ww - ps.width)/2)
-                                                 : (xa === "right" ? ww - ps.width - ((i === size - 1) ? right : 0)
-                                                                   : (i === 0 ? left: 0)),
+                                                    : (xa === "right" ? ww - ps.width - ((i === size - 1) ? right : 0)
+                                                                    : (i === 0 ? left: 0)),
                             vy = ya === "center" ? Math.floor((hh - ps.height)/2)
-                                                 : (ya === "bottom" ? hh - ps.height - ((i === size - 1) ? bottom : 0)
+                                                    : (ya === "bottom" ? hh - ps.height - ((i === size - 1) ? bottom : 0)
                                                                     : (i === 0 ? top: 0));
 
 
@@ -205,20 +216,14 @@ export default class GridCaption extends BaseCaption {
                 }
             }
 
-            this.$super(g);
+            super.paintOnTop(g);
         }
-    },
+    }
+}
 
-    function(titles, render) {
-        if (arguments.length < 2) {
-            render = new ui.StringRender("");
-        }
-
-        this.psW = this.psH = 0;
-        this.titles = [];
-        this.render = render;
-        this.render.setFont(pkg.GridCaption.font);
-        this.render.setColor(pkg.GridCaption.fontColor);
-        this.$super(titles);
+class LeftGridCaption extends GridCaption {
+    constructor() {
+        super();
+        this.constraints = "left";
     }
 }

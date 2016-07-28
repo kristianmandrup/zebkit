@@ -6,10 +6,15 @@
  *  @class zebkit.ui.Manager
  *  @constructor
  */
-export default class Manager {
-    constructor(events) {
+
+import events from './events';
+
+abstract class Manager {
+    constructor() {
         if (events != null) {
             events.bind(this);
         }
     }
 }
+
+export default Manager;

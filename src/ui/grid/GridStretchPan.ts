@@ -21,155 +21,16 @@ import Panel from '../ui/Panel'
  * @extends {zebkit.ui.Panel}
  */
 export default class GridStretchPan extends Panel {
-    function $prototype() {
-        this.calcPreferredSize = function(target) {
-            this.recalcPS();
-            return (target.kids.length === 0 ||
-                    target.grid.isVisible === false) ? { width:0, height:0 }
-                                                     : { width:this.$strPs.width,
-                                                         height:this.$strPs.height };
-        };
+    grid: any;
 
-        this.doLayout = function(target){
-            this.recalcPS();
-            if (target.kids.length > 0){
-                var grid = this.grid,
-                    left = target.getLeft(),
-                    top = target.getTop();
+    protected $widths: number[];
+    protected $props
+    protected $strPs: any;
+    protected $prevWidth = 0;
+    protected $propW = -1;
 
-                if (grid.isVisible === true) {
-                    grid.setBounds(left, top,
-                                   target.width  - left - target.getRight(),
-                                   target.height - top  - target.getBottom());
-
-                    for(var i = 0; i < this.$widths.length; i++) {
-                        grid.setColWidth(i, this.$widths[i]);
-                    }
-                }
-            }
-        };
-
-        this.captionResized = function(src, col, pw){
-            if (col < this.$widths.length - 1) {
-                var grid = this.grid,
-                    w    = grid.getColWidth(col),
-                    dt   = w - pw;
-
-                if (dt < 0) {
-                    grid.setColWidth(col + 1, grid.getColWidth(col + 1) - dt);
-                } else {
-                    var ww = grid.getColWidth(col + 1) - dt,
-                        mw = this.getMinWidth();
-
-                    if (ww < mw) {
-                        grid.setColWidth(col, w - (mw - ww));
-                        grid.setColWidth(col + 1, mw);
-                    } else {
-                        grid.setColWidth(col + 1, ww);
-                    }
-                }
-
-                this.$propW = -1;
-            }
-        };
-
-        this.getMinWidth = function () {
-            return zebkit.instanceOf(this.grid.topCaption, pkg.BaseCaption) ? this.grid.topCaption.minSize
-                                                                           : 10;
-        };
-
-        this.calcColWidths = function(targetAreaW){
-            var grid = this.grid,
-                cols = grid.getGridCols(),
-                ew   = targetAreaW - (this.$props.length + 1) * grid.lineSize,
-                sw   = 0;
-
-            if (this.$widths == null || this.$widths.length != cols) {
-                this.$widths = Array(cols);
-            }
-
-            for(var i = 0; i < cols; i++){
-                if (this.$props.length - 1 === i) {
-                    this.$widths[i] = ew - sw;
-                } else {
-                    this.$widths[i] = Math.round(ew * this.$props[i]);
-                    sw += this.$widths[i];
-                }
-            }
-        };
-
-        this.recalcPS = function (){
-            var grid = this.grid;
-            if (grid != null && grid.isVisible === true) {
-                // calculate size excluding padding where
-                // the target grid columns have to be stretched
-                var p        = this.parent,
-                    isScr    = zebkit.instanceOf(p, ui.ScrollPan),
-                    taWidth  = (isScr ? p.width - p.getLeft() - p.getRight() - this.getRight() - this.getLeft()
-                                      : this.width - this.getRight() - this.getLeft()),
-                    taHeight = (isScr ? p.height - p.getTop() - p.getBottom() - this.getBottom() - this.getTop()
-                                      : this.height - this.getBottom() - this.getTop());
-
-                // exclude left caption
-                if (this.grid.leftCaption != null &&
-                    this.grid.leftCaption.isVisible === true)
-                {
-                    taWidth -= this.grid.leftCaption.getPreferredSize().width;
-                }
-
-                if (this.$strPs == null || this.$prevWidth  != taWidth)
-                {
-                    if (this.$propW < 0 || this.$props == null || this.$props.length != cols) {
-                        // calculate col proportions
-                        var cols = grid.getGridCols();
-                        if (this.$props == null || this.$props.length !== cols) {
-                            this.$props = Array(cols);
-                        }
-                        this.$propW = 0;
-
-                        for(var i = 0; i < cols; i++){
-                            var w = grid.getColWidth(i);
-                            if (w === 0) w = grid.getColPSWidth(i);
-                            this.$propW += w;
-                        }
-
-                        for(var i = 0; i < cols; i++){
-                            var w = grid.getColWidth(i);
-                            if (w === 0) w = grid.getColPSWidth(i);
-                            this.$props[i] = w / this.$propW;
-                        }
-                    }
-
-                    this.$prevWidth  = taWidth;
-                    this.calcColWidths(taWidth);
-                    this.$strPs   = {
-                        width : taWidth,
-                        height: grid.getPreferredSize().height
-                    };
-
-                    // check if the calculated height is greater than
-                    // height of the parent component and re-calculate
-                    // the metrics if vertical scroll bar is required
-                    // taking in account horizontal reduction because of
-                    // the scroll bar visibility
-                    if (isScr === true &&
-                        p.height > 0 &&
-                        p.vBar != null &&
-                        p.autoHide === false &&
-                        taHeight < this.$strPs.height)
-                    {
-                        taWidth -= p.vBar.getPreferredSize().width;
-                        this.calcColWidths(taWidth);
-                        this.$strPs.width = taWidth;
-                    }
-                }
-            }
-        };
-    },
-
-    function (grid){
-        this.$super(this);
-
+    constructor(grid){
+        super();
         /**
          * Target grid component
          * @type {zebkit.ui.Grid}
@@ -183,28 +44,173 @@ export default class GridStretchPan extends Panel {
         this.$prevWidth = 0;
         this.$propW = -1;
         this.add(grid);
-    },
+        
+    }        
 
-    function kidAdded(index,constr,l){
+    calcPreferredSize(target) {
+        this.recalcPS();
+        return (target.kids.length === 0 ||
+                target.grid.isVisible === false) ? { width:0, height:0 }
+                                                    : { width:this.$strPs.width,
+                                                        height:this.$strPs.height };
+    }
+
+    doLayout(target){
+        this.recalcPS();
+        if (target.kids.length > 0){
+            var grid = this.grid,
+                left = target.getLeft(),
+                top = target.getTop();
+
+            if (grid.isVisible === true) {
+                grid.setBounds(left, top,
+                                target.width  - left - target.getRight(),
+                                target.height - top  - target.getBottom());
+
+                for(var i = 0; i < this.$widths.length; i++) {
+                    grid.setColWidth(i, this.$widths[i]);
+                }
+            }
+        }
+    }
+
+    captionResized(src, col, pw){
+        if (col < this.$widths.length - 1) {
+            var grid = this.grid,
+                w    = grid.getColWidth(col),
+                dt   = w - pw;
+
+            if (dt < 0) {
+                grid.setColWidth(col + 1, grid.getColWidth(col + 1) - dt);
+            } else {
+                var ww = grid.getColWidth(col + 1) - dt,
+                    mw = this.getMinWidth();
+
+                if (ww < mw) {
+                    grid.setColWidth(col, w - (mw - ww));
+                    grid.setColWidth(col + 1, mw);
+                } else {
+                    grid.setColWidth(col + 1, ww);
+                }
+            }
+
+            this.$propW = -1;
+        }
+    }
+
+    getMinWidth() {
+        return zebkit.instanceOf(this.grid.topCaption, pkg.BaseCaption) ? this.grid.topCaption.minSize
+                                                                        : 10;
+    }
+
+    calcColWidths(targetAreaW){
+        var grid = this.grid,
+            cols = grid.getGridCols(),
+            ew   = targetAreaW - (this.$props.length + 1) * grid.lineSize,
+            sw   = 0;
+
+        if (this.$widths == null || this.$widths.length != cols) {
+            this.$widths = Array(cols);
+        }
+
+        for(var i = 0; i < cols; i++){
+            if (this.$props.length - 1 === i) {
+                this.$widths[i] = ew - sw;
+            } else {
+                this.$widths[i] = Math.round(ew * this.$props[i]);
+                sw += this.$widths[i];
+            }
+        }
+    }
+
+    recalcPS(){
+        var grid = this.grid;
+        if (grid != null && grid.isVisible === true) {
+            // calculate size excluding padding where
+            // the target grid columns have to be stretched
+            var p        = this.parent,
+                isScr    = zebkit.instanceOf(p, ui.ScrollPan),
+                taWidth  = (isScr ? p.width - p.getLeft() - p.getRight() - this.getRight() - this.getLeft()
+                                    : this.width - this.getRight() - this.getLeft()),
+                taHeight = (isScr ? p.height - p.getTop() - p.getBottom() - this.getBottom() - this.getTop()
+                                    : this.height - this.getBottom() - this.getTop());
+
+            // exclude left caption
+            if (this.grid.leftCaption != null &&
+                this.grid.leftCaption.isVisible === true)
+            {
+                taWidth -= this.grid.leftCaption.getPreferredSize().width;
+            }
+
+            if (this.$strPs == null || this.$prevWidth  != taWidth)
+            {
+                if (this.$propW < 0 || this.$props == null || this.$props.length != cols) {
+                    // calculate col proportions
+                    var cols = grid.getGridCols();
+                    if (this.$props == null || this.$props.length !== cols) {
+                        this.$props = Array(cols);
+                    }
+                    this.$propW = 0;
+
+                    for(var i = 0; i < cols; i++){
+                        var w = grid.getColWidth(i);
+                        if (w === 0) w = grid.getColPSWidth(i);
+                        this.$propW += w;
+                    }
+
+                    for(var i = 0; i < cols; i++){
+                        var w = grid.getColWidth(i);
+                        if (w === 0) w = grid.getColPSWidth(i);
+                        this.$props[i] = w / this.$propW;
+                    }
+                }
+
+                this.$prevWidth  = taWidth;
+                this.calcColWidths(taWidth);
+                this.$strPs   = {
+                    width : taWidth,
+                    height: grid.getPreferredSize().height
+                };
+
+                // check if the calculated height is greater than
+                // height of the parent component and re-calculate
+                // the metrics if vertical scroll bar is required
+                // taking in account horizontal reduction because of
+                // the scroll bar visibility
+                if (isScr === true &&
+                    p.height > 0 &&
+                    p.vBar != null &&
+                    p.autoHide === false &&
+                    taHeight < this.$strPs.height)
+                {
+                    taWidth -= p.vBar.getPreferredSize().width;
+                    this.calcColWidths(taWidth);
+                    this.$strPs.width = taWidth;
+                }
+            }
+        }
+    }
+
+    kidAdded(index,constr,l){
         this.$propsW = -1;
         if (l.topCaption != null) {
             l.topCaption.bind(this);
         }
         this.scrollManager = l.scrollManager;
-        this.$super(index, constr, l);
-    },
+        super.kidAdded(index, constr, l);
+    }
 
-    function kidRemoved(i,l){
+    kidRemoved(i,l){
         this.$propsW = -1;
         if (l.topCaption != null) {
             l.topCaption.unbind(this);
         }
         this.scrollManager = null;
-        this.$super(i, l);
-    },
+        super.kidRemoved(i, l);
+    }
 
-    function invalidate(){
+    invalidate(){
         this.$strPs = null;
-        this.$super();
+        super.invalidate();
     }
 }

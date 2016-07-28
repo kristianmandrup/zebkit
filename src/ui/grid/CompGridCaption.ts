@@ -8,167 +8,167 @@ export class LeftCompGridCaption extends CompGridCaption {
 }
 
 function Clazz() {
-        this.Layout = class extends Layout {
-            constructor() {
-                this.doLayout = function (target) {
-                    var m    = target.metrics,
-                        b    = target.orient === "horizontal",
-                        top  = target.getTop(),
-                        left = target.getLeft(),
-                        wh   = (b ? target.height - top  - target.getBottom()
-                                  : target.width  - left - target.getRight());
-                        xy   = (b ? left + m.getXOrigin()
-                                  : top  + m.getYOrigin());
+    this.Layout = class extends Layout {
+        constructor() {
+            this.doLayout = function (target) {
+                var m    = target.metrics,
+                    b    = target.orient === "horizontal",
+                    top  = target.getTop(),
+                    left = target.getLeft(),
+                    wh   = (b ? target.height - top  - target.getBottom()
+                                : target.width  - left - target.getRight());
+                    xy   = (b ? left + m.getXOrigin()
+                                : top  + m.getYOrigin());
 
-                    for(var i=0; i < target.kids.length; i++) {
-                        var kid = target.kids[i],
-                            cwh = (b ? m.getColWidth(i) : m.getRowHeight(i));// + m.lineSize;
+                for(var i=0; i < target.kids.length; i++) {
+                    var kid = target.kids[i],
+                        cwh = (b ? m.getColWidth(i) : m.getRowHeight(i));// + m.lineSize;
 
-                        if (i === 0) {
-                            cwh -= (b ? (left - m.lineSize) : top);
-                        }
-
-                        if (kid.isVisible === true) {
-                            if (b) {
-                                kid.setBounds(xy, top, cwh, wh);
-                            } else {
-                                kid.setBounds(left, xy, wh, cwh);
-                            }
-                        }
-
-                        xy += ( cwh + m.lineSize );
+                    if (i === 0) {
+                        cwh -= (b ? (left - m.lineSize) : top);
                     }
-                };
 
-                this.calcPreferredSize = function (target) {
-                    return zebkit.layout.getMaxPreferredSize(target);
-                };
-            }
-        ]);
-
-        this.Link = Class(ui.Link, []);
-
-        this.StatusPan = Class(ui.StatePan, []);
-
-        /**
-         * Title panel that is designed to be used as
-         * CompGridCaption UI component title element.
-         * The panel keeps a grid column or row title,
-         * a column or row sort indicator. Using the
-         * component you can have sortable grid columns.
-         * @constructor
-         * @param {String} a grid column or row title
-         * @class zebkit.ui.grid.CompGridCaption.TitlePan
-         */
-        var clazz = this;
-        this.TitlePan = Class(ui.Panel, [
-            function $clazz() {
-                this.layout = new zebkit.layout.FlowLayout("center", "center", "horizontal", 8);
-            },
-
-            function $prototype() {
-                this.sortState = 0;
-
-                /**
-                 * Indicates if the title panel has to initiate a column sorting
-                 * @default false
-                 * @attribute isSortable
-                 * @readOnly
-                 * @type {Boolean}
-                 */
-                this.isSortable = false;
-            },
-
-            function getGridCaption() {
-                var c = this.parent;
-                while(c != null && zebkit.instanceOf(c, pkg.BaseCaption) === false) {
-                    c = c.parent;
-                }
-                return c;
-            },
-
-            function matrixSorted(target, info) {
-                if (this.isSortable) {
-                    var col = this.parent.indexOf(this);
-                    if (info.col === col) {
-                        this.sortState = info.name === 'descent' ? 1 : -1;
-                        this.statusPan.setState(info.name);
-                    } else {
-                        this.sortState = 0;
-                        this.statusPan.setState("*");
+                    if (kid.isVisible === true) {
+                        if (b) {
+                            kid.setBounds(xy, top, cwh, wh);
+                        } else {
+                            kid.setBounds(left, xy, wh, cwh);
+                        }
                     }
+
+                    xy += ( cwh + m.lineSize );
                 }
-            },
+            };
+
+            this.calcPreferredSize = function (target) {
+                return zebkit.layout.getMaxPreferredSize(target);
+            };
+        }
+    ]);
+
+    this.Link = Class(ui.Link, []);
+
+    this.StatusPan = Class(ui.StatePan, []);
+
+    /**
+     * Title panel that is designed to be used as
+     * CompGridCaption UI component title element.
+     * The panel keeps a grid column or row title,
+     * a column or row sort indicator. Using the
+     * component you can have sortable grid columns.
+     * @constructor
+     * @param {String} a grid column or row title
+     * @class zebkit.ui.grid.CompGridCaption.TitlePan
+     */
+    var clazz = this;
+    this.TitlePan = Class(ui.Panel, [
+        function $clazz() {
+            this.layout = new zebkit.layout.FlowLayout("center", "center", "horizontal", 8);
+        },
+
+        function $prototype() {
+            this.sortState = 0;
 
             /**
-             * Set the caption icon
-             * @param {String|Image} path a path to an image or image object
-             * @method setIcon
+             * Indicates if the title panel has to initiate a column sorting
+             * @default false
+             * @attribute isSortable
+             * @readOnly
+             * @type {Boolean}
              */
-            function setIcon(path) {
-                this.iconPan.setImage(path);
-                return this;
-            },
+            this.isSortable = false;
+        },
 
-            function matrixResized(target,prevRows,prevCols){
-                if (this.isSortable) {
+        function getGridCaption() {
+            var c = this.parent;
+            while(c != null && zebkit.instanceOf(c, pkg.BaseCaption) === false) {
+                c = c.parent;
+            }
+            return c;
+        },
+
+        function matrixSorted(target, info) {
+            if (this.isSortable) {
+                var col = this.parent.indexOf(this);
+                if (info.col === col) {
+                    this.sortState = info.name === 'descent' ? 1 : -1;
+                    this.statusPan.setState(info.name);
+                } else {
                     this.sortState = 0;
                     this.statusPan.setState("*");
                 }
-            },
-
-            function fired(target) {
-                if (this.isSortable === true) {
-                    var f = this.sortState === 1 ? zebkit.data.ascent
-                                                 : zebkit.data.descent,
-                        model = this.getGridCaption().metrics.model,
-                        col   = this.parent.indexOf(this);
-                    model.sortCol(col, f);
-                }
-            },
-
-            function kidRemoved(index, kid) {
-                // TODO: not very prefect check
-                if (kid._ != null && kid._.fired != null) {
-                    kid.unbind(this);
-                }
-                this.$super(index, kid);
-            },
-
-            function kidAdded(index, constr, kid) {
-                // TODO: not very prefect check
-                if (kid._ != null && kid._.fired != null) {
-                    kid.bind(this);
-                }
-                this.$super(index, constr, kid);
-            },
-
-            function(title) {
-                this.$super();
-
-                /**
-                 * Image panel to keep grtid caption title
-                 * @attribute iconPan
-                 * @type {zebkit.ui.ImagePan}
-                 * @readOnly
-                 */
-                this.iconPan = new ui.ImagePan(null);
-
-                /**
-                 * Title link
-                 * @attribute link
-                 * @type {zebkit.ui.Link}
-                 * @readOnly
-                 */
-                this.link = new clazz.Link(title);
-                this.statusPan = new clazz.StatusPan();
-                this.statusPan.setVisible(this.isSortable);
-
-                this.add(this.iconPan);
-                this.add(this.link);
-                this.add(this.statusPan);
             }
-        ]);
+        },
+
+        /**
+         * Set the caption icon
+         * @param {String|Image} path a path to an image or image object
+         * @method setIcon
+         */
+        function setIcon(path) {
+            this.iconPan.setImage(path);
+            return this;
+        },
+
+        function matrixResized(target,prevRows,prevCols){
+            if (this.isSortable) {
+                this.sortState = 0;
+                this.statusPan.setState("*");
+            }
+        },
+
+        function fired(target) {
+            if (this.isSortable === true) {
+                var f = this.sortState === 1 ? zebkit.data.ascent
+                                                : zebkit.data.descent,
+                    model = this.getGridCaption().metrics.model,
+                    col   = this.parent.indexOf(this);
+                model.sortCol(col, f);
+            }
+        },
+
+        function kidRemoved(index, kid) {
+            // TODO: not very prefect check
+            if (kid._ != null && kid._.fired != null) {
+                kid.unbind(this);
+            }
+            this.$super(index, kid);
+        },
+
+        function kidAdded(index, constr, kid) {
+            // TODO: not very prefect check
+            if (kid._ != null && kid._.fired != null) {
+                kid.bind(this);
+            }
+            this.$super(index, constr, kid);
+        },
+
+        function(title) {
+            this.$super();
+
+            /**
+             * Image panel to keep grtid caption title
+             * @attribute iconPan
+             * @type {zebkit.ui.ImagePan}
+             * @readOnly
+             */
+            this.iconPan = new ui.ImagePan(null);
+
+            /**
+             * Title link
+             * @attribute link
+             * @type {zebkit.ui.Link}
+             * @readOnly
+             */
+            this.link = new clazz.Link(title);
+            this.statusPan = new clazz.StatusPan();
+            this.statusPan.setVisible(this.isSortable);
+
+            this.add(this.iconPan);
+            this.add(this.link);
+            this.add(this.statusPan);
+        }
+    ]);
 }
 
 /**
@@ -184,7 +184,7 @@ function Clazz() {
 import { types } from '../../utils';
 
 export class CompGridCaption extends BaseCaption {
-    get clazz(clazz) {
+    get clazz() {
         return new Clazz();
     }
 

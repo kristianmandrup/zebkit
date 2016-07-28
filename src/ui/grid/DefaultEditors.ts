@@ -42,8 +42,8 @@
  * @constructor
  * @class zebkit.ui.grid.DefEditors
  */
-export default class DefEditors {
-    get clazz() {
+
+function Clazz() {
         this.TextField = Class(ui.TextField, []);
         this.Checkbox  = Class(ui.Checkbox,  []);
         this.Combo     = Class(ui.Combo,     [
@@ -79,7 +79,12 @@ export default class DefEditors {
                 this.selectedIndex = selectedIndex;
             }
         ]);
-    },
+}
+
+export default class DefEditors {
+    get clazz() {
+        return new Clazz();
+    }
 
     constructor() {
         this.textEditor     = new this.clazz.TextField("", 150);
@@ -101,13 +106,13 @@ export default class DefEditors {
      * the edited cell content
      * @method  fetchEditedValue
      */
-    this.fetchEditedValue = function(grid,row,col,data,editor) {
+    fetchEditedValue(grid,row,col,data,editor) {
         if (editor === this.selectorEditor) {
             data.selectedIndex = editor.list.selectedIndex;
             return data;
         }
         return editor.getValue();
-    };
+    }
 
     /**
      * Get an editor UI component to be used for the given cell of the specified grid
@@ -118,7 +123,7 @@ export default class DefEditors {
      * @return {zebkit.ui.Panel} an editor UI component to be used to edit the given cell
      * @method  getEditor
      */
-    this.getEditor = function(grid, row, col, v) {
+    getEditor(grid, row, col, v) {
         var editor = this.editors[col];
         if (editor != null) {
             editor.setValue(v);
@@ -139,7 +144,7 @@ export default class DefEditors {
         var ah = Math.floor((grid.getRowHeight(row) - editor.getPreferredSize().height)/2);
         editor.setPadding(ah, grid.cellInsetsLeft, ah, grid.cellInsetsRight);
         return editor;
-    };
+    }
 
     /**
      * Test if the specified input event has to trigger the given grid cell editing
@@ -164,9 +169,9 @@ export default class DefEditors {
      * cancellation
      * @method shouldCancel
      */
-    this.shouldCancel = function(grid,row,col,e){
+    shouldCancel(grid,row,col,e){
         return e.id === "keyPressed" && ui.KeyEvent.ESCAPE === e.code;
-    };
+    }
 
     /**
      * Test if the specified input event has to trigger finishing the given grid cell editing
@@ -177,7 +182,7 @@ export default class DefEditors {
      * @return {Boolean} true if the given input event triggers finishing the given cell editing
      * @method shouldFinish
      */
-    this.shouldFinish = function(grid,row,col,e){
+    shouldFinish(grid,row,col,e){
         return e.id === "keyPressed" && ui.KeyEvent.ENTER === e.code;
-    };
+    }
 }
