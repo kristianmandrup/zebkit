@@ -8,12 +8,14 @@
  * @class zebkit.ui.Line
  * @extends {zebkit.ui.Panel}
  */
-import Panel from './Panel';
+import Panel from './core/Panel';
 
 export default class Line extends Panel {
-    constructor() {
+    lineWidth: number;
+
+    constructor(public colors: string[]) {
         super();
-        this.colors = [ "gray" ];
+        this.colors = colors || [ "gray" ];
 
         /**
          * Line width
@@ -36,8 +38,8 @@ export default class Line extends Panel {
         }        
     }
 
-    setColor(c) {
-        this.setColors(c);
+    setColor(...colors) {
+        this.setColors(...colors);
         return this;
     }
 
@@ -47,7 +49,9 @@ export default class Line extends Panel {
      * @param {String} colors* colors
      * @method setLineColors
      */
-    setColors() {
+
+    // TODO: use rest args!
+    setColors(...colors) {
         this.colors = (arguments.length === 1) ? (Array.isArray(arguments[0]) ? arguments[0].slice(0)
                                                                               : [ arguments[0] ] )
                                                 : Array.prototype.slice.call(arguments);
@@ -78,7 +82,7 @@ export default class Line extends Panel {
     }
 
     calcPreferredSize(target) {
-        var s = this.colors.length * this.lineWidth;
+        let s = this.colors.length * this.lineWidth;
         return { width: s, height:s};
     }
 }
