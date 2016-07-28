@@ -165,6 +165,13 @@ panel.paint(g, newPos, newSize, d);
 
 So much better!
 
+## JavaScript compatibility
+
+You can still code using good old ES5 or ES6 etc. TypeScript can interoperate seamlessly with normal Javascript.
+Write your code in any flavour of JavaScript or TypeScript that you like. ES5 is also valid TypeScript! 
+You just wont get all the benefits of static typing and code assist which TypeScript provides, which is a 
+huge win IMO!!
+
 ## License
 
 MIT
