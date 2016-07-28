@@ -70,16 +70,17 @@ import * as web from '../../web';
 import $ContextMethods from './ContextMethods';
 
 export default class HtmlCanvas extends HtmlElement {
-    $clazz = new $ContextMethods();
+    protected $clazz = new $ContextMethods();
 
-    $rotateValue: number;
-    $scaleX: number;
-    $scaleY: number;
-    $paintTask: any;
+    protected $rotateValue: number;
+    protected $scaleX: number;
+    protected $scaleY: number;
+    protected $paintTask: any;
 
-    $da: {}; // Object
-    $container: any;
-    $context: any;
+    protected $da: {}; // Object
+
+    protected $container: any;
+    protected $context: any;
 
     width: number;
     height: number;
@@ -162,7 +163,7 @@ export default class HtmlCanvas extends HtmlElement {
         return Panel.prototype.setPadding.apply(this, arguments);
     }
 
-    setSize(w, h) {
+    setSize(w, h) : Panel {
         if (this.width != w || h != this.height) {
             var pw  = this.width,
                 ph  = this.height;

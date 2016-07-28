@@ -8,7 +8,7 @@ export default class InputStream {
     marked: any;
     pos: any;
 
-    constructor(container) {
+    constructor(container? : any) {
         if (isBA && container instanceof ArrayBuffer) {
             this.data = new Uint8Array(container);
         } else {
@@ -43,7 +43,7 @@ export default class InputStream {
 
     close()   { this.pos = this.data.length; },
 
-    read(buf, off, len) {
+    read(buf?, off?, len?) {
         if (arguments.length === 0) {
             return this.available() > 0 ? this.data[this.pos++] : -1;
         }

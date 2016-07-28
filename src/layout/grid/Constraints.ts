@@ -100,5 +100,5 @@ export default class Constraints {
             this.right  = r;
         }
         return this;
-    };
+    }
 }

@@ -4,9 +4,9 @@ export default class Output {
     constructor() {
     }
 
-    print(o) { this._p(0, o); };
-    error(o) { this._p(2, o); };
-    warn(o)  { this._p(1, o); };
+    print(o, _?) { this._p(0, o); };
+    error(o, _?) { this._p(2, o); };
+    warn(o, _?)  { this._p(1, o); };
 
     _p(l, o) {
         o = this.format(o);

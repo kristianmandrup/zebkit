@@ -30,18 +30,20 @@ export default class HtmlElement extends Panel {
     static CLASS_NAME = null;
     static $bodyFontSize = window.getComputedStyle(document.body, null).getPropertyValue('font-size');        
 
-    $container: any;
-    $canvas: any;
+    protected $container: any;
+    protected $canvas: any;
+    protected $blockElement: any; // DOM element
+    protected $initListeners: any;
+    protected $sizeAdjusted: boolean;
+
     ePsW: number;
     ePsH: number;
     isDOMElement: boolean;
-    $sizeAdjusted: boolean;
     element: any; // DOM element
-    $blockElement: any; // DOM element
     border: string;
     width: number;
     height: number;
-    $initListeners: any;
+    
     focusManager: FocusManager;
 
     constructor(e?, focusManager?) {
@@ -377,7 +379,7 @@ export default class HtmlElement extends Panel {
         }
     }
 
-    setEnabled(b:any) {
+    setEnabled(b : any) : Panel {
         if (this.isEnabled != b) {
             if (b) {
                 this.$container.removeChild(this.$blockElement);
@@ -391,7 +393,7 @@ export default class HtmlElement extends Panel {
         return super.setEnabled(b);
     }
 
-    setSize(w, h) {
+    setSize(w, h) : Panel {
         // by the moment the method setSize is called the DOM element can be not a part of
         // HTML layout. In this case offsetWidth/offsetHeihght are always zero what prevents
         // us from proper calculation of CSS width and height. Postpone

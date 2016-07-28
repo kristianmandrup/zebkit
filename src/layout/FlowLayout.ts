@@ -43,6 +43,7 @@ export default class FlowLayout implements Layout {
     gap: number | string;
     stretchLast: boolean;    
 
+    // TODO: Fix bad arguments, use options Object and destructuring
     constructor(public ax : string | number, public ay : string | number, public direction? : string, g?) {
         /**
          * Gap between laid out components

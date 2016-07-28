@@ -67,7 +67,7 @@ export default class Bag {
     content: any;
     url: string;
 
-    constructor(protected root : any) {
+    constructor(protected root? : any) {
         /**
          * Environment variables that can be referred from loaded content
          * @attribute variables

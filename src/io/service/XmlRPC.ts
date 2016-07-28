@@ -23,10 +23,22 @@
  */
 import Service from './Service';
 import { types } from '../../utils';
-import { date, b64, xml } from '../';
+import { date, b64 } from '../';
+import { xml } from '../parser';
 
 export default class XRPC extends Service {
     contentType: string;
+
+    /**
+     * Shortcut to call the specified method of a XML-RPC service.
+     * @param  {String} url an URL
+     * @param  {String} method a method name
+     * @api zebkit.io.XRPC.invoke()
+     * @method invoke
+     */
+    static invoke = function(url, method) {
+        return Service.invoke(XRPC, url, method);
+    };    
 
     constructor(url, methods) {
         super(url, methods);
@@ -146,17 +158,6 @@ export default class XRPC extends Service {
         }
         throw new Error("incorrect XML-RPC response");
     }
-
-    /**
-     * Shortcut to call the specified method of a XML-RPC service.
-     * @param  {String} url an URL
-     * @param  {String} method a method name
-     * @api zebkit.io.XRPC.invoke()
-     * @method invoke
-     */
-    invoke = function(url, method) {
-        return Service.invoke(XRPC, url, method);
-    };    
 }
 
 

@@ -1,6 +1,6 @@
 var CDNAME = '';
 
-export const getMethod = function(clazz, name) {
+export const getMethod = function(clazz, name : any, type? : number) {
     // map user defined constructor to internal constructor name
     if (name == CDNAME) {
         name = '$';

@@ -17,7 +17,7 @@ export default class QS {
      * @static
      * @method append
      */
-    append(url, obj) {
+    static append(url, obj) {
         return url + ((obj === null) ? '' : ((url.indexOf("?") > 0) ? '&' : '?') + QS.toQS(obj, true));
     }
 
@@ -28,7 +28,7 @@ export default class QS {
      * @method parse
      * @static
      */
-    parse(url) {
+    static parse(url) {
         var m = window.location.search.match(/[?&][a-zA-Z0-9_.]+=[^?&=]+/g), r = {};
         for(var i=0; m && i < m.length; i++) {
             var l = m[i].split('=');
@@ -46,7 +46,7 @@ export default class QS {
      * @static
      * @method toQS
      */
-    toQS(obj, encode) {
+    static toQS(obj, encode) {
         if (typeof encode === "undefined") encode = true;
         if (types.isString(obj) || types.isBoolean(obj) || types.isNumber(obj)) {
             return "" + obj;

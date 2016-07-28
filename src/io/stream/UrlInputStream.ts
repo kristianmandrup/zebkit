@@ -1,5 +1,6 @@
 import InputStream from './InputStream';
 import { getMethod } from '../extras';
+import { getRequest } from '../Http';
 
 var isBA = typeof(ArrayBuffer) !== 'undefined';
 
@@ -7,7 +8,7 @@ export default class URLInputStream extends InputStream {
     constructor(url, f) {
         super();
 
-        var r = io.getRequest(), $this = this;
+        var r = getRequest(), $this = this;
         r.open("GET", url, f !== null);
         if (f === null || isBA === false) {
             if (!r.overrideMimeType) throw new Error("Binary mode is not supported");

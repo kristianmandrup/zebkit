@@ -1,9 +1,8 @@
-import * as util from '../../util';
 import * as web from '../../web';
-import * as zebkit from '../';
-import URL from '../utils/URL';
+import URL from '../../utils/URL';
+import * as utils from '../../utils';
 
-export default class Bag extends util.Bag {
+export default class Bag extends utils.Bag {
     url: string;
     globalPropertyLookup: boolean;
     usePropertySetters: boolean;
@@ -23,7 +22,7 @@ export default class Bag extends util.Bag {
 
     // static
 
-    load = (s, cb) => {
+    load(s, cb?) {
       if (cb != null) {
           zebkit.busy();
           try {

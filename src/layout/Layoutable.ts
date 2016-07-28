@@ -197,7 +197,7 @@ export default class Layoutable implements Layout {
 
         findInTree(this, this.$normPath(path),
             function(node, name) {
-                return node.clazz != null && types.instanceOf(node, zebkit.Class.forName(name));
+                return node.clazz != null && types.instanceOf(node, types.Class.forName(name));
             }, callback);
         return res;
     }

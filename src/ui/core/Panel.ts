@@ -383,6 +383,7 @@
 import * as layout from '../../layout';
 import * as html from '../html';
 import * as views from '../views';
+import * as events from '../core/events'; 
 
 import HtmlElement from './HtmlElement';
 import HtmlCanvas from './HtmlCanvas';
@@ -409,7 +410,7 @@ export default class Panel extends layout.Layoutable {
     parent: any;
     border: any;
 
-    private $context: any;
+    protected $context: any;
 
     constructor(e?) {
       super();
@@ -1078,12 +1079,12 @@ export default class Panel extends layout.Layoutable {
      *  @method setEnabled
      *  @chainable
      */
-    setEnabled(b){
+    setEnabled(b : any) : Panel {
         if (this.isEnabled != b){
             this.isEnabled = b;
 
             COMP_EVENT.source = this;
-            pkg.events.fireEvent("compEnabled", COMP_EVENT);
+            events.fireEvent("compEnabled", COMP_EVENT);
             if (this.kids.length > 0) {
                 for(var i = 0;i < this.kids.length; i++) {
                     this.kids[i].setEnabled(b);

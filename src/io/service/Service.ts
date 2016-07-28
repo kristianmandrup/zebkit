@@ -44,6 +44,11 @@ import { HTTP } from '../Http';
 export default class Service {
     contentType: string;
 
+    static invoke = (clazz, url, method) => {
+        var rpc = new clazz(url, method);
+        return function() { return rpc[method].apply(rpc, arguments); };
+    }    
+
     constructor(public url : string, methods) {
         var $this = this;
         /**
@@ -128,10 +133,5 @@ export default class Service {
         }
         return http.POST(data, callback);
     }
-
-    invoke = (clazz, url, method) => {
-        var rpc = new clazz(url, method);
-        return function() { return rpc[method].apply(rpc, arguments); };
-    };    
 }
 

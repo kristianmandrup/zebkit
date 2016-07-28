@@ -28,6 +28,17 @@ export default class JsonRPC extends Service {
     version: string;
     contentType: string;
 
+    /**
+     * Shortcut to call the specified method of a JSON-RPC service.
+     * @param  {String} url an URL
+     * @param  {String} method a method name
+     * @api zebkit.io.JRPC.invoke()
+     * @method invoke
+     */
+    static invoke = function(url, method) {
+        return Service.invoke(JsonRPC, url, method);
+    };    
+
     constructor(url, methods) {
         super(url, methods);
         this.version = "2.0";
@@ -53,16 +64,5 @@ export default class JsonRPC extends Service {
         }
         return r.result;
     }
-
-    /**
-     * Shortcut to call the specified method of a JSON-RPC service.
-     * @param  {String} url an URL
-     * @param  {String} method a method name
-     * @api zebkit.io.JRPC.invoke()
-     * @method invoke
-     */
-    invoke = function(url, method) {
-        return Service.invoke(JsonRPC, url, method);
-    };    
 }
 
