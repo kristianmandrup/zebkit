@@ -220,9 +220,7 @@ export default class ShaperPan extends Panel {
         }
     }
 
-    // static
-
-    static insert(i, constr, d) {
+    insert(i, constr, d) {
         if (this.kids.length > 0) {
             this.removeAll();
         }
@@ -240,7 +238,7 @@ export default class ShaperPan extends Panel {
         super.insert(i, "center", d);
     }
 
-    static focused(){
+    focused(){
         super.focused();
         this.shaperBr.color = this.colors[this.hasFocus()? 1 : 0];
         this.repaint();

@@ -98,3 +98,87 @@ export const properties = function(target, p) {
     }
     return target;
 };
+
+export const $component = function(desc, instance) {
+    if (types.isString(desc)) {
+        //  [x] Text
+        //  @(image-path:wxh) Text
+        //  Text
+
+        var m = desc.match(/^(\[[x ]?\])/);
+        if (m != null) {
+            var txt = desc.substring(m[1].length),
+                ch  = instance != null && instance.clazz.Checkbox != null ? new instance.clazz.Checkbox(txt)
+                                                                          : new pkg.Checkbox(txt);
+            ch.setValue(m[1].indexOf('x') > 0);
+            return ch;
+        } else {
+            var m = desc.match(/^@\((.*)\)(\:[0-9]+x[0-9]+)?/);
+            if (m != null) {
+                var path = m[1],
+                    txt  = desc.substring(path.length + 3 + (m[2] != null ? m[2].length : 0)).trim(),
+                    img  = instance != null && instance.clazz.ImagePan != null ? new instance.clazz.ImagePan(path)
+                                                                               : new pkg.ImagePan(path);
+
+                if (m[2] != null) {
+                    var s = m[2].substring(1).split('x'),
+                        w = parseInt(s[0], 10),
+                        h = parseInt(s[1], 10);
+
+                    img.setPreferredSize(w, h);
+                }
+
+                if (txt.length == 0) {
+                    return img;
+                }
+
+                return instance != null && instance.clazz.ImageLabel != null ? new instance.clazz.ImageLabel(txt, img)
+                                                                             : new pkg.ImageLabel(txt, img);
+            } else {
+                return instance != null && instance.clazz.Label != null ? new instance.clazz.Label(desc)
+                                                                        : new pkg.Label(desc);
+            }
+        }
+    } else if (Array.isArray(desc)) {
+        if (desc.length > 0 && Array.isArray(desc[0])) {
+            var model = new zebkit.data.Matrix(desc.length, desc[0].length);
+            for(var row = 0; row < model.rows; row++) {
+                for(var col = 0; col < model.cols; col++) {
+                    model.put(row, col, desc[row][col]);
+                }
+            }
+            return new pkg.grid.Grid(model);
+        } else {
+            var clz = instance != null && instance.clazz.Combo != null ? instance.clazz.Combo
+                                                                       : pkg.Combo,
+                combo = new clz(new clz.CompList(true)),
+                selectedIndex = -1;
+
+            for(var i = 0; i < desc.length; i++) {
+                var s = desc[i];
+                if (zebkit.isString(s)) {
+                    if (selectedIndex === -1 && s.length > 1 && s[0] === '*') {
+                        selectedIndex = i;
+                        desc[i] = s.substring(1);
+                    }
+                }
+                combo.list.add(pkg.$component(desc[i], combo.list));
+            }
+
+            combo.select(selectedIndex);
+            return combo;
+        }
+    } else if (desc instanceof Image) {
+        return instance != null && instance.clazz.ImagePan != null ? new instance.clazz.ImagePan(desc)
+                                                                   : new pkg.ImagePan(desc);
+    } else if (zebkit.instanceOf(desc, pkg.View)) {
+        var v = instance != null && instance.clazz.ViewPan != null ? new instance.clazz.ViewPan()
+                                                                   : new pkg.ViewPan();
+        v.setView(desc);
+        return v;
+    }
+
+    // TODO: desc
+    return desc;
+};
+

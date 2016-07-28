@@ -63,6 +63,8 @@ import { StatePan, Label } from './';
 import SwitchManager from './SwitchManager';
 import { types } from '../utils';
 import KeyEvent from './web/keys/KeyEvent';
+import * as pointer from '../utils/position/pointer';
+import Group from './Group';
 
 // TODO: use mixin
 export default class Checkbox extends CompositeEvStatePan, Switchable {
@@ -79,6 +81,12 @@ export default class Checkbox extends CompositeEvStatePan, Switchable {
             Label: Label
         }
     }
+
+    manager: any;
+    parent: any;
+    box: any;
+    state: any;
+    isEnabled: boolean;
 
     constructor(c, m) {
         super();
@@ -129,9 +137,9 @@ export default class Checkbox extends CompositeEvStatePan, Switchable {
     toViewId(state){
         if (this.isEnabled === true) {
             if (this.getValue()) {
-                return (this.state === OVER) ? "on.over" : "on.out";
+                return (this.state === pointer.OVER) ? "on.over" : "on.out";
             }
-            return (this.state === OVER) ? "off.over" : "off.out";
+            return (this.state === pointer.OVER) ? "off.over" : "off.out";
         }
         return this.getValue() ? "don" : "doff";
     }
@@ -139,7 +147,7 @@ export default class Checkbox extends CompositeEvStatePan, Switchable {
     // static
 
     keyPressed(e){
-        if (types.instanceOf(this.manager, pkg.Group) && this.getValue()){
+        if (types.instanceOf(this.manager, Group) && this.getValue()){
             var d = 0;
             if (e.code === KeyEvent.LEFT || e.code === KeyEvent.UP) d = -1;
             else {

@@ -24,7 +24,7 @@
  * @param {Integer} prevCol a previous virtual cursor column in the previous line
  */
 export default class Position {
-    function $clazz() {
+    get $clazz() {
         this.Listeners = pkg.ListenersClass("posChanged"),
 
         /**
@@ -59,9 +59,9 @@ export default class Position {
                 function getLineSize()  {},
                 function getMaxOffset() {}
         ]);
-    },
+    }
 
-    function $prototype() {
+    constructor() {
         /**
          * Set the specified virtual cursor offsest
          * @param {Integer} o an offset, pass null to set position to indefinite state

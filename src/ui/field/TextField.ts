@@ -23,6 +23,9 @@ import ScrollManager from '../ScrollManager';
 import { types } from '../../utils';
 import { SingleLineText, TextModel } from '../../data';
 import TextRender from '../views/TextRender'
+import { Position } from '../../utils/position';
+import { isLetter } from '../../utils'; 
+import KeyEvent from '../web/keys/KeyEvent';
 
 export default class TextField extends Label {
     get clazz() {
@@ -376,32 +379,32 @@ export default class TextField extends Label {
             }
 
             switch(e.code) {
-                case pkg.KeyEvent.DOWN : position.seekLineTo("down");break;
-                case pkg.KeyEvent.UP   : position.seekLineTo("up");break;
-                case pkg.KeyEvent.LEFT : foff *= -1;
-                case pkg.KeyEvent.RIGHT:
+                case KeyEvent.DOWN : position.seekLineTo("down");break;
+                case KeyEvent.UP   : position.seekLineTo("up");break;
+                case KeyEvent.LEFT : foff *= -1;
+                case .KeyEvent.RIGHT:
                     if (e.ctrlKey === false && e.metaKey === false) {
                         position.seek(foff);
                     }
                     break;
-                case pkg.KeyEvent.END:
+                case KeyEvent.END:
                     if (e.ctrlKey) {
                         position.seekLineTo("down", this.getLines() - line - 1);
                     }
                     else position.seekLineTo("end");
                     break;
-                case pkg.KeyEvent.HOME:
+                case KeyEvent.HOME:
                     if (e.ctrlKey) position.seekLineTo("up", line);
                     else position.seekLineTo("begin");
                     break;
-                case pkg.KeyEvent.DELETE:
+                case KeyEvent.DELETE:
                     if (this.hasSelection() && this.isEditable === true) {
                         this.removeSelected();
                     }
                     else {
                         if (this.isEditable === true) this.remove(position.offset, 1);
                     } break;
-                case pkg.KeyEvent.BSPACE:
+                case KeyEvent.BSPACE:
                     if (this.isEditable === true) {
                         if (this.hasSelection()) this.removeSelected();
                         else {
@@ -430,8 +433,8 @@ export default class TextField extends Label {
      */
     isFiltered(e){
         var code = e.code;
-        return code === pkg.KeyEvent.SHIFT || code === pkg.KeyEvent.CTRL ||
-                code === pkg.KeyEvent.TAB   || code === pkg.KeyEvent.ALT  ||
+        return code === KeyEvent.SHIFT || code === KeyEvent.CTRL ||
+                code === KeyEvent.TAB   || code === KeyEvent.ALT  ||
                 e.altKey;
     }
 
@@ -963,9 +966,7 @@ export default class TextField extends Label {
         g.translate(-sx, -sy);
     }
 
-    // static
-
-    static setView(v){
+    setView(v){
         if (v != this.view) {
             if (this.view != null && this.view.target != null) {
                 if (this.view.target.bind != null) this.view.target.unbind(this);
@@ -973,7 +974,7 @@ export default class TextField extends Label {
 
             super.setView(v);
             if (this.position == null) {
-                this.setPosition(new zebkit.util.Position(this.view));
+                this.setPosition(new Position(this.view));
             } else {
                 this.position.setMetric(this.view);
             }
@@ -990,7 +991,7 @@ export default class TextField extends Label {
      * @param {String} s a text the text field component has to be filled
      * @method setValue
      */
-    static setValue(s) {
+    setValue(s) {
         var txt = this.getValue();
         if (txt != s){
             if (this.position != null) {
@@ -1002,7 +1003,7 @@ export default class TextField extends Label {
         return this;
     }
 
-    static setEnabled(b){
+    setEnabled(b){
         this.clearSelection();
         super.setEnabled(b);
         return this;

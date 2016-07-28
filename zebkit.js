@@ -5142,7 +5142,7 @@ pkg.Bag = zebkit.Class([
                         }
 
                         var join = this.join();
-                        zebkit.io.GET(p, function(r) {
+                        io.GET(p, function(r) {
                             if (r.status != 200) {
                                 runner.fireError(new Error("Invalid JSON path"));
                             }

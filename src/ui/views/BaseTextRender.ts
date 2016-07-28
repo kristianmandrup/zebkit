@@ -1,10 +1,11 @@
 import Render from './Render';
-import font from '../utils/font'; // FIX
-import Font from './utils/Font';
+import { fonts } from './utils/fonts'; // FIX
+import Font from '../web/Font';
+import { types } from '../../utils';
 
 export default class BaseTextRender extends Render {
     $clazz = {
-        font: font,
+        font: fonts.font,
         color: 'gray',
         disabledColor: 'white'
     }
@@ -53,8 +54,8 @@ export default class BaseTextRender extends Render {
     setFont(f) {
         var old = this.font;
 
-        if (utils.instanceOf(f, Font) === false && f != null) {
-            f = utils.newInstance(Font, arguments);
+        if (types.instanceOf(f, Font) === false && f != null) {
+            f = types.newInstance(Font, arguments);
         }
 
         if (f != old) {

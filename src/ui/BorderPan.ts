@@ -34,13 +34,23 @@ function Clazz() {
 
 import Panel from './core/Panel';
 import TitledBorder from './views/TitledBorder';
-import types from '../';
+import { types } from '../utils';
 import { $view } from './views';
+import { $validateValue } from '../utils/validate';
+import { $component } from '../utils/tools';
 
 export default class BorderPan extends Panel {
     get clazz() {
         return new Clazz();
     }
+
+    content: any; // ??
+    label: any; // Label
+    alignment: string;
+    vGap: number;
+    hGap: number;
+    indent: number;
+    orient: string;
 
     constructor(title, center, o, a) {
         super();
@@ -76,14 +86,14 @@ export default class BorderPan extends Panel {
         this.alignment = "left";
     
         if (arguments.length > 0) {
-            title = pkg.$component(title, this);
+            title = $component(title, this);
         }
 
-        if (arguments.lengh > 2) {
+        if (arguments.length > 2) {
             this.orient = o;
         }
 
-        if (arguments.lengh > 3) {
+        if (arguments.length > 3) {
             this.alignment = a;
         }
 
@@ -188,7 +198,7 @@ export default class BorderPan extends Panel {
 
     setOrientation(o) {
         if (this.orient !== o) {
-            this.orient = zebkit.util.$validateValue(o, "top", "bottom");
+            this.orient = $validateValue(o, "top", "bottom");
             this.vrp();
         }
         return this;
@@ -196,15 +206,13 @@ export default class BorderPan extends Panel {
 
     setAlignment(a) {
         if (this.alignment !== a) {
-            this.alignment = zebkit.util.$validateValue(a, "left", "right", "center");
+            this.alignment = $validateValue(a, "left", "right", "center");
             this.vrp();
         }
         return this;
     }
     
-    // static
-
-    setBorder(br) {
+    setBorder(br: any) : Panel {
         br = $view(br);
         if (types.instanceOf(br, TitledBorder) === false) {
             br = new TitledBorder(br, "center");

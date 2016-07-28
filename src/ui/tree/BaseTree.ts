@@ -1,5 +1,3 @@
-import Panel from '../ui/Panel';
-
 /**
  * Abstract tree component that can used as basement for building own tree components.
  * The component is responsible for rendering tree, calculating tree nodes metrics,
@@ -90,6 +88,9 @@ import Panel from '../ui/Panel';
   */
 import { ListenersClass } from '../../utils/listen';
 import ScrollManager from '../ScrollManager';
+import Panel from '../core/Panel';
+import TreeModel from '../../data/TreeModel';
+import { types } from '../../utils';
 
 export default class BaseTree extends Panel {
     get clazz() {
@@ -931,10 +932,8 @@ export default class BaseTree extends Panel {
                                     : { width:this.maxw, height:this.maxh };
     }
 
-    // static
 
-
-    static focused(){
+    focused(){
         super.focused();
         if (this.selected != null) {
             var m = this.getItemMetrics(this.selected);
@@ -947,7 +946,7 @@ export default class BaseTree extends Panel {
      * @param {Boolean} b true is tree component items can be selected
      * @method setSelectable
      */
-    static setSelectable(b){
+    setSelectable(b){
         if (this.isSelectable != b){
             if (b === false && this.selected != null) this.select(null);
             this.isSelectable = b;
@@ -961,7 +960,7 @@ export default class BaseTree extends Panel {
      * @param {String} c a color
      * @method setLineColor
      */
-    static setLineColor(c){
+    setLineColor(c){
         this.lnColor = c;
         this.repaint();
         return this;
@@ -974,7 +973,7 @@ export default class BaseTree extends Panel {
      * @param {Integer} gy vertical gap
      * @method setGaps
      */
-    static setGaps(gx, gy){
+    setGaps(gx, gy){
         if (gx != this.gapx || gy != this.gapy){
             this.gapx = gx;
             this.gapy = gy;
@@ -1016,7 +1015,7 @@ export default class BaseTree extends Panel {
      * @param {Object} v dictionary of tree component decorative elements views
      * @method setViews
      */
-    static setViews(v) {
+    setViews(v) {
         // setting to 0 prevents exception when on/off view is not defined
         this.viewSizes.on  = { width: 0, height : 0};
         this.viewSizes.off = { width: 0, height : 0};
@@ -1039,10 +1038,10 @@ export default class BaseTree extends Panel {
      * @param {zebkit.data.TreeModel|Object} d a tree model
      * @method setModel
      */
-    static setModel(d){
+    setModel(d){
         if (this.model != d) {
-            if (zebkit.instanceOf(d, zebkit.data.TreeModel) === false) {
-                d = new zebkit.data.TreeModel(d);
+            if (types.instanceOf(d, TreeModel) === false) {
+                d = new TreeModel(d);
             }
 
             this.select(null);
@@ -1057,7 +1056,7 @@ export default class BaseTree extends Panel {
         return this;
     }
 
-    static invalidate(){
+    invalidate(){
         if (this.isValid === true){
             this._isVal = false;
         }

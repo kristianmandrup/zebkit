@@ -1,11 +1,16 @@
 import Panel from '../core/Panel';
-import { ListenersClass } from '../../utils/listen';
-import ArrowButton from './ArrowButton';
+import { ListenersClass, Listeners } from '../../utils/listen';
+import { Link, Label, ArrowButton } from '../';
+import KeyEvent from '../web/keys/KeyEvent';
+import TextField from '../field/TextField';
+import { Combo, CompList } from '../list';
+import DaysGrid from './DaysGrid';
+import * as dates from './utils';
 
 class MonthsCombo extends Combo {
     get clazz() {
         return {
-            Label:    Label,
+            Label: Label,
             CompList: CompList
         }
     }
@@ -29,19 +34,22 @@ class MonthsCombo extends Combo {
 }
 
 class YearField extends TextField {
-    static keyPressed(e) {
+    fireNextYear: any;
+    firePrevYear: any;
+
+    keyPressed(e) {
         switch (e.code) {
-            case ui.KeyEvent.UP  : if (this.fireNextYear != null) this.fireNextYear(); break;
-            case ui.KeyEvent.DOWN: if (this.firePrevYear != null) this.firePrevYear(); break;
-            default: return this.$super(e);
+            case KeyEvent.UP  : if (this.fireNextYear != null) this.fireNextYear(); break;
+            case KeyEvent.DOWN: if (this.firePrevYear != null) this.firePrevYear(); break;
+            default: return super.keyPressed(e);
         }
     }
 }
 
 class DotButton extends ui.EvStatePan, ui.ButtonRepeatMix {
     constructor() {
-        this._ = new zebkit.util.Listeners();
-        this.$super();
+        super();
+        this._ = new Listeners();
     }
 }
 
@@ -71,6 +79,16 @@ export default class Calendar extends Panel {
     get clazz() {
         return new Clazz();
     }
+
+    comboMonth: any;
+    monthDaysGrid: any;
+    selectedDate: any;
+    minDate: any;
+    maxDate: any;
+    yearText: string;
+    showMonth: any;
+
+    protected $freeze: boolean;
 
     constructor(date) {
         super(new layout.BorderLayout());
@@ -186,7 +204,7 @@ export default class Calendar extends Panel {
     }
 
     showMonth(month, year) {
-        pkg.validateDate(month, year);
+        dates.validateDate(month, year);
         if (this.canMonthBeShown(month, year)) {
             this.monthDaysGrid.setValue(month, year);
         }
@@ -267,20 +285,20 @@ export default class Calendar extends Panel {
         }
     };
 
-    static setMinValue(date) {
+    setMinValue(date) {
         if (arguments.length > 1) {
             date = new Date(arguments[2], arguments[1], arguments[0]);
         }
 
-        if (date != null) pkg.validateDate(date);
+        if (date != null) dates.validateDate(date);
 
-        if (pkg.compareDates(this.minDate, date) !== 0) {
-            if (pkg.compareDates(date, this.maxDate) === 1) {
+        if (dates.compareDates(this.minDate, date) !== 0) {
+            if (dates.compareDates(date, this.maxDate) === 1) {
                 throw new RangeError();
             }
 
             this.minDate = date;
-            if (pkg.compareDates(this.selectedDate, this.minDate) === -1) {
+            if (dates.compareDates(this.selectedDate, this.minDate) === -1) {
                 this.setValue(null);
             }
 
@@ -288,20 +306,20 @@ export default class Calendar extends Panel {
         }
     }
 
-    static setMaxValue(date) {
+    setMaxValue(date) {
         if (arguments.length > 1) {
             date = new Date(arguments[2], arguments[1], arguments[0]);
         }
 
-        if (date != null) pkg.validateDate(date);
+        if (date != null) dates.validateDate(date);
 
-        if (pkg.compareDates(this.maxDate, date) !== 0) {
-            if (pkg.compareDates(date, this.minDate) === -1) {
-                throw new RangeError("" + date + "," + this.minDate + "," + pkg.compareDates(date, this.minDate));
+        if (dates.compareDates(this.maxDate, date) !== 0) {
+            if (dates.compareDates(date, this.minDate) === -1) {
+                throw new RangeError("" + date + "," + this.minDate + "," + dates.compareDates(date, this.minDate));
             }
 
             this.maxDate = date;
-            if (pkg.compareDates(this.selectedDate, this.maxDate) === 1) {
+            if (dates.compareDates(this.selectedDate, this.maxDate) === 1) {
                 this.setValue(null);
             }
 
@@ -309,17 +327,17 @@ export default class Calendar extends Panel {
         }
     }
 
-    static setValue(date) {
+    setValue(date) {
         if (arguments.length > 1) {
             date = new Date(arguments[2], arguments[1], arguments[0]);
         }
 
         if (this.$freeze !== true) {
             if (date != null) {
-                pkg.validateDate(date);
+                dates.validateDate(date);
             }
 
-            if (this.canDateBeSet(date) === true && pkg.compareDates(this.selectedDate, date) !== 0) {
+            if (this.canDateBeSet(date) === true && dates.compareDates(this.selectedDate, date) !== 0) {
                 try {
                     this.$freeze = true;
 

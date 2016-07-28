@@ -18,6 +18,17 @@ export default class KeyEvent extends Event {
     static M_ALT = 4;
     static M_CMD = 8;
 
+    static ENTER = 13; 
+    static ESCAPE = 27; 
+    static "SPACE" = 32;
+    static "DELETE" = 46;
+    static "TAB" = 9; 
+    static "INSERT" = 45;  
+    static "LEFT" = 37; 
+    static "RIGHT" = 39;
+    static "UP" = 38 
+    static "DOWN" = 40;
+
     code: number;
     mask: number;
     ch: string | number;

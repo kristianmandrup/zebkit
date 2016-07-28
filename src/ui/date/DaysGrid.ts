@@ -121,6 +121,7 @@ function Clazz() {
 import Grid from '../grid/Grid';
 import { CompRender } from '../views';
 import * as utils from './utils';
+import KeyEvent from '../web/keys/KeyEvent';
 
 export default class DaysGrid extends Grid {
     get clazz() {
@@ -130,6 +131,7 @@ export default class DaysGrid extends Grid {
     tags: any;
     tagger: any;
     view: any; // View
+    views: any[];
     itemPan: any;
     model: any;
     caption: any; //Caption
@@ -377,7 +379,7 @@ export default class DaysGrid extends Grid {
         }
     }
 
-    static rPsMetric() {
+    rPsMetric() {
         super.rPsMetric();
 
         var max = 0, cols = this.getGridCols();
@@ -390,13 +392,13 @@ export default class DaysGrid extends Grid {
         }
     }
 
-    static $getPosMarker() {
+    $getPosMarker() {
         var item = this.model.geti(this.position.offset);
         return this.isItemSelectable(item) === false ? this.views.notSelectableMarker
                                                       : super.$getPosMarker();
     }
 
-    static pointerClicked(e) {
+    pointerClicked(e) {
         super.pointerClicked(e);
         var p = this.cellByLocation(e.x, e.y);
         if (p != null) {
@@ -404,8 +406,8 @@ export default class DaysGrid extends Grid {
         }
     }
 
-    static keyPressed(e) {
-        if (e.code != ui.KeyEvent.ENTER) {
+    keyPressed(e) {
+        if (e.code != KeyEvent.ENTER) {
             return super.keyPressed(e);
         }
 

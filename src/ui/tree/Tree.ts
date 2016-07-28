@@ -250,20 +250,17 @@ export default class Tree extends BaseTree {
         }
     }
 
-
-    // static
-
-    static toggle(item) {
+    toggle(item) {
         this.stopEditing(false);
         super.toggle(item);
     }
 
-    static itemInserted(target,item){
+    itemInserted(target,item){
         this.stopEditing(false);
         super.itemInserted(target,item);
     }
 
-    static itemRemoved(target,item){
+    itemRemoved(target,item){
         this.stopEditing(false);
         super.itemRemoved(target,item);
     }
@@ -275,7 +272,7 @@ export default class Tree extends BaseTree {
      * @param {zebkit.ui.tree.DefEditors} p an editor provider
      * @method setEditorProvider
      */
-    static setEditorProvider(p){
+    setEditorProvider(p){
         if (p != this.editors){
             this.stopEditing(false);
             this.editors = p;
@@ -289,7 +286,7 @@ export default class Tree extends BaseTree {
      * @param {zebkit.ui.tree.DefViews} p a view provider
      * @method setViewProvider
      */
-    static setViewProvider(p){
+    setViewProvider(p){
         if (this.provider != p) {
             this.stopEditing(false);
             this.provider = p;
@@ -305,24 +302,24 @@ export default class Tree extends BaseTree {
      * @param {zebkit.data.TreeModel|Object} d a tree model
      * @method setModel
      */
-    static setModel(d){
+    setModel(d){
         this.stopEditing(false);
         super.setModel(d);
         return this;
     }
 
-    static paintSelectedItem(g, root, node, x, y) {
+    paintSelectedItem(g, root, node, x, y) {
         if (root != this.editedItem) {
             super.paintSelectedItem(g, root, node, x, y);
         }
     }
 
-    static itemPressed(root, e) {
+    itemPressed(root, e) {
         super.itemPressed(root, e);
         if (this.se(root, e) === false) this.pressedItem = root;
     }
 
-    static pointerPressed(e){
+    pointerPressed(e){
         this.pressedItem = null;
         this.stopEditing(true);
         super.pointerPressed(e);

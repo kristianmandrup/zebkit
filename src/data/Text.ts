@@ -1,5 +1,9 @@
 import TextModel from './TextModel';
 
+Text.Line = (s) => {
+    this.s = s;
+}
+
 //  toString for array.join method
 Text.Line.prototype.toString = function() {
     return this.s;
@@ -14,16 +18,15 @@ Text.Line.prototype.toString = function() {
  * @extends zebkit.data.TextModel
  */
 export default class Text extends TextModel {
-    static Line = function(s) {
-        this.s = s;
-    };
-
+    static Line;
     textLength: number;
-    lines: [];
+    lines: any[];
 
     // TODO: Fix
     get clazz() {
-        return Text;
+        return {
+            Line: Line
+        };
     }
 
     constructor(s) {
@@ -224,4 +227,4 @@ export default class Text extends TextModel {
         }
         return false;
     }
-)
+}

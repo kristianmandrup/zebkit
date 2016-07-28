@@ -86,7 +86,7 @@ export default class HtmlCanvas extends HtmlElement {
     element: any; // DOM element    
 
     // e is a DOM element
-    constructor(e) {
+    constructor(e?) {
         super(e == null ? "canvas" : e);
 
         this.$rotateValue = 0;

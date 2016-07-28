@@ -385,7 +385,9 @@ import * as html from '../html';
 import * as views from '../views';
 
 import HtmlElement from './HtmlElement';
-import Bag from './Bag';
+import HtmlCanvas from './HtmlCanvas';
+import * as utils from '../../utils';
+import * as intersect from '../../utils/intersect';
 
 import { COMP_EVENT } from './events';
 
@@ -405,6 +407,9 @@ export default class Panel extends layout.Layoutable {
     clazz: any;
     isVisible: boolean;
     parent: any;
+    border: any;
+
+    private $context: any;
 
     constructor(e?) {
       super();
@@ -483,7 +488,7 @@ export default class Panel extends layout.Layoutable {
 
     // TODO: not stable api, probably it should be moved to static
     wrapWithCanvas() {
-        var c = new html.HtmlCanvas();
+        var c = new HtmlCanvas();
         c.setLayout(new layout.StackLayout());
         c.add(this);
         return c;
@@ -532,7 +537,7 @@ export default class Panel extends layout.Layoutable {
             if (w > 0 && h > 0) {
                 var r = pkg.$cvp(this, temporary);
                 if (r != null) {
-                    util.intersection(r.x, r.y, r.width, r.height, x, y, w, h, r);
+                    intersect.intersection(r.x, r.y, r.width, r.height, x, y, w, h, r);
                     if (r.width > 0 && r.height > 0) {
                         x = r.x;
                         y = r.y;
@@ -823,7 +828,7 @@ export default class Panel extends layout.Layoutable {
      * @method load
      */
     load(jsonPath, cb) {
-        new Bag(this).load(jsonPath, cb);
+        new utils.Bag(this).load(jsonPath, cb);
         return this;
     }
 
@@ -1163,9 +1168,9 @@ export default class Panel extends layout.Layoutable {
      * @method setBorder
      * @chainable
      */
-    setBorder(v) {
+    setBorder(v: any) : Panel {
         var old = this.border;
-        v = pkg.$view(v);
+        v = $view(v);
         if (v != old){
             this.border = v;
             this.notifyRender(old, v);

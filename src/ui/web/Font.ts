@@ -182,14 +182,12 @@ export default class Font {
         }
         // set 1x1 transparent picture
         this.$fmImage.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII%3D';            
-        }      
-    }
-    
+    }          
 }
 
 
 // initialize font specific structures
-zebkit.busy();
+// zebkit.busy();
 
 
 

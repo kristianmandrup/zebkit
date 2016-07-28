@@ -28,3 +28,23 @@ export const instanceOf = function(obj, clazz) {
 
     throw new Error("instanceOf(): null class");
 };
+
+/**
+ * Instantiate a new class instance by the given class name with the specified constructor
+ * arguments.
+ * @param  {Function} clazz a class
+ * @param  {Array} [args] an arguments list
+ * @return {Object}  a new instance of the given class initialized with the specified arguments
+ * @api  zebkit.util.newInstance()
+ * @method newInstance
+ */
+export const newInstance = function(clazz, args) {
+    if (args && args.length > 0) {
+        function f() {}
+        f.prototype = clazz.prototype;
+        var o = new f();
+        clazz.apply(o, args);
+        return o;
+    }
+    return new clazz();
+};

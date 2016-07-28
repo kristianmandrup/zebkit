@@ -1,4 +1,13 @@
- let ButtonRepeatMix = (superclass) => class extends superclass {
+import * as pointer from '../utils/position/pointer';
+import { task } from '../utils/tasks';
+
+let ButtonRepeatMix = (superclass) => class extends superclass {
+     isFireByPress: boolean;
+     firePeriod: number;
+     startIn: number;
+     state: any;
+     repeatTask: any;
+
     constructor() {
         super();
         /**
@@ -30,7 +39,7 @@
      * @protected
      */
     run() {
-        if (this.state === PRESSED_OVER) this.fire();
+        if (this.state === pointer.PRESSED_OVER) this.fire();
     }
 
     /**
@@ -65,11 +74,11 @@
 
     stateUpdated(o,n){
         super.stateUpdated(o, n);
-        if (n === PRESSED_OVER) {
+        if (n === pointer.PRESSED_OVER) {
             if (this.isFireByPress === true){
                 this.fire();
                 if (this.firePeriod > 0) {
-                    this.repeatTask = zebkit.util.task(this.run, this).run(this.startIn, this.firePeriod);
+                    this.repeatTask = task(this.run, this).run(this.startIn, this.firePeriod);
                 }
             }
         }
@@ -78,7 +87,7 @@
                 this.repeatTask.shutdown();
             }
 
-            if (n === OVER && (o === PRESSED_OVER && this.isFireByPress === false)) {
+            if (n === pointer.OVER && (o === pointer.PRESSED_OVER && this.isFireByPress === false)) {
                 this.fire();
             }
         }

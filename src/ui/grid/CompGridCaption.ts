@@ -181,6 +181,8 @@ function Clazz() {
  * @class zebkit.ui.grid.CompGridCaption
  * @extends zebkit.ui.grid.BaseCaption
  */
+import { types } from '../../utils';
+
 export class CompGridCaption extends BaseCaption {
     get clazz(clazz) {
         return new Clazz();
@@ -189,6 +191,10 @@ export class CompGridCaption extends BaseCaption {
     /**
      * @for zebkit.ui.grid.CompGridCaption
      */
+    kids: any[];
+    parent: any;
+    orient: string;
+
     constructor(titles = null) {
         super(titles);        
         this.setLayout(new this.clazz.Layout());
@@ -216,10 +222,10 @@ export class CompGridCaption extends BaseCaption {
             this.add(new this.clazz.TitlePan(""));
         }
 
-        if (zebkit.isString(t)) {
+        if (types.isString(t)) {
             t = new this.clazz.TitlePan(t);
         } else {
-            if (zebkit.instanceOf(t, ui.View)) {
+            if (types.instanceOf(t, ui.View)) {
                 var p = new ui.ViewPan();
                 p.setView(t);
                 t = p;
@@ -271,14 +277,12 @@ export class CompGridCaption extends BaseCaption {
                             : 0;
     };
 
-    // static
-
-    static captionResized(rowcol, ns) {
+    captionResized(rowcol, ns) {
         super.captionResized(rowcol, ns);
         this.vrp();
     }
 
-    static setParent(p) {
+    setParent(p) {
         if (this.parent != null && this.parent.scrollManager != null) {
             this.parent.scrollManager.unbind(this);
         }
@@ -290,8 +294,8 @@ export class CompGridCaption extends BaseCaption {
         super.setParent(p);
     }
 
-    static insert(i,constr, c) {
-        if (zebkit.isString(c)) {
+    insert(i,constr, c) {
+        if (types.isString(c)) {
             c = new this.clazz.TitlePan(c);
         }
         super.insert(i,constr, c);

@@ -6,9 +6,12 @@
  */
 import EvStatePan from './EvStatePan';
 import Panel from './core/Panel'
-import { focusManager } from '../utils'; 
-import { $view } from '../views';
+import { FocusManager } from './core'; 
+import { $view } from './views';
+
 export default class CompositeEvStatePan extends EvStatePan {
+
+    focusManager: FocusManager;
     canHaveFocus: boolean;
     catchInput: boolean;
     focusComponent: boolean;
@@ -16,6 +19,8 @@ export default class CompositeEvStatePan extends EvStatePan {
 
     constructor() {
         super();
+
+        this.focusManager = FocusManager.instance;
         /**
          * Indicates if the component can have focus
          * @attribute canHaveFocus
@@ -70,7 +75,7 @@ export default class CompositeEvStatePan extends EvStatePan {
      */
     setCanHaveFocus(b) {
         if (this.canHaveFocus != b){
-            var fm = focusManager;
+            var fm = this.focusManager;
             if (b === false && fm.focusOwner === this) {
                 fm.requestFocus(null);
             }

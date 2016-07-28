@@ -39,3 +39,20 @@
  * @main ui
  * @requires zebkit, util, io, data
  */
+
+export { default as CanvasLayer } from './CanvasLayer';
+export { default as Cursor } from './Cursor';
+export { default as CursorManager } from './CursorManager';
+export { default as EventManager } from './EventManager';
+export { default as FocusManager } from './FocusManager';
+export { default as HtmlCanvas } from './HtmlCanvas';
+export { default as ImagePan } from './ImagePan';
+export { default as Manager } from './Manager';
+export { default as Panel } from './Panel';
+export { default as RootLayer } from './RootLayer';
+export { default as ShortcutManager } from './ShortcutManager';
+export { default as ViewPan } from './ViewPan';
+export { default as zCanvas } from './zCanvas';
+
+import * as _utils from './utils';
+export const utils = _utils;

@@ -44,7 +44,7 @@ export default class HtmlElement extends Panel {
     $initListeners: any;
     focusManager: FocusManager;
 
-    constructor(e, focusManager?) {
+    constructor(e?, focusManager?) {
         super();
         this.$container = this.$canvas = null;
         this.ePsW = this.ePsH = 0;

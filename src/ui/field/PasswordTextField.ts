@@ -1,6 +1,3 @@
-import TextField from './TextField';
-import SingleLineTxt from '../../data/SingleLineText';
-
 /**
  * Password text field.
  * @class zebkit.ui.PassTextField
@@ -10,6 +7,11 @@ import SingleLineTxt from '../../data/SingleLineText';
  * not be disguised with a star character
  * @extends zebkit.ui.TextField
  */
+import TextField from './TextField';
+import SingleLineTxt from '../../data/SingleLineText';
+import PasswordText from '../views/PasswordText';
+import { types } from '../../utils';
+
 export default class PasswordTextField extends TextField {
     constructor(txt, size, showLast) {
         super(txt);
@@ -18,10 +20,10 @@ export default class PasswordTextField extends TextField {
             showLast = false;
             size     = -1;
 
-            if (zebkit.isBoolean(txt)) {
+            if (types.isBoolean(txt)) {
                 showLast = txt;
                 txt      = "";
-            } else if (zebkit.isNumber(txt)) {
+            } else if (types.isNumber(txt)) {
                 size = txt;
                 txt = "";
             }
@@ -33,14 +35,14 @@ export default class PasswordTextField extends TextField {
             showLast = false;
         }
 
-        var pt = new pkg.PasswordText(new SingleLineTxt(txt, size));
+        var pt = new PasswordText(new SingleLineTxt(txt, size));
         pt.showLast = showLast;        
         if (size > 0) {
             this.setPSByRowsCols(-1, size);
         }
     }
 
-    static setShowLast(b) {
+    setShowLast(b) {
         if (this.showLast !== b) {
             this.view.showLast = b;
             this.repaint();
