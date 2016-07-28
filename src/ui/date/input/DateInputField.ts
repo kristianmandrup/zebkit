@@ -1,30 +1,33 @@
-class DateInputField extends ui.Panel, PopupCalendarMix {
-    function $clazz() {
-        this.Button = Class(ui.Button, []);
+import Calendar from '../Calendar';
+import DateTextField from './DateTextField';
 
-        this.Calendar = Class(pkg.Calendar, [
-            function $clazz() {
-                this.MonthsCombo = Class(pkg.Calendar.MonthsCombo, []);
-            }
-        ]);
+class CalendarX extends Calendar {
+    get clazz() {
+        return {
+            MonthsCombo: Calendar.MonthsCombo
+        }
+    }
+}
 
-        this.DateTextField = Class(pkg.DateTextField, []);
-    },
+function Clazz() {
+    this.Button = Button;
+    this.Calendar = CalendarX
+    this.DateTextField = DateTextField;    
+}
 
-    function calendarDateSet(src) {
-        this.dateField.setValue(src.selectedDate);
-    },
+import Panel from '../../core/Panel';
+import PopupCalendarMix from '../PopupCalendarMixin';
+import * as layout from '../../../layout';
 
-    function setValue(d) {
-        this.getCalendar().setValue(d);
-    },
+export default class DateInputField extends Panel, PopupCalendarMix {
+    get clazz() {
+        return new Clazz();
+    }
 
-    function getValue(d) {
-        return this.getCalendar().selectedDate;
-    },
+    dateField: any;
 
-    function (format) {
-        this.$super(new zebkit.layout.FlowLayout());
+    constructor(format) {
+        super(new layout.FlowLayout());
 
         var $this = this;
         this.dateField = new this.clazz.DateTextField(format);
@@ -37,5 +40,17 @@ class DateInputField extends ui.Panel, PopupCalendarMix {
         this.find(".zebkit.ui.Button").bind(function(src) {
             $this.showCalendar($this.dateField);
         });
+    }
+
+    calendarDateSet(src) {
+        this.dateField.setValue(src.selectedDate);
+    }
+
+    setValue(d) {
+        this.getCalendar().setValue(d);
+    }
+
+    getValue(d) {
+        return this.getCalendar().selectedDate;
     }
 }

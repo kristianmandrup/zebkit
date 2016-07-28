@@ -361,22 +361,22 @@ export default class HtmlElement extends Panel {
         }
     }
 
-    toFront() {
-        super.toFront();
-        var pnode = this.$container.parentNode;
+    toFront() : Panel { 
+        let pnode = this.$container.parentNode;
         if (pnode != null && pnode.lastChild !== this.$container) {
             pnode.removeChild(this.$container);
             pnode.appendChild(this.$container);
         }
+        return super.toFront();
     }
 
-    toBack(){
-        super.toBack();
+    toBack(){        
         var pnode = this.$container.parentNode;
         if (pnode != null && pnode.firstChild !== this.$container) {
             pnode.removeChild(this.$container);
             pnode.insertBefore(this.$container, pnode.firstChild);
         }
+        return super.toBack();
     }
 
     setEnabled(b : any) : Panel {
@@ -446,8 +446,7 @@ export default class HtmlElement extends Panel {
             this.$sizeAdjusted = false;
         }
 
-        super.setPadding.apply(arguments);
-        return this;
+        return super.setPadding.apply(arguments);
     }
 
     setBorder(b) {

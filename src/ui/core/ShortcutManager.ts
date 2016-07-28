@@ -85,7 +85,7 @@ export default class ShortcutManager extends Manager {
     focusManager: FocusManager;
 
     constructor(commands, focusManager?) {
-        super();
+        super(commands);
         this.keyCommands = {};
         if (commands != null) {
             events._.addEvents("commandFired");
@@ -123,7 +123,7 @@ export default class ShortcutManager extends Manager {
         }
     }
 
-    $parseKey(k : string) : Array<number> {
+    protected $parseKey(k : string) : Array<number> {
         var m = 0, c = 0, r = k.split("+");
         for(var i = 0; i < r.length; i++) {
             var ch = r[i].trim().toUpperCase();

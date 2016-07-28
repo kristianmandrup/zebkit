@@ -46,7 +46,7 @@ export default class ViewPan extends Panel {
      * @chainable
      */
     setView(v : any) {
-        var old = this.view;
+        let old = this.view;
         v = $view(v);
 
         if (v !== old) {

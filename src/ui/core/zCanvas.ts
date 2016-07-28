@@ -3,10 +3,16 @@ import { types } from '../../utils';
 import * as web from '../../web';
 import { $canvases } from '../web/utils';
 import FocusManager from './FocusManager';
+// $pointerOwner
+// COMP_EVENT
+// $pointerPressedOwner
+// events
 
 export default class zCanvas extends HtmlCanvas {
-    $clazz = {
-        CLASS_NAME: "zebcanvas"
+    get clazz() {
+        return {
+            CLASS_NAME: "zebcanvas"
+        };        
     }
 
     $container: any; // DOM element
@@ -137,7 +143,7 @@ export default class zCanvas extends HtmlCanvas {
     // TODO: may be rename to dedicated method $doWheelScroll
     $doScroll(dx, dy, src) {
         if (src === "wheel") {
-            var owner = pkg.$pointerOwner.mouse;
+            var owner = $pointerOwner.mouse;
             while (owner != null && owner.doScroll == null) {
                 owner = owner.parent;
             }
@@ -149,9 +155,9 @@ export default class zCanvas extends HtmlCanvas {
     }
 
     $keyTyped(e) {
-        if (pkg.focusManager.focusOwner != null) {
-            e.source = pkg.focusManager.focusOwner;
-            return pkg.events.fireEvent("keyTyped", e);
+        if (this.focusManager.focusOwner != null) {
+            e.source = this.focusManager.focusOwner;
+            return events.fireEvent("keyTyped", e);
         }
         return false;
     }
@@ -164,18 +170,18 @@ export default class zCanvas extends HtmlCanvas {
             }
         }
 
-        if (pkg.focusManager.focusOwner != null) {
-            e.source = pkg.focusManager.focusOwner;
-            return pkg.events.fireEvent("keyPressed", e);
+        if (this.focusManager.focusOwner != null) {
+            e.source = this.focusManager.focusOwner;
+            return events.fireEvent("keyPressed", e);
         }
 
         return false;
     }
 
     $keyReleased(e){
-        if (pkg.focusManager.focusOwner != null) {
-            e.source = pkg.focusManager.focusOwner;
-            return pkg.events.fireEvent("keyReleased", e);
+        if (this.focusManager.focusOwner != null) {
+            e.source = this.focusManager.focusOwner;
+            return events.fireEvent("keyReleased", e);
         }
         return false;
     }
@@ -188,31 +194,31 @@ export default class zCanvas extends HtmlCanvas {
         var x = this.$toElementX(e.pageX, e.pageY),
             y = this.$toElementY(e.pageX, e.pageY),
             d = this.getComponentAt(x, y),
-            o = pkg.$pointerOwner[e.identifier];
+            o = $pointerOwner[e.identifier];
 
         // also correct current component on that  pointer is located
         if (d !== o) {
             // if pointer owner is not null but doesn't match new owner
             // generate pointer exit and clean pointer owner
             if (o != null) {
-                pkg.$pointerOwner[e.identifier] = null;
-                pkg.events.fireEvent("pointerExited", e.update(o, x, y));
+                $pointerOwner[e.identifier] = null;
+                events.fireEvent("pointerExited", e.update(o, x, y));
             }
 
             // if new pointer owner is not null and enabled
             // generate pointer entered event ans set new pointer owner
             if (d != null && d.isEnabled === true){
-                pkg.$pointerOwner[e.identifier] = d;
-                pkg.events.fireEvent("pointerEntered", e.update(d, x, y));
+                $pointerOwner[e.identifier] = d;
+                events.fireEvent("pointerEntered", e.update(d, x, y));
             }
         }
     }
 
     $pointerExited(e) {
-        var o = pkg.$pointerOwner[e.identifier];
+        var o = $pointerOwner[e.identifier];
         if (o != null) {
-            pkg.$pointerOwner[e.identifier] = null;
-            return pkg.events.fireEvent("pointerExited", e.update(o,
+            $pointerOwner[e.identifier] = null;
+            return events.fireEvent("pointerExited", e.update(o,
                                                                   this.$toElementX(e.pageX, e.pageY),
                                                                   this.$toElementY(e.pageX, e.pageY)));
         }
@@ -236,28 +242,28 @@ export default class zCanvas extends HtmlCanvas {
         var x = this.$toElementX(e.pageX, e.pageY),
             y = this.$toElementY(e.pageX, e.pageY),
             d = this.getComponentAt(x, y),
-            o = pkg.$pointerOwner[e.identifier],
+            o = $pointerOwner[e.identifier],
             b = false;
 
         // check if pointer already inside a component
         if (o != null) {
             if (d != o) {
-                pkg.$pointerOwner[e.identifier] = null;
-                b = pkg.events.fireEvent("pointerExited", e.update(o, x, y));
+                $pointerOwner[e.identifier] = null;
+                b = events.fireEvent("pointerExited", e.update(o, x, y));
 
                 if (d != null && d.isEnabled === true) {
-                    pkg.$pointerOwner[e.identifier] = d;
-                    b = pkg.events.fireEvent("pointerEntered", e.update(d, x, y)) || b;
+                    $pointerOwner[e.identifier] = d;
+                    b = events.fireEvent("pointerEntered", e.update(d, x, y)) || b;
                 }
             } else {
                 if (d != null && d.isEnabled === true) {
-                    b = pkg.events.fireEvent("pointerMoved", e.update(d, x, y));
+                    b = events.fireEvent("pointerMoved", e.update(d, x, y));
                 }
             }
         } else {
             if (d != null && d.isEnabled === true) {
-                pkg.$pointerOwner[e.identifier] = d;
-                b = pkg.events.fireEvent("pointerEntered", e.update(d, x, y));
+                $pointerOwner[e.identifier] = d;
+                b = events.fireEvent("pointerEntered", e.update(d, x, y));
             }
         }
 
@@ -272,15 +278,15 @@ export default class zCanvas extends HtmlCanvas {
         // if target component can be detected fire pointer start dragging and
         // pointer dragged events to the component
         if (d != null && d.isEnabled === true) {
-            return pkg.events.fireEvent("pointerDragStarted", e.update(d, x, y));
+            return events.fireEvent("pointerDragStarted", e.update(d, x, y));
         }
 
         return false;
     }
 
     $pointerDragged(e){
-        if (pkg.$pointerOwner[e.identifier] != null) {
-            return pkg.events.fireEvent("pointerDragged", e.update(pkg.$pointerOwner[e.identifier],
+        if ($pointerOwner[e.identifier] != null) {
+            return events.fireEvent("pointerDragged", e.update($pointerOwner[e.identifier],
                                                                     this.$toElementX(e.pageX, e.pageY),
                                                                     this.$toElementY(e.pageX, e.pageY)));
         }
@@ -289,8 +295,8 @@ export default class zCanvas extends HtmlCanvas {
     }
 
     $pointerDragEnded(e) {
-        if (pkg.$pointerOwner[e.identifier] != null) {
-            return pkg.events.fireEvent("pointerDragEnded", e.update(pkg.$pointerOwner[e.identifier],
+        if ($pointerOwner[e.identifier] != null) {
+            return events.fireEvent("pointerDragEnded", e.update($pointerOwner[e.identifier],
                                                                       this.$toElementX(e.pageX, e.pageY),
                                                                       this.$toElementY(e.pageX, e.pageY)));
         }
@@ -302,7 +308,7 @@ export default class zCanvas extends HtmlCanvas {
             y = this.$toElementY(e.pageX, e.pageY),
             d = this.getComponentAt(x, y);
 
-        return d != null ? pkg.events.fireEvent("pointerClicked", e.update(d, x, y))
+        return d != null ? events.fireEvent("pointerClicked", e.update(d, x, y))
                           : false;
     }
 
@@ -311,28 +317,28 @@ export default class zCanvas extends HtmlCanvas {
             y = this.$toElementY(e.pageX, e.pageY),
             d = this.getComponentAt(x, y);
 
-        return d != null ? pkg.events.fireEvent("pointerDoubleClicked", e.update(d, x, y))
+        return d != null ? events.fireEvent("pointerDoubleClicked", e.update(d, x, y))
                           : false;
     }
 
     $pointerReleased(e) {
         var x  = this.$toElementX(e.pageX, e.pageY),
             y  = this.$toElementY(e.pageX, e.pageY),
-            pp = pkg.$pointerPressedOwner[e.identifier];
+            pp = $pointerPressedOwner[e.identifier];
 
         // release pressed state
         if (pp != null) {
             try {
-                pkg.events.fireEvent("pointerReleased", e.update(pp, x, y));
+                events.fireEvent("pointerReleased", e.update(pp, x, y));
             } finally {
-                pkg.$pointerPressedOwner[e.identifier] = null;
+                $pointerPressedOwner[e.identifier] = null;
             }
         }
 
         // mouse released can happen at new location, so move owner has to be corrected
         // and mouse exited entered event has to be generated.
         // the correction takes effect if we have just completed dragging or mouse pressed
-        // event target doesn't match pkg.$pointerOwner
+        // event target doesn't match $pointerOwner
         if (e.pointerType === "mouse" && (e.pressPageX != e.pageX || e.pressPageY != e.pageY)) {
             var nd = this.getComponentAt(x, y),
                 po = this.getComponentAt(this.$toElementX(e.pressPageX, e.pressPageY),
@@ -340,13 +346,13 @@ export default class zCanvas extends HtmlCanvas {
 
             if (nd !== po) {
                 if (po != null) {
-                    pkg.$pointerOwner[e.identifier] = null;
-                    pkg.events.fireEvent("pointerExited", e.update(po, x, y));
+                    $pointerOwner[e.identifier] = null;
+                    events.fireEvent("pointerExited", e.update(po, x, y));
                 }
 
                 if (nd != null && nd.isEnabled === true){
-                    pkg.$pointerOwner[e.identifier] = nd;
-                    pkg.events.fireEvent("pointerEntered", e.update(nd, x, y));
+                    $pointerOwner[e.identifier] = nd;
+                    events.fireEvent("pointerEntered", e.update(nd, x, y));
                 }
             }
         }
@@ -355,14 +361,14 @@ export default class zCanvas extends HtmlCanvas {
     $pointerPressed(e) {
         var x  = this.$toElementX(e.pageX, e.pageY),
             y  = this.$toElementY(e.pageX, e.pageY),
-            pp = pkg.$pointerPressedOwner[e.identifier];
+            pp = $pointerPressedOwner[e.identifier];
 
         // free pointer prev presssed if any
         if (pp != null) {
             try {
-                pkg.events.fireEvent("pointerReleased", e.update(pp, x, y));
+                events.fireEvent("pointerReleased", e.update(pp, x, y));
             } finally {
-                pkg.$pointerPressedOwner[e.identifier] = null;
+                $pointerPressedOwner[e.identifier] = null;
             }
         }
 
@@ -385,16 +391,16 @@ export default class zCanvas extends HtmlCanvas {
         var d = this.getComponentAt(x, y);
 
         if (d != null && d.isEnabled === true) {
-            if (pkg.$pointerOwner[e.identifier] !== d) {
-                pkg.$pointerOwner[e.identifier] = d;
-                pkg.events.fireEvent("pointerEntered",  e.update(d, x, y));
+            if ($pointerOwner[e.identifier] !== d) {
+                $pointerOwner[e.identifier] = d;
+                events.fireEvent("pointerEntered",  e.update(d, x, y));
             }
 
-            pkg.$pointerPressedOwner[e.identifier] = d;
+            $pointerPressedOwner[e.identifier] = d;
 
             // TODO: prove the solution (returning true) !?
-            if (pkg.events.fireEvent("pointerPressed", e.update(d, x, y)) === true) {
-                delete pkg.$pointerPressedOwner[e.identifier];
+            if (events.fireEvent("pointerPressed", e.update(d, x, y)) === true) {
+                delete $pointerPressedOwner[e.identifier];
                 return true;
             }
         }
@@ -456,14 +462,14 @@ export default class zCanvas extends HtmlCanvas {
         COMP_EVENT.source = this;
         COMP_EVENT.px     = px;
         COMP_EVENT.py     = py;
-        pkg.events.fireEvent("compMoved", COMP_EVENT);
+        events.fireEvent("compMoved", COMP_EVENT);
     }
 
     resized(pw,ph) {
         COMP_EVENT.source = this;
         COMP_EVENT.prevWidth  = pw;
         COMP_EVENT.prevHeight = ph;
-        pkg.events.fireEvent("compSized", COMP_EVENT);
+        events.fireEvent("compSized", COMP_EVENT);
         // don't forget repaint it
         this.repaint();
     }

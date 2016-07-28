@@ -389,6 +389,7 @@ import HtmlElement from './HtmlElement';
 import HtmlCanvas from './HtmlCanvas';
 import * as utils from '../../utils';
 import * as intersect from '../../utils/intersect';
+import FocusManager from './FocusManager';
 
 import { COMP_EVENT } from './events';
 
@@ -409,12 +410,14 @@ export default class Panel extends layout.Layoutable {
     isVisible: boolean;
     parent: any;
     border: any;
+    focusManager: FocusManager
 
     protected $context: any;
 
     constructor(e?) {
       super();
 
+      this.focusManager = FocusManager.instance;
         /**
          * UI component border view
          * @attribute border
@@ -913,7 +916,7 @@ export default class Panel extends layout.Layoutable {
         COMP_EVENT.constraints = constr;
         COMP_EVENT.kid = l;
 
-        pkg.events.fireEvent("compAdded", COMP_EVENT);
+        events.fireEvent("compAdded", COMP_EVENT);
 
         if (l.width > 0 && l.height > 0) {
             l.repaint();
@@ -946,7 +949,7 @@ export default class Panel extends layout.Layoutable {
         COMP_EVENT.source = this;
         COMP_EVENT.index  = i;
         COMP_EVENT.kid    = l;
-        pkg.events.fireEvent("compRemoved", COMP_EVENT);
+        events.fireEvent("compRemoved", COMP_EVENT);
         if (l.isVisible === true) {
             this.repaint(l.x, l.y, l.width, l.height);
         }
@@ -963,7 +966,7 @@ export default class Panel extends layout.Layoutable {
         COMP_EVENT.source = this;
         COMP_EVENT.prevX  = px;
         COMP_EVENT.prevY  = py;
-        pkg.events.fireEvent("compMoved", COMP_EVENT);
+        events.fireEvent("compMoved", COMP_EVENT);
 
         var p = this.parent,
             w = this.width,
@@ -1006,7 +1009,7 @@ export default class Panel extends layout.Layoutable {
         COMP_EVENT.source = this;
         COMP_EVENT.prevWidth  = pw;
         COMP_EVENT.prevHeight = ph;
-        pkg.events.fireEvent("compSized", COMP_EVENT);
+        events.fireEvent("compSized", COMP_EVENT);
 
         if (this.parent != null) {
             this.parent.repaint(this.x, this.y,
@@ -1021,7 +1024,7 @@ export default class Panel extends layout.Layoutable {
      * @method hasFocus
      */
     hasFocus(){
-        return pkg.focusManager.hasFocus(this);
+        return this.focusManager.hasFocus(this);
     }
 
     /**
@@ -1029,7 +1032,7 @@ export default class Panel extends layout.Layoutable {
      * @method requestFocus
      */
     requestFocus(){
-        pkg.focusManager.requestFocus(this);
+        this.focusManager.requestFocus(this);
     }
 
     /**
@@ -1060,7 +1063,7 @@ export default class Panel extends layout.Layoutable {
             this.invalidate();
 
             COMP_EVENT.source = this;
-            pkg.events.fireEvent("compShown", COMP_EVENT);
+            events.fireEvent("compShown", COMP_EVENT);
 
             if (this.parent != null) {
                 if (b) this.repaint();
@@ -1324,7 +1327,7 @@ the component is stored in the dictionary is considered as the component constra
      * Bring the UI component to front
      * @method toFront
      */
-    toFront(){
+    toFront() : Panel {
         if (this.parent != null && this.parent.kids[this.parent.kids.length-1] !== this){
             var p = this.parent;
             p.kids.splice(p.indexOf(this), 1);

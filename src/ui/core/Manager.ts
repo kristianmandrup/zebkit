@@ -7,7 +7,7 @@
  *  @constructor
  */
 export default class Manager {
-    constructor() {
+    constructor(events) {
         if (events != null) {
             events.bind(this);
         }
