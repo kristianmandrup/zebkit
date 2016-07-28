@@ -15,7 +15,7 @@ import { types, Runner } from '../../utils';
 export default class ImagePan extends ViewPan {
     $runner: any;
 
-    constructor(img, w, h) {
+    constructor(img, w?, h?) {
         super();
         this.$runner = null;
         this.setImage(img != null ? img : null);

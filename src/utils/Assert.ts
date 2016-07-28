@@ -1,3 +1,5 @@
+import { types } from './';
+
 export default class AssertionError extends Error {
     err: any;
 
@@ -88,8 +90,8 @@ export default class AssertionError extends Error {
     assertException(f, et, lab) {
         if (!(f instanceof Function)) throw new WrongArgument("Function as input is expected");
 
-        if (zebkit.isString(et)) lab = et;
-        if (arguments.length < 2 || zebkit.isString(et)) et = Error;
+        if (types.isString(et)) lab = et;
+        if (arguments.length < 2 || types.isString(et)) et = Error;
 
         try { f(); }
         catch(e) {

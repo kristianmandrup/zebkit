@@ -1,7 +1,7 @@
-import Panel from '../ui/Panel';
-import util from '../util';
-import utils from '../utils';
-import $ViewsSetterMix from '../';
+import Panel from '../core/Panel';
+import { types } from '../../utils';
+import $ViewsSetterMix from '../../';
+import ScrollManager from '../ScrollManager';
 
 /**
  * Base UI list component class that has to be extended with a
@@ -42,7 +42,7 @@ export default class BaseList extends Panel, util.Position.Metric, $ViewsSetterM
         if (b == null) b = false;
         if (m == null) m = [];
         else {
-            if (utils.isBoolean(m)) {
+            if (types.isBoolean(m)) {
                 b = m;
                 m = [];
             }
@@ -75,7 +75,7 @@ export default class BaseList extends Panel, util.Position.Metric, $ViewsSetterM
          * @protected
          * @type {zebkit.ui.ScrollManager}
          */
-        this.scrollManager = new pkg.ScrollManager(this);
+        this.scrollManager = new ScrollManager(this);
 
         // position manager should be set before model initialization
         this.setPosition(new zebkit.util.Position(this));

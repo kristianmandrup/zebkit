@@ -751,7 +751,8 @@ export default class Tabs extends Panel, $ViewsSetterMix {
             render = constr;
         }
         else {
-            render = new this.clazz.TabView((constr == null ? "Page " + index : constr ));
+            let icon = (constr == null ? "Page " + index : constr )
+            render = new this.clazz.TabView(icon);
             render.ownerChanged(this); // TODO: a little bit ugly but setting an owner is required to
                                        // keep tabs component informed when an icon has been updated
         }

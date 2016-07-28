@@ -43,7 +43,7 @@ export default class TabView extends CompRender {
 
     owner: any;
 
-    constructor(icon, caption) {
+    constructor(icon, caption?) {
         super(icon, caption);
         if (arguments.length === 0) {
             caption = "";

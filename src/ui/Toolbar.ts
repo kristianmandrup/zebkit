@@ -27,8 +27,9 @@
 
 
 import ToolPan from './toolbar/ToolPan';
-import Panel from './core/Panel';
+import { Panel, ImagePan } from './core';
 import { listen, types } from '../utils';
+import { Line, Checkbox, Radiobox } from './';
 
 function Clazz() {
     this.ToolPan  = ToolPan; 

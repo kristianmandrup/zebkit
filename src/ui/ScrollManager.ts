@@ -30,12 +30,20 @@
   * @param  {Integer} px a previous x location target component scroll location
   * @param  {Integer} py a previous y location target component scroll location
   */
+import { ListenersClass } from '../utils/listen'; 
+
 export default class ScrollManager {
-    $clazz() {
-        this.Listeners = zebkit.util.ListenersClass("scrolled");
+    get clazz() {
+        return {
+            Listeners: ListenersClass("scrolled")
+        };        
     }
 
-    constructor(c){
+    target: any;
+    sx: number;
+    sy: number;
+
+    constructor(target) {
         this.sx = this.sy = 0;
         this._  = new this.clazz.Listeners();
 
@@ -45,7 +53,7 @@ export default class ScrollManager {
          * @type {zebkit.ui.Panel}
          * @readOnly
          */
-        this.target = c;
+        this.target = target;
     }
     /**
      * Get current target component x scroll location

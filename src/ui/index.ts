@@ -15,7 +15,7 @@ export { default as Line } from './Line';
 export { default as Link } from './Link';
 export { default as MobileScrollMan } from './MobileScrollMan';
 export { default as Progress } from './Progress';
-export { default as RadioBox } from './RadioBox';
+export { default as Radiobox } from './Radiobox';
 export { default as Scroll } from './Scroll';
 export { default as ScrollManager } from './ScrollManager';
 export { default as ScrollPan } from './ScrollPan';
