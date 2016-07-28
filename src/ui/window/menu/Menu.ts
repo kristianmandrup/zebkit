@@ -45,6 +45,7 @@ function Clazz() {
 
 import CompList from '../../list/CompList';
 import { types } from '../../../utils'
+import { MENU_EVENT } from './';
 
 export default class Menu extends CompList {
     _clazz: Object;
@@ -343,7 +344,7 @@ export default class Menu extends CompList {
      * @param  {zebkit.ui.KeyEvent} e a key event
      * @method keyPressed
      */
-    function keyPressed(e){
+    keyPressed(e){
         if (e.code === pkg.KeyEvent.ESCAPE) {
             if (this.parent != null) {
                 var p = this.$parentMenu;
@@ -354,17 +355,17 @@ export default class Menu extends CompList {
         } else {
             this.$super(e);
         }
-    },
+    }
 
-    function insert(i, ctr, c) {
+    insert(i, ctr, c) {
         if (zebkit.isString(c)) {
             return this.$super(i, ctr, (c.match(/^\-+$/) != null) ? new this.clazz.Line()
                                                                   : new this.clazz.MenuItem(c));
         }
         return this.$super(i, ctr, c);
-    },
+    }
 
-    function setParent(p) {
+    setParent(p) {
         if (p != null) {
             this.select(-1);
             this.position.setOffset(null);
@@ -372,31 +373,31 @@ export default class Menu extends CompList {
             this.$parentMenu = null;
         }
         this.$super(p);
-    },
+    }
 
     /**
      * Add the specified component as a decorative item of the menu
      * @param {zebkit.ui.Panel} c an UI component
      * @method addDecorative
      */
-    function addDecorative(c) {
+    addDecorative(c) {
         this.decoratives[c] = true;
         this.$getSuper("insert").call(this, this.kids.length, null, c);
-    },
+    }
 
-    function kidRemoved(i,c) {
+    kidRemoved(i,c) {
         if (this.decoratives[c] !== true) {
             delete this.decoratives[c];
         }
         this.setMenuAt(i, null);
         this.$super(i, c);
-    },
+    }
 
-    function isItemSelectable(i) {
+    isItemSelectable(i) {
         return this.$super(i) && this.isDecorative(i) === false;
-    },
+    }
 
-    function posChanged(target,prevOffset,prevLine,prevCol) {
+    posChanged(target,prevOffset,prevLine,prevCol) {
         var off = target.offset;
 
         if (off >= 0) {
@@ -422,9 +423,9 @@ export default class Menu extends CompList {
         }
 
         this.$super(target, prevOffset, prevLine, prevCol);
-    },
+    }
 
-    function fireSelected(prev) {
+    fireSelected(prev) {
         if (this.parent != null && this.selectedIndex >= 0) {
             var sub = this.getMenuAt(this.selectedIndex);
 
@@ -457,6 +458,6 @@ export default class Menu extends CompList {
             pkg.events.fireEvent("menuItemSelected",
                                  MENU_EVENT.$fillWith(this, this.selectedIndex, this.kids[this.selectedIndex]));
         }
-        this.$super(prev);
+        super.fireSelected(prev);
     }
 }

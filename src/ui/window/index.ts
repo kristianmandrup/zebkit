@@ -1,8 +1,15 @@
-var MENU_EVENT = new MenuEvent();
-var WIN_EVENT  = new WinEvent();
-
 export { default as HtmlWinCanvas } from './HtmlWinCanvas';
-export { default as MenuEvent } from './MenuEvent';
+export { default as Window } from './Window';
+export { default as WinEvent } from './WinEvent';
+ import WinEvent from './WinEvent';
+
+import * as _menu from './menu';
+export const menu = _menu;
+
+import * as _popup from './popup';
+export const popup = _popup;
+
+export const WIN_EVENT  = new WinEvent();
 
 /**
  * Show the given UI component as a modal window

@@ -6,7 +6,11 @@
  * @extends {zebkit.ui.HtmlCanvas}
  */
 
-import CanvasLayer from '../core/CanvasLayer';
+import CanvasLayer from '../../core/CanvasLayer';
+import { types } from '../../../utils';
+import * as layout from '../../../layout';
+import KeyEvent from '../../web/keys/KeyEvent';
+import Menu from '../menu/Menu';
 
 export default class PopupLayer extends CanvasLayer {
     get clazz() {
@@ -59,19 +63,19 @@ export default class PopupLayer extends CanvasLayer {
      * @method childKeyPressed
      */
     childKeyPressed(e){
-        var dc = zebkit.layout.getDirectChild(this, e.source);
+        var dc = layout.getDirectChild(this, e.source);
 
-        if (this.activeMenubar != null && zebkit.instanceOf(dc, pkg.Menu)) {
+        if (this.activeMenubar != null && types.instanceOf(dc, Menu)) {
             var s = this.activeMenubar.selectedIndex;
             switch (e.code) {
-                case pkg.KeyEvent.RIGHT :
+                case KeyEvent.RIGHT :
                     if (s < this.activeMenubar.model.count()-1) {
                         //this.removeAll();
                         this.activeMenubar.requestFocus();
                         this.activeMenubar.position.seekLineTo("down");
                     }
                     break;
-                case pkg.KeyEvent.LEFT :
+                case KeyEvent.LEFT :
                     if (s > 0) {
                         // this.removeAll();
                         this.activeMenubar.requestFocus();
@@ -95,7 +99,7 @@ export default class PopupLayer extends CanvasLayer {
                 // save an area the menu bar component takes
                 // it is required to allow the menu bar getting input
                 // event by inactivating the pop up layer
-                var abs = zebkit.layout.toParentOrigin(0, 0, this.activeMenubar);
+                var abs = layout.toParentOrigin(0, 0, this.activeMenubar);
                 this.mLeft   = abs.x;
                 this.mRight  = this.mLeft + this.activeMenubar.width - 1;
                 this.mTop    = abs.y;
@@ -124,7 +128,7 @@ export default class PopupLayer extends CanvasLayer {
 
         for(var i = 0; i < cnt; i++){
             var m = this.kids[i];
-            if (zebkit.instanceOf(m, pkg.Menu)) {
+            if (types.instanceOf(m, Menu)) {
                 var ps = m.getPreferredSize(),
                     xx = (m.x + ps.width  > this.width ) ? this.width  - ps.width  : m.x,
                     yy = (m.y + ps.height > this.height) ? this.height - ps.height : m.y;

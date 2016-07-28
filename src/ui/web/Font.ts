@@ -189,8 +189,6 @@ export default class Font {
 // initialize font specific structures
 // zebkit.busy();
 
-
-
 var e = document.getElementById("zebkit.fm");
 if (e == null) {
     e = document.createElement("div");

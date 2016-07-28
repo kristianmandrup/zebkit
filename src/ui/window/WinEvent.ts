@@ -1,6 +1,6 @@
-import { Event } from '../../utils/Event'; 
+import { Event } from '../core/events'; 
 
-export default class WinEvent extends util.Event {
+export default class WinEvent extends Event {
     isShown: boolean;
     isActive: boolean;
     layer: any;

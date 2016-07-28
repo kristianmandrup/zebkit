@@ -27,7 +27,7 @@
  */
 
 import MenuItem from './MenuItem';
-import Label from '../../Label';
+import Label from '../../core/Label';
 
 class MenuItemX extends MenuItem {
     get clazz() {
