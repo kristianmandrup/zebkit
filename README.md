@@ -40,11 +40,11 @@ zebkit.init().then((z) => {
         padding: 8,
         kids: {
             center: new TextField("Hi ...\n", {maxLength: 15}),
-            bottom: new Button("Clear", { 
+            bottom: new Button("Clear", {
                 canHaveFocus: false
             })
         }
-    });    
+    });
 };
 ```
 
@@ -201,6 +201,31 @@ panel.paint(g, newPos, newSize, d);
 ```
 
 So much better!
+
+We could also use [enums](https://www.typescriptlang.org/docs/handbook/enums.html)
+
+```js
+enum Direction {
+    Up = 1,
+    Down,
+    Left,
+    Right
+}
+```
+
+Or even [String Literal Types](https://basarat.gitbooks.io/typescript/content/docs/types/stringLiteralType.html)
+
+```js
+type CardinalDirection =
+    "North"
+    | "East"
+    | "South"
+    | "West";
+
+function move(distance: number, direction: CardinalDirection) {
+````
+
+In short, much better handling of types and hence the values flowing through the system ;)
 
 ## JavaScript compatibility
 
