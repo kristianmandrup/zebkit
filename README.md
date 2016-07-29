@@ -227,6 +227,19 @@ function move(distance: number, direction: CardinalDirection) {
 
 In short, much better handling of types and hence the values flowing through the system ;)
 
+### Namespaces
+
+TypeScript even supports the concept of [namespaces](https://www.typescriptlang.org/docs/handbook/namespaces.html) which could provide another convenient modularization mechanism :)
+
+```js
+namespace Validation {
+    export interface StringValidator {
+        isAcceptable(s: string): boolean;
+    }
+```
+
+So many goodies to use and explore!!
+
 ## JavaScript compatibility
 
 You can still code using good old ES5 or ES6 etc. TypeScript can interoperate seamlessly with normal Javascript.
