@@ -11,7 +11,44 @@ Documentation can be found [here](http://www.zebkit.org/documentation/)
 
 ## Usage
 
-TODO
+The original zebkit is used as described in this [Getting started tutorial](http://www.zebkit.com/start-in-5-minutes/)
+We imagine the new ES6 version of Zebkit will be used something like this:
+
+```js
+zebkit.loadConfig((config) => {
+  // override default loading of config file
+});
+
+import zebkit from 'zebkit';
+const BorderLayout = zebkit.layout.BorderLayout;
+const { TextField, Button } = zebkit.ui.controls;
+const { Border } = zebkit.ui.views;
+
+// initialize
+zebkit.init().then((z) => {
+    // create canvas
+    const canvas = document.querySelector('#myCanvas')
+    const root = new zCanvas(canvas, {width: 400, height: 400}).root;
+    root.properties({
+        layout : new BorderLayout({
+            gaps: {
+                horizontal: 8
+                vertical: 8
+            }
+        }),
+        border : new Border(),
+        padding: 8,
+        kids: {
+            center: new TextField("Hi ...\n", {maxLength: 15}),
+            bottom: new Button("Clear", { 
+                canHaveFocus: false
+            })
+        }
+    });    
+};
+```
+
+Notice the much clearer API using option Objects instead of positional arguments.
 
 ## Architecture
 
